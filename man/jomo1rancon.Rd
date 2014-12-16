@@ -12,7 +12,7 @@ jomo1rancon(Y, X=matrix(1,nrow(Y),1), Z=matrix(1,nrow(Y),1), clus,
             betap=matrix(0,ncol(X),ncol(Y)),
             up=matrix(0,length(unique(clus)),ncol(Z)*ncol(Y)), covp=diag(1,ncol(Y)),
             covu=diag(1,ncol(Y)*ncol(Z)), Sp=diag(1,ncol(Y)), Sup=diag(1,ncol(Y)*ncol(Z)),
-            nburn=100, nbetween=100, nimp=5, rngflag=0)
+            nburn=100, nbetween=100, nimp=5)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -57,10 +57,7 @@ Number of iterations between two successive imputations. Default is 100.
   \item{nimp}{
 Number of Imputations. Default is 5.
 }
-  \item{rngflag}{
-A flag for the random number generator. If set to zero (default) rnglib is used to initialize, from library rnglib.
-Otherwise R random number generator is used. Suggestion is to use rnglib becaus eof its speed, but R rng when looking for reproducible results.
-}
+
 }
 \details{
 The Gibbs sampler algorithm used is a simplification of the one described in detail in Chapter 9 of Carpenter and Kenward (2013), where we exclude the presence of level 2 variables. Regarding the choice of the priors, a flat prior is considered for beta, while an inverse-Wishart prior is given to the covariance matrices, with p-1 degrees of freedom, aka the minimum possible, to guarantee the greatest uncertainty. Binary or continuous covariates in the imputation model may be considered without any problem, but when considering a categorical covariate it has to be included with dummy variables (binary indicators) only. 

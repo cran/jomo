@@ -1,6 +1,7 @@
-jomo1con<- function(Y, X=matrix(1,nrow(Y),1), betap=matrix(0,ncol(X),ncol(Y)), covp=diag(1,ncol(Y)), Sp=diag(1,ncol(Y)), nburn=100, nbetween=100, nimp=5, rngflag=0) {
+jomo1con<- function(Y, X=matrix(1,nrow(Y),1), betap=matrix(0,ncol(X),ncol(Y)), covp=diag(1,ncol(Y)), Sp=diag(1,ncol(Y)), nburn=100, nbetween=100, nimp=5) {
 
   stopifnot(nrow(Y)==nrow(X), nrow(betap)==ncol(X), ncol(betap)==ncol(Y),nrow(covp)==ncol(covp), nrow(covp)==ncol(Y), nrow(Sp)==ncol(Sp),nrow(Sp)==nrow(covp))
+  rngflag=0;
   colnamy<-colnames(Y)
   colnamx<-colnames(X)
   Y<-as.matrix(Y,nrow(Y),ncol(Y))
@@ -49,6 +50,8 @@ jomo1con<- function(Y, X=matrix(1,nrow(Y),1), betap=matrix(0,ncol(X),ncol(Y)), c
   cat("The posterior covariance matrix is:\n")
   print(omegapostmean)
   imp<-data.frame(imp)
+  if (is.null(colnamy)) colnamy=paste("Y", 1:ncol(Y), sep = "")
+  if (is.null(colnamx)) colnamx=paste("X", 1:ncol(X), sep = "")
   colnames(imp)<-c(colnamy,colnamx,"Imputation","id")
   return(imp)
 }

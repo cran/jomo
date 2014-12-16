@@ -14,7 +14,7 @@ jomo1ranconhr(Y, X=matrix(1,nrow(Y),1), Z=matrix(1,nrow(Y),1), clus,
               covp=matrix(diag(1,ncol(Y)),length(unique(clus))*ncol(Y),ncol(Y),2), 
               covu=diag(1,ncol(Y)*ncol(Z)), Sp=diag(1,ncol(Y)), 
               Sup=diag(1,ncol(Y)*ncol(Z)), 
-              nburn=100, nbetween=100, nimp=5, a=ncol(Y), meth="random",rngflag=0) 
+              nburn=100, nbetween=100, nimp=5, a=ncol(Y), meth="random") 
 
 }
 %- maybe also 'usage' for other objects documented here.
@@ -64,10 +64,7 @@ Starting value for the degrees of freedom of the wishart distribution from which
 \item{meth}{
 This can be set to "Fixed" or "Random". In the first case the fucntion will consider fixed study-specific covarianc ematrices, in the second, random study-specific distributed according to an inverse-Wishart distribution.
 }
-  \item{rngflag}{
-A flag for the random number generator. If set to zero (default) rnglib is used to initialize, from library rnglib.
-Otherwise R random number generator is used. Suggestion is to use rnglib becaus eof its speed, but R rng when looking for reproducible results.
-}
+
 }
 \details{
 The Gibbs sampler algorithm used is similar to the one described in detail in Chapter 9 of Carpenter and Kenward (2013), where we exclude the presence of level 2 variables and we estimate separetely different covariance matrices within each study. When option meth="random" is specified, all the covariance matrices ae assume dto be random draws from the same underlying inverse Wishart distributions. Details of thi algorithm may be found in (Yucel, 2011). Regarding the choice of the priors, a flat prior is considered for beta, while an inverse-Wishart prior is given to the covariance matrices, with p-1 degrees of freedom, aka the minimum possible, to guarantee the greatest uncertainty. Binary or continuous covariates in the imputation model may be considered without any problem, but when considering a categorical covariate it has to be included with dummy variables (binary indicators) only. 

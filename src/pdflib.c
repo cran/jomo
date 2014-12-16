@@ -1146,14 +1146,14 @@ double value;
 if ( fl == 0 )
   {
     
-	value = r8_uni_01 ( );
+	value = ( double ) unif_rand ( );
   
 	}
   
 else
   {
-    
-	value = ( double ) unif_rand ( ) / ( double ) RAND_MAX;
+    value = r8_uni_01 ( );
+	
   
 	}
 

@@ -1,6 +1,7 @@
 jomo1mix <-
-  function(Y_con, Y_cat, Y_numcat, X=matrix(1,nrow(Y_cat),1), betap=matrix(0,ncol(X),(ncol(Y_con)+(sum(Y_numcat)-length(Y_numcat)))), covp=diag(1,ncol(betap)), Sp=diag(1,ncol(betap)), nburn=100, nbetween=100, nimp=5, meth="MH", rngflag=0) {
+  function(Y_con, Y_cat, Y_numcat, X=matrix(1,nrow(Y_cat),1), betap=matrix(0,ncol(X),(ncol(Y_con)+(sum(Y_numcat)-length(Y_numcat)))), covp=diag(1,ncol(betap)), Sp=diag(1,ncol(betap)), nburn=100, nbetween=100, nimp=5, meth="MH") {
     stopifnot((meth=="MH"|meth=="IW"),nrow(Y_con)==nrow(X), nrow(betap)==ncol(X), ncol(betap)==(ncol(Y_con)+(sum(Y_numcat)-length(Y_numcat))),nrow(covp)==ncol(covp), nrow(covp)==ncol(betap), nrow(Sp)==ncol(Sp),nrow(Sp)==nrow(covp))
+    rngflag=0
     colnamycon<-colnames(Y_con)
     colnamycat<-colnames(Y_cat)
     colnamx<-colnames(X)
@@ -71,6 +72,9 @@ jomo1mix <-
     cat("The posterior covariance matrix is:\n")
     print(omegapostmean)
     imp<-data.frame(imp)
+    if (is.null(colnamycat)) colnamycat=paste("Ycat", 1:ncol(Y_cat), sep = "")
+    if (is.null(colnamycon)) colnamycon=paste("Ycon", 1:ncol(Y_con), sep = "")
+    if (is.null(colnamx)) colnamx=paste("X", 1:ncol(X), sep = "")
     colnames(imp)<-c(colnamycon,colnamycat,colnamx,"Imputation","id")
     return(imp)
   }

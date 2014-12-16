@@ -12,7 +12,7 @@ jomo1ranmix(Y_con, Y_cat, Y_numcat, X=matrix(1,nrow(Y_cat),1), Z=matrix(1,nrow(Y
 clus, betap=matrix(0,ncol(X),(ncol(Y_con)+(sum(Y_numcat)-length(Y_numcat)))), 
 up=matrix(0,length(unique(clus)),ncol(Z)*(ncol(Y_con)+(sum(Y_numcat)-length(Y_numcat)))),
 covp=diag(1,ncol(betap)), covu=diag(1,ncol(up)), Sp=diag(1,ncol(covp)), 
-Sup=diag(1,ncol(covu)), nburn=100, nbetween=100, nimp=5, meth="MH", rngflag=0) 
+Sup=diag(1,ncol(covu)), nburn=100, nbetween=100, nimp=5, meth="MH") 
 
 }
 %- maybe also 'usage' for other objects documented here.
@@ -65,10 +65,7 @@ Number of Imputations. Default is 5.
  \item{meth}{
 Estimation method for covariance matrix. When meth="MH", the covariance matrix at each iteration is estimated with a Metropolis Hastings step, while when meth="IW" is specified, then covariance matrix is drawn from inverse Wishart distribution and afterwards constraints on elements related to latent normals are imposed.
 }
-  \item{rngflag}{
-A flag for the random number generator. If set to zero (default) rnglib is used to initialize, from library rnglib.
-Otherwise R random number generator is used. Suggestion is to use rnglib becaus eof its speed, but R rng when looking for reproducible results.
-}
+
 }
 \details{
 The Gibbs sampler algorithm used is described in detail in Chapter 9 of Carpenter and Kenward (2013). Regarding the choice of the priors, a flat prior is considered for beta, while an inverse-Wishart prior is given to the covariance matrix, with p-1 degrees of freedom, aka the minimum possible, to guarantee the greatest uncertainty. A Metropolis Hastings step is implemented to update the covariance matrix when option meth="MH", as described in the book. When option meth="IW", then we update the covariance matrix drawing from the inverse Wishart distribution as we usually do when only continuous data are present in the model, and afterwards we constrain variances of the latent normals to 1 and covariances among latent normals related to the same categorical variable to 0. Then positive definitiveness of the matrix is checked and, if not met, another matrix is drawn.  Binary or continuous covariates in the imputation model may be considered without any problem, but when considering a categorical covariate it has to be included with dummy variables (binary indicators) only. 
@@ -103,8 +100,8 @@ covp<-diag(1,5)
 covu<-diag(1,5)
 Sp=diag(0,5);
 Sup=diag(1,5);
-nburn=as.integer(10);
-nbetween=as.integer(10);
+nburn=as.integer(100);
+nbetween=as.integer(100);
 nimp=as.integer(5);
 
 #Then we can run the function, deciding which method we want to use to update the covariance matrix:

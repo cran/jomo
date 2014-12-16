@@ -14,7 +14,7 @@ betap=matrix(0,ncol(X),((sum(Y_numcat)-length(Y_numcat)))),
 up=matrix(0,length(unique(clus)),ncol(Z)*((sum(Y_numcat)-length(Y_numcat)))), 
 covp=matrix(diag(1,ncol(betap)),ncol(betap)*length(unique(clus)),ncol(betap),2), 
 covu=diag(1,ncol(up)), Sp=diag(1,ncol(betap)), Sup=diag(1,ncol(up)), 
-nburn=100, nbetween=100, nimp=5,a=ncol(betap), rngflag=0)
+nburn=100, nbetween=100, nimp=5,a=ncol(betap))
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -63,10 +63,7 @@ Number of Imputations. Default is 5.
   \item{a}{
 Starting value for the degrees of freedom of the wishart distribution from which all of the covariance matrices are drawn. Default is the minimum possible, i.e. the dimension of the covariance matrices.
 }
-  \item{rngflag}{
-A flag for the random number generator. If set to zero (default) rnglib is used to initialize, from library rnglib.
-Otherwise R random number generator is used. Suggestion is to use rnglib becaus eof its speed, but R rng when looking for reproducible results.
-}
+
 }
 \details{
 The Gibbs sampler algorithm used is obtained is a mixture of the ones described in chapter 5 and 9 of Carpenter and Kenward (2013). We update the covariance matrices drawing from the inverse Wishart distribution as we usually do when only continuous data are present in the model, and afterwards we constrain variances of the latent normals to 1 and covariances among latent normals related to the same categorical variable to 0. Then positive definitiveness of the matrix is checked and, if not met, another matrix is drawn. We also update values of a and A, degrees of freedom and scale matrix of the inverse Wishart distribution from which all the covariance matrices are sampled. Regarding the choice of the priors, a flat prior is considered for beta, while an inverse-Wishart prior is given to the covariance matrix, with p-1 degrees of freedom, aka the minimum possible, to guarantee the greatest uncertainty.   Binary or continuous covariates in the imputation model may be considered without any problem, but when considering a categorical covariate it has to be included with dummy variables (binary indicators) only. 
@@ -104,8 +101,8 @@ covu<-diag(1,3)
 Sp=diag(0,3);
 Sup=diag(1,3);
 a=5
-nburn=as.integer(10);
-nbetween=as.integer(10);
+nburn=as.integer(100);
+nbetween=as.integer(100);
 nimp=as.integer(2);
 
 # And finally we can run either the model with fixed or random cluster-specific covariance matrices:

@@ -398,7 +398,7 @@ for (i=0;i<ns;i++) {
 					newlogLH=newlogLH+help6[0];
 				}
 				newlogLH=newlogLH*(-0.5)-IY*detom/2;
-				if (((( double ) unif_rand ( ) / ( double ) RAND_MAX)<exp(newlogLH-logLH))&(flag==1)) {
+				if (((( double ) unif_rand ( ) )<exp(newlogLH-logLH))&(flag==1)) {
 					REAL(omega)[j+JY*k]=newomega[j+JY*k];
 					REAL(omega)[k+JY*j]=newomega[k+JY*j];
 					logLH=newlogLH;

@@ -1,6 +1,7 @@
 jomo1cat <-
-  function(Y_cat, Y_numcat, X=matrix(1,nrow(Y_cat),1), betap=matrix(0,ncol(X),((sum(Y_numcat)-length(Y_numcat)))), covp=diag(1,ncol(betap)), Sp=diag(1,ncol(betap)), nburn=100, nbetween=100, nimp=5, meth="MH", rngflag=0) {
+  function(Y_cat, Y_numcat, X=matrix(1,nrow(Y_cat),1), betap=matrix(0,ncol(X),((sum(Y_numcat)-length(Y_numcat)))), covp=diag(1,ncol(betap)), Sp=diag(1,ncol(betap)), nburn=100, nbetween=100, nimp=5, meth="MH") {
     stopifnot((meth=="MH"|meth=="IW"), nrow(betap)==ncol(X), ncol(betap)==((sum(Y_numcat)-length(Y_numcat))),nrow(covp)==ncol(covp), nrow(covp)==ncol(betap), nrow(Sp)==ncol(Sp),nrow(Sp)==nrow(covp))
+    rngflag=0;
     colnamycat<-colnames(Y_cat)
     colnamx<-colnames(X)
     Y_cat<-as.matrix(Y_cat,nrow(Y_cat),ncol(Y_cat))
@@ -67,6 +68,8 @@ jomo1cat <-
     cat("The posterior covariance matrix is:\n")
     print(omegapostmean)
     imp<-data.frame(imp)
+    if (is.null(colnamycat)) colnamycat=paste("Y", 1:ncol(Y_cat), sep = "")
+    if (is.null(colnamx)) colnamx=paste("X", 1:ncol(X), sep = "")
     colnames(imp)<-c(colnamycat,colnamx,"Imputation","id")
     return(imp)
   }

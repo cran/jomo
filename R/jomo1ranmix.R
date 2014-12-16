@@ -1,6 +1,7 @@
 jomo1ranmix <-
-function(Y_con, Y_cat, Y_numcat, X=matrix(1,nrow(Y_cat),1), Z=matrix(1,nrow(Y_cat),1), clus, betap=matrix(0,ncol(X),(ncol(Y_con)+(sum(Y_numcat)-length(Y_numcat)))), up=matrix(0,length(unique(clus)),ncol(Z)*(ncol(Y_con)+(sum(Y_numcat)-length(Y_numcat)))), covp=diag(1,ncol(betap)), covu=diag(1,ncol(up)), Sp=diag(1,ncol(covp)), Sup=diag(1,ncol(covu)), nburn=100, nbetween=100, nimp=5,meth="MH", rngflag=0) {
+function(Y_con, Y_cat, Y_numcat, X=matrix(1,nrow(Y_cat),1), Z=matrix(1,nrow(Y_cat),1), clus, betap=matrix(0,ncol(X),(ncol(Y_con)+(sum(Y_numcat)-length(Y_numcat)))), up=matrix(0,length(unique(clus)),ncol(Z)*(ncol(Y_con)+(sum(Y_numcat)-length(Y_numcat)))), covp=diag(1,ncol(betap)), covu=diag(1,ncol(up)), Sp=diag(1,ncol(covp)), Sup=diag(1,ncol(covu)), nburn=100, nbetween=100, nimp=5,meth="MH") {
   stopifnot((meth=="MH"|meth=="IW"),nrow(Y_con)==nrow(clus),nrow(Y_con)==nrow(X), nrow(betap)==ncol(X), ncol(betap)==(ncol(Y_con)+(sum(Y_numcat)-length(Y_numcat))),nrow(covp)==ncol(covp), nrow(covp)==ncol(betap), nrow(Sp)==ncol(Sp),nrow(Sp)==nrow(covp),nrow(Z)==nrow(Y_con), ncol(covu)==ncol(up), ncol(up)==ncol(Z)*(ncol(Y_con)+(sum(Y_numcat)-length(Y_numcat))))
+  rngflag=0
   colnamycon<-colnames(Y_con)
   colnamycat<-colnames(Y_cat)
   colnamx<-colnames(X)
@@ -99,6 +100,10 @@ function(Y_con, Y_cat, Y_numcat, X=matrix(1,nrow(Y_cat),1), Z=matrix(1,nrow(Y_ca
   cat("The posterior mean of the level 2 covariance matrix is:\n")
   print(covupostmean)
   imp<-data.frame(imp)
+  if (is.null(colnamycat)) colnamycat=paste("Ycat", 1:ncol(Y_cat), sep = "")
+  if (is.null(colnamycon)) colnamycon=paste("Ycon", 1:ncol(Y_con), sep = "")
+  if (is.null(colnamz)) colnamz=paste("Z", 1:ncol(Z), sep = "")
+  if (is.null(colnamx)) colnamx=paste("X", 1:ncol(X), sep = "")
   colnames(imp)<-c(colnamycon,colnamycat,colnamx,colnamz,"clus","id","Imputation")
   return(imp)
 }

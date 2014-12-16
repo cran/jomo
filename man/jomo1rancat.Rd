@@ -12,7 +12,7 @@ jomo1rancat( Y_cat, Y_numcat, X=matrix(1,nrow(Y_cat),1), Z=matrix(1,nrow(Y_cat),
             clus, betap=matrix(0,ncol(X),((sum(Y_numcat)-length(Y_numcat)))), 
             up=matrix(0,length(unique(clus)),ncol(Z)*((sum(Y_numcat)-length(Y_numcat)))), 
             covp=diag(1,ncol(betap)), covu=diag(1,ncol(up)), Sp=diag(1,ncol(covp)), 
-            Sup=diag(1,ncol(covu)), nburn=100, nbetween=100, nimp=5,meth="MH",rngflag=0)
+            Sup=diag(1,ncol(covu)), nburn=100, nbetween=100, nimp=5,meth="MH")
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -61,10 +61,6 @@ Number of Imputations. Default is 5.
  \item{meth}{
 Estimation method for covariance matrix. When meth="MH", the covariance matrix at each iteration is estimated with a Metropolis Hastings step, while when meth="IW" is specified, then covariance matrix is drawn from inverse Wishart distribution and afterwards constraints on elements related to latent normals are imposed.
 }
-  \item{rngflag}{
-A flag for the random number generator. If set to zero (default) rnglib is used to initialize, from library rnglib.
-Otherwise R random number generator is used. Suggestion is to use rnglib becaus eof its speed, but R rng when looking for reproducible results.
-}
 
 }
 \details{
@@ -97,8 +93,8 @@ covp<-diag(1,3)
 covu<-diag(1,3)
 Sp=diag(0,3);
 Sup=diag(1,3);
-nburn=as.integer(10);
-nbetween=as.integer(10);
+nburn=as.integer(100);
+nbetween=as.integer(100);
 nimp=as.integer(2);
 
 #And finally we run the imputation function:

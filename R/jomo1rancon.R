@@ -1,5 +1,6 @@
-jomo1rancon<- function(Y, X=matrix(1,nrow(Y),1), Z=matrix(1,nrow(Y),1), clus, betap=matrix(0,ncol(X),ncol(Y)), up=matrix(0,length(unique(clus)),ncol(Z)*ncol(Y)), covp=diag(1,ncol(Y)), covu=diag(1,ncol(Y)*ncol(Z)), Sp=diag(1,ncol(Y)), Sup=diag(1,ncol(Y)*ncol(Z)), nburn=100, nbetween=100, nimp=5, rngflag=0) {
+jomo1rancon<- function(Y, X=matrix(1,nrow(Y),1), Z=matrix(1,nrow(Y),1), clus, betap=matrix(0,ncol(X),ncol(Y)), up=matrix(0,length(unique(clus)),ncol(Z)*ncol(Y)), covp=diag(1,ncol(Y)), covu=diag(1,ncol(Y)*ncol(Z)), Sp=diag(1,ncol(Y)), Sup=diag(1,ncol(Y)*ncol(Z)), nburn=100, nbetween=100, nimp=5) {
   stopifnot(nrow(Y)==nrow(clus),nrow(Y)==nrow(X), nrow(betap)==ncol(X), ncol(betap)==ncol(Y),nrow(covp)==ncol(covp), nrow(covp)==ncol(Y), nrow(Sp)==ncol(Sp),nrow(Sp)==nrow(covp), nrow(Z)==nrow(Y), ncol(covu)==ncol(up), ncol(up)==ncol(Z)*ncol(Y))
+  rngflag=0
   colnamy<-colnames(Y)
   colnamx<-colnames(X)
   colnamz<-colnames(Z)
@@ -77,6 +78,9 @@ jomo1rancon<- function(Y, X=matrix(1,nrow(Y),1), Z=matrix(1,nrow(Y),1), clus, be
   cat("The posterior mean of the level 2 covariance matrix is:\n")
   print(covupostmean)
   imp<-data.frame(imp)
+  if (is.null(colnamy)) colnamy=paste("Y", 1:ncol(Y), sep = "")
+  if (is.null(colnamz)) colnamz=paste("Z", 1:ncol(Z), sep = "")
+  if (is.null(colnamx)) colnamx=paste("X", 1:ncol(X), sep = "")
   colnames(imp)<-c(colnamy,colnamx,colnamz,"clus","id","Imputation")
   return(imp)
 }

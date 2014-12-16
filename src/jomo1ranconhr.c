@@ -292,7 +292,7 @@ for (i=0;i<ns;i++) {
 		lambda=sqrt(-5/(4*deriv2));
 		u_prop=lambda*t_sample(4,fl)+u_m;
 		con2=exp(log_f_u(eta, u_prop, JY, nj, allinvomega, invomega, invA,help,help2,gamma, Gammastar)-log_f_u(eta, u_new, JY, nj, allinvomega, invomega, invA,help,help2, gamma,Gammastar))*h_u(u_new,u_m,lambda)/h_u(u_prop,u_m,lambda);
-		if ((( double ) unif_rand ( ) / ( double ) RAND_MAX)<r8_min(1,con2)) u_new=u_prop;
+		if ((( double ) unif_rand ( ) )<r8_min(1,con2)) u_new=u_prop;
 		a=u_new;
 	}
 	if (u_m==-9999) {
@@ -302,7 +302,7 @@ for (i=0;i<ns;i++) {
 		lambda=sqrt(-5/(4*deriv2));
 		u_prop=lambda*t_sample(4,fl)+u_m;
 		con2=exp(log_f_u(eta, u_prop, JY, nj, allinvomega, invomega, invA,help,help2,gamma, Gammastar)-log_f_u(eta, u_new, JY, nj, allinvomega, invomega, invA,help,help2, gamma,Gammastar))*h_u(u_new,u_m,lambda)/h_u(u_prop,u_m,lambda);
-		if ((( double ) unif_rand ( ) / ( double ) RAND_MAX)<r8_min(1,con2)) u_new=u_prop;
+		if ((( double ) unif_rand ( ) )<r8_min(1,con2)) u_new=u_prop;
 		a=u_new;
 
 	}

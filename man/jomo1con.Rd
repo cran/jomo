@@ -9,7 +9,7 @@ Impute a single level dataset with continuous outcomes only. A joint multivariat
 }
 \usage{
 jomo1con(Y, X=matrix(1,nrow(Y),1), betap=matrix(0,ncol(X),ncol(Y)), 
-covp=diag(1,ncol(Y)), Sp=diag(1,ncol(Y)), nburn=100, nbetween=100, nimp=5, rngflag=0)
+covp=diag(1,ncol(Y)), Sp=diag(1,ncol(Y)), nburn=100, nbetween=100, nimp=5)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -36,10 +36,6 @@ Number of iterations between two successive imputations. Default is 100.
 }
   \item{nimp}{
 Number of Imputations. Default is 5.
-}
-  \item{rngflag}{
-A flag for the random number generator. If set to zero (default) rnglib is used to initialize, from library rnglib.
-Otherwise R random number generator is used. Suggestion is to use rnglib becaus eof its speed, but R rng when looking for reproducible results.
 }
 
 }

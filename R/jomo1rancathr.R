@@ -1,6 +1,7 @@
 jomo1rancathr <-
-  function(Y_cat, Y_numcat, X=matrix(1,nrow(Y_cat),1), Z=matrix(1,nrow(Y_cat),1), clus, betap=matrix(0,ncol(X),((sum(Y_numcat)-length(Y_numcat)))), up=matrix(0,length(unique(clus)),ncol(Z)*((sum(Y_numcat)-length(Y_numcat)))), covp=matrix(diag(1,ncol(betap)),ncol(betap)*length(unique(clus)),ncol(betap),2), covu=diag(1,ncol(up)), Sp=diag(1,ncol(betap)), Sup=diag(1,ncol(up)), nburn=100, nbetween=100, nimp=5,a=ncol(betap), rngflag=0) {
+  function(Y_cat, Y_numcat, X=matrix(1,nrow(Y_cat),1), Z=matrix(1,nrow(Y_cat),1), clus, betap=matrix(0,ncol(X),((sum(Y_numcat)-length(Y_numcat)))), up=matrix(0,length(unique(clus)),ncol(Z)*((sum(Y_numcat)-length(Y_numcat)))), covp=matrix(diag(1,ncol(betap)),ncol(betap)*length(unique(clus)),ncol(betap),2), covu=diag(1,ncol(up)), Sp=diag(1,ncol(betap)), Sup=diag(1,ncol(up)), nburn=100, nbetween=100, nimp=5,a=ncol(betap)) {
     stopifnot(nrow(betap)==ncol(X), ncol(betap)==((sum(Y_numcat)-length(Y_numcat))),nrow(covp)==nrow(up)*ncol(covp), nrow(covp)==nrow(up)*ncol(betap), nrow(Sp)==ncol(Sp),nrow(covp)==nrow(up)*nrow(Sp),nrow(Z)==nrow(Y_cat), ncol(covu)==ncol(up), ncol(up)==ncol(Z)*((sum(Y_numcat)-length(Y_numcat))))
+    rngflag=0
     colnamycat<-colnames(Y_cat)
     colnamx<-colnames(X)
     colnamz<-colnames(Z)
@@ -85,6 +86,9 @@ jomo1rancathr <-
     cat("The posterior mean of the level 2 covariance matrix is:\n")
     print(covupostmean)
     imp<-data.frame(imp)
+    if (is.null(colnamycat)) colnamycat=paste("Ycat", 1:ncol(Y_cat), sep = "")
+    if (is.null(colnamz)) colnamz=paste("Z", 1:ncol(Z), sep = "")
+    if (is.null(colnamx)) colnamx=paste("X", 1:ncol(X), sep = "")
     colnames(imp)<-c(colnamycat,colnamx,colnamz,"clus","id","Imputation")
     return(imp)
   }
