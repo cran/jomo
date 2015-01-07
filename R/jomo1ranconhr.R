@@ -1,5 +1,5 @@
 jomo1ranconhr <-
-  function(Y, X=matrix(1,nrow(Y),1), Z=matrix(1,nrow(Y),1), clus, betap=matrix(0,ncol(X),ncol(Y)), up=matrix(0,length(unique(clus)),ncol(Z)*ncol(Y)), covp=matrix(diag(1,ncol(Y)),length(unique(clus))*ncol(Y),ncol(Y),2), covu=diag(1,ncol(Y)*ncol(Z)), Sp=diag(1,ncol(Y)), Sup=diag(1,ncol(Y)*ncol(Z)), nburn=100, nbetween=100, nimp=5, a=ncol(Y),meth="random") {
+  function(Y, X=matrix(1,nrow(Y),1), Z=matrix(1,nrow(Y),1), clus, betap=matrix(0,ncol(X),ncol(Y)), up=matrix(0,nrow(unique(clus)),ncol(Z)*ncol(Y)), covp=matrix(diag(1,ncol(Y)),nrow(unique(clus))*ncol(Y),ncol(Y),2), covu=diag(1,ncol(Y)*ncol(Z)), Sp=diag(1,ncol(Y)), Sup=diag(1,ncol(Y)*ncol(Z)), nburn=100, nbetween=100, nimp=5, a=ncol(Y),meth="random") {
     stopifnot((meth=="fixed"|meth=="random"),nrow(Y)==nrow(clus),nrow(Y)==nrow(X), nrow(betap)==ncol(X), ncol(betap)==ncol(Y),nrow(covp)==nrow(up)*ncol(covp), nrow(covp)==nrow(up)*ncol(Y), nrow(Sp)==ncol(Sp),nrow(covp)==nrow(up)*nrow(Sp), nrow(Z)==nrow(Y), ncol(covu)==ncol(up), ncol(up)==ncol(Z)*ncol(Y))
     rngflag=0
     colnamy<-colnames(Y)

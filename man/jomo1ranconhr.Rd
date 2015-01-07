@@ -10,8 +10,8 @@ Impute a clustered dataset with continuous outcomes only. A joint multivariate m
 \usage{
 jomo1ranconhr(Y, X=matrix(1,nrow(Y),1), Z=matrix(1,nrow(Y),1), clus, 
               betap=matrix(0,ncol(X),ncol(Y)),
-              up=matrix(0,length(unique(clus)),ncol(Z)*ncol(Y)),
-              covp=matrix(diag(1,ncol(Y)),length(unique(clus))*ncol(Y),ncol(Y),2), 
+              up=matrix(0,nrow(unique(clus)),ncol(Z)*ncol(Y)),
+              covp=matrix(diag(1,ncol(Y)),nrow(unique(clus))*ncol(Y),ncol(Y),2), 
               covu=diag(1,ncol(Y)*ncol(Z)), Sp=diag(1,ncol(Y)), 
               Sup=diag(1,ncol(Y)*ncol(Z)), 
               nburn=100, nbetween=100, nimp=5, a=ncol(Y), meth="random") 
@@ -29,7 +29,7 @@ A data frame, or matrix, with covariates of the joint imputation model. Rows cor
 A data frame, or matrix, for covariates associated to random effects in the joint imputation model. Rows correspond to different observations, while columns are different variables. Missing values are not allowed in these variables. In case we want an intercept, a column of 1 is needed. The default is a column of 1.
 }
   \item{clus}{
-A vector containing the cluster indicator for each observation. Cluster needs to be labeled with an integer number ranging from 0 to nclus-1.
+A data frame, or matrix, containing the cluster indicator for each observation. Cluster needs to be labeled with an integer number ranging from 0 to nclus-1.
 }
   \item{betap}{
 Starting value for beta, the vector(s) of fixed effects. Rows index different covariates and columns index different outcomes. The default is a matrix of zeros.

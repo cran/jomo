@@ -332,7 +332,7 @@ for (i=0;i<ns;i++) {
 	r8mat_poinv(JY*JZ, help4, invomega3);
 	for (jj=1;jj<(JY*JZ);jj++) for (tt=0;tt<jj;tt++) invomega3[jj+(JZ*JY)*tt]=invomega3[tt+(JZ*JY)*jj];
 
-	wishart_sample(JY*JZ,nj-1,invomega3,newomega2, help4,sumzi,incrzz,mu3,fl);
+	wishart_sample(JY*JZ,(nj+JY*JZ),invomega3,newomega2, help4,sumzi,incrzz,mu3,fl);
 	
 	r8mat_pofac(JY * JZ,newomega2, help4,11);
 	r8mat_poinv(JY * JZ, help4,invomega3);

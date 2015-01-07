@@ -10,7 +10,7 @@ Impute a clustered dataset with continuous outcomes only. A joint multivariate m
 \usage{
 jomo1rancon(Y, X=matrix(1,nrow(Y),1), Z=matrix(1,nrow(Y),1), clus, 
             betap=matrix(0,ncol(X),ncol(Y)),
-            up=matrix(0,length(unique(clus)),ncol(Z)*ncol(Y)), covp=diag(1,ncol(Y)),
+            up=matrix(0,nrow(unique(clus)),ncol(Z)*ncol(Y)), covp=diag(1,ncol(Y)),
             covu=diag(1,ncol(Y)*ncol(Z)), Sp=diag(1,ncol(Y)), Sup=diag(1,ncol(Y)*ncol(Z)),
             nburn=100, nbetween=100, nimp=5)
 }
@@ -28,7 +28,7 @@ A data frame, or matrix, for covariates associated to random effects in the join
 
 }
   \item{clus}{
-A vector containing the cluster indicator for each observation. Cluster needs to be labeled with an integer number ranging from 0 to nclus-1.
+A data frame, or matrix, containing the cluster indicator for each observation. Cluster needs to be labeled with an integer number ranging from 0 to nclus-1.
 }
   \item{betap}{
 Starting value for beta, the vector(s) of fixed effects. Rows index different covariates and columns index different outcomes. The default is a matrix of zeros.

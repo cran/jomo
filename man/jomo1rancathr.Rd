@@ -11,8 +11,8 @@ Impute a clustered dataset with categorical variables as outcome. A joint multiv
 jomo1rancathr( Y_cat, Y_numcat, X=matrix(1,nrow(Y_cat),1), 
 Z=matrix(1,nrow(Y_cat),1), clus,
 betap=matrix(0,ncol(X),((sum(Y_numcat)-length(Y_numcat)))), 
-up=matrix(0,length(unique(clus)),ncol(Z)*((sum(Y_numcat)-length(Y_numcat)))), 
-covp=matrix(diag(1,ncol(betap)),ncol(betap)*length(unique(clus)),ncol(betap),2), 
+up=matrix(0,nrow(unique(clus)),ncol(Z)*((sum(Y_numcat)-length(Y_numcat)))), 
+covp=matrix(diag(1,ncol(betap)),ncol(betap)*nrow(unique(clus)),ncol(betap),2), 
 covu=diag(1,ncol(up)), Sp=diag(1,ncol(betap)), Sup=diag(1,ncol(up)), 
 nburn=100, nbetween=100, nimp=5,a=ncol(betap))
 }
@@ -31,7 +31,7 @@ A data frame, or matrix, with covariates of the joint imputation model. Rows cor
 A data frame, or matrix, for covariates associated to random effects in the joint imputation model. Rows correspond to different observations, while columns are different variables. Missing values are not allowed in these variables. In case we want an intercept, a column of 1 is needed. The default is a column of 1.
 }
   \item{clus}{
-A vector containing the cluster indicator for each observation. Cluster needs to be labeled with an integer number ranging from 0 to nclus-1.
+A data frame, or matrix, containing the cluster indicator for each observation. Cluster needs to be labeled with an integer number ranging from 0 to nclus-1.
 }
   \item{betap}{
 Starting value for beta, the vector(s) of fixed effects. Rows index different covariates and columns index different outcomes. For each n-category variable we define n-1 latent normals. The default is a matrix of zeros.

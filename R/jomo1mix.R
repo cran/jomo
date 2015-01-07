@@ -17,7 +17,7 @@ jomo1mix <-
           Yi[j,(ncol(Y_con)+h):(ncol(Y_con)+h+Y_numcat[i]-2)]=NA
         }
       } 
-      h=h+Y_numcat[i]
+      h=h+Y_numcat[i]-1
     }
     imp=matrix(0,nrow(Y)*(nimp+1),ncol(Y)+ncol(X)+2)
     imp[1:nrow(Y),1:ncol(Y)]=Y
