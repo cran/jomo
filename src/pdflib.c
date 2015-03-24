@@ -11,7 +11,7 @@
 
 
 # include "pdflib.h"
-# include "rnglib.h"
+
 
 
 
@@ -20,6 +20,7 @@ int checkposdef(int dim, double matr[], double matrh[],double matrh2[])
 
 {
 int hg,hj,hi,flag=1;
+double detma;
 if (matr[0]<=0) flag=0;
 for (hg=2;hg<(dim+1);hg++) {
 	for (hj=0;hj<hg;hj++) {
@@ -28,7 +29,8 @@ for (hg=2;hg<(dim+1);hg++) {
 		}
 	}
 	r8mat_pofac(hg,matrh,matrh2,17);
-	if(ISNAN(r8mat_podet(hg,matrh2))) flag=0;	
+	detma=r8mat_podet(hg,matrh2);
+	if(ISNAN(detma)||detma<0) flag=0;	
 }
 
 return flag;
@@ -1152,7 +1154,8 @@ if ( fl == 0 )
   
 else
   {
-    value = r8_uni_01 ( );
+    value = 0;
+	Rprintf("This would be to possibly use other rng");
 	
   
 	}

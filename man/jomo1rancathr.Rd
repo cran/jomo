@@ -98,7 +98,7 @@ betap<-matrix(0,2,3)
 up<-matrix(0,10,3)
 covp<-matrix(diag(1,3),30,3,2)
 covu<-diag(1,3)
-Sp=diag(0,3);
+Sp=diag(1,3);
 Sup=diag(1,3);
 a=5
 nburn=as.integer(100);

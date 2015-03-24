@@ -70,7 +70,7 @@ Y_numcat=matrix(4,1,1)
 X=data.frame(rep(1,300),sex)
 betap<-matrix(0,2,3)
 covp<-diag(1,3)
-Sp=diag(0,3);
+Sp=diag(1,3);
 nburn=as.integer(100);
 nbetween=as.integer(100);
 nimp=as.integer(5);

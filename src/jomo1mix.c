@@ -4,14 +4,13 @@
 #include <time.h>
 #include <string.h>
 #include "pdflib.h"
-#include "rnglib.h"
 #include "wishart.h"
 #include<R.h>
 #include<Rinternals.h>
 #include<Rmath.h>
 
 SEXP jomo1mix(SEXP Y, SEXP Yimp, SEXP Yimp2, SEXP Yimpcat, SEXP X, SEXP beta, SEXP betapost, SEXP omega, SEXP omegapost, SEXP nstep, SEXP Sp, SEXP Y_numcat, SEXP num_con, SEXP flagrng){
-int i,j,k, IY,JY, IX, JX, Io, Jo, Ib, Jb, ns, nmiss=0,t, countm=0, counto=0, countmm=0, countmo=0, countoo=0, jj, tt, kk, ncon,ncat, pos,flag=0,nmaxx,h,fl;
+int i,j,k, IY,JY, IX, JX, Io, Jo, Ib, Jb, ns, nmiss=0,t, countm=0, counto=0, countmm=0, countmo=0, countoo=0, jj, tt, kk, ncon,ncat, pos,flag=0,nmaxx,h,fl, indic=0,currncat;
 SEXP RdimY, RdimX, Rdimo, Rdimb;
 double *betaX, *Yobs, *Ymiss, *mumiss, *omegadrawmiss, *betamiss, *betaobs, *omegaoo,  *omegamo, *omegamm, *invomega, *invomega2, *help, *help2, *help3, *imp, *zi;
 double *sumzy, *incrzz, *incrzy, *mu, *mu2, *newbeta, *newomega, *sumzi, *yi, *invomega3, *help4, *help5, *help6, *missing, *fixomega,meanom,sdom, *resid, logLH, newlogLH,detom;
@@ -106,79 +105,113 @@ for (i=0;i<ncat;i++) {
 	for (j=0;j<(INTEGER(Y_numcat)[i]-1);j++) {
 		for (k=0;k<(INTEGER(Y_numcat)[i]-1);k++) {
 			if (j==k) REAL(omega)[(pos+j)+Jo*(pos+k)]=1;
-			else REAL(omega)[(pos+j)+Jo*(pos+k)]=0;
+			else REAL(omega)[(pos+j)+Jo*(pos+k)]=0.5;
 			fixomega[(pos+j)+Jo*(pos+k)]=1;
 		}
 	}
 	pos=pos+INTEGER(Y_numcat)[i]-1;
 }
+for (i=0;i<JY*JY;i++) newomega[i]=REAL(omega)[i];
 
 GetRNGstate();
 
 for (i=0;i<ns;i++) {
-
 	// Rejection Sampling
-
 	pos=ncon;
 	for (j=0;j<ncat;j++) {
+		currncat=INTEGER(Y_numcat)[j]-1;
 		for (t=0;t<IY;t++) {
 			if (!ISNAN(REAL(Y)[t+(ncon+j)*IY])) {
-				for (k=0;k<(INTEGER(Y_numcat)[j]-1);k++) betaX[k]=0;
+				for (k=0;k<currncat;k++) betaX[k]=0;
 				for (tt=0;tt<JX;tt++) {
-					for (k=0;k<(INTEGER(Y_numcat)[j]-1);k++) {
+					for (k=0;k<currncat;k++) {
 						betaX[k]=betaX[k]+REAL(beta)[tt+(k+pos)*Ib]*REAL(X)[t+tt*IX];
 					}
 				}
-				for (k=0;k<pos;k++) help[k]=0;
+
+
+				for (k=0;k<(JY-currncat);k++) help[k]=0;
 				for (tt=0;tt<JX;tt++) {
 					for (k=0;k<pos;k++) {
 						help[k]=help[k]+REAL(beta)[tt+k*Ib]*REAL(X)[t+tt*IX];
 					}
+					for (k=(pos+currncat);k<JY;k++) {
+						help[k-currncat]=help[k-currncat]+REAL(beta)[tt+k*Ib]*REAL(X)[t+tt*IX];
+					}
 				}
+
 				for (k=0;k<pos;k++) {
 					help[k]=imp[t+k*IY]-help[k];
-					for (kk=0;kk<pos;kk++) help4[k+pos*kk]=REAL(omega)[k+JY*kk];
-					for (kk=0;kk<(INTEGER(Y_numcat)[j]-1);kk++) help5[k+pos*kk]=REAL(omega)[k+JY*(pos+kk)];
 				}
-				r8mat_pofac(pos,help4, help6,1);
-				r8mat_poinv(pos,help6, invomega);
-				for (jj=1;jj<pos;jj++) for (tt=0;tt<jj;tt++) invomega[jj+pos*tt]=invomega[tt+pos*jj];
-				r8mat_mm_new(pos,pos,(INTEGER(Y_numcat)[j]-1),invomega,help5, help2);
-				r8mat_mm_new(1,pos,(INTEGER(Y_numcat)[j]-1),help,help2, mumiss);
-				r8mat_add((INTEGER(Y_numcat)[j]-1),1,betaX,mumiss);
-				r8mat_mtm_new((INTEGER(Y_numcat)[j]-1),pos,(INTEGER(Y_numcat)[j]-1),help2,help5, omegadrawmiss);
-				r8mat_divide((INTEGER(Y_numcat)[j]-1),(INTEGER(Y_numcat)[j]-1),-1,omegadrawmiss);
-				for (k=0;k<(INTEGER(Y_numcat)[j]-1);k++) omegadrawmiss[k+k*(INTEGER(Y_numcat)[j]-1)]=omegadrawmiss[k+k*(INTEGER(Y_numcat)[j]-1)]+1;
-				r8mat_pofac((INTEGER(Y_numcat)[j]-1),omegadrawmiss, omegamm,2);
-				jj=0;
+				
+				for (k=(pos+currncat);k<JY;k++) {
+					help[k-currncat]=imp[t+k*IY]-help[k-currncat];
+				}
+				for (k=0;k<JY;k++) {
+					for (kk=0;kk<JY;kk++) {
+						if (((kk<pos)||(kk>(pos+currncat-1)))&&((k<pos)||(k>(pos+currncat-1)))) {
+							help4[countm]=REAL(omega)[kk+JY*k];
+							countm++;
+						}
+						else if (((kk<pos)||(kk>(pos+currncat-1)))&&((k>(pos-1))||(k<(pos+currncat)))) {
+							help5[counto]=REAL(omega)[kk+JY*k];
+							counto++;
+						}
+					}
+				}
+				countm=0;
+				counto=0;
+				r8mat_pofac((JY-currncat),help4, help6,1);
+				r8mat_poinv((JY-currncat),help6, invomega);
+			
+				for (jj=1;jj<(JY-currncat);jj++) for (tt=0;tt<jj;tt++) invomega[jj+(JY-currncat)*tt]=invomega[tt+(JY-currncat)*jj];
+				
+				r8mat_mm_new((JY-currncat),(JY-currncat),currncat,invomega,help5, help2);
+					
+
+				r8mat_mm_new(1,(JY-currncat),currncat,help,help2, mumiss);
+				r8mat_add(currncat,1,betaX,mumiss);
+				r8mat_mtm_new(currncat,(JY-currncat),currncat,help2,help5, omegadrawmiss);
+				r8mat_divide(currncat,currncat,-1,omegadrawmiss);
+				for (k=0;k<currncat;k++) {
+					omegadrawmiss[k+k*currncat]=omegadrawmiss[k+k*currncat]+1;
+					for (kk=0;kk<currncat;kk++) if (k!=kk) omegadrawmiss[k+kk*currncat]=omegadrawmiss[k+kk*currncat]+0.5;
+					
+				}
+				r8mat_pofac(currncat,omegadrawmiss, omegamm,2);
+				flag=0;
+				kk=0;
+	
+
 				if (REAL(Y)[t+(ncon+j)*IY]==INTEGER(Y_numcat)[j]) {
-					while (flag==0) {
+					while ((flag==0)&(kk<10000)) {
 						r8vec_multinormal_sample((INTEGER(Y_numcat)[j]-1), mumiss,omegamm, newbeta,mu2,fl);
 						maxim=maxvec((INTEGER(Y_numcat)[j]-1),newbeta);
 						if (maxim<0) {
+
+						
 							for (k=0;k<(INTEGER(Y_numcat)[j]-1);k++) imp[t+(k+pos)*IY]=newbeta[k];
 							flag=1;
+							indic++;
 						}
-				jj++;
-				if (jj>2000) flag=1;
-
+						kk++;
 					}
 				}
 				else {
-					while (flag==0) {
+					while ((flag==0)&(kk<10000)) {
 						r8vec_multinormal_sample((INTEGER(Y_numcat)[j]-1), mumiss,omegamm, newbeta,mu2,fl);
 						maxim=argmaxvec((INTEGER(Y_numcat)[j]-1),newbeta);
 						maxim2=maxvec((INTEGER(Y_numcat)[j]-1),newbeta);
 						if (((maxim+1)==REAL(Y)[t+(ncon+j)*IY])&(maxim2>0)) {
 							for (k=0;k<(INTEGER(Y_numcat)[j]-1);k++) imp[t+(k+pos)*IY]=newbeta[k];
 							flag=1;
+							indic++;
 						}
-				jj++;
-				if (jj>2000) flag=1;
-
+						kk++;
 					}
 				}
 				flag=0;
+
 			}
 		}
 		pos=pos+INTEGER(Y_numcat)[j]-1;
@@ -235,7 +268,7 @@ for (i=0;i<ns;i++) {
 		r8mat_mmt_new(1,JY,1,help5,help4,help6);
 		logLH=logLH+help6[0];
 	}
-	logLH=logLH*(-0.5)-IY*detom/2;
+	logLH=logLH*(-0.5)-IY*log(detom)/2;
 	for (j=0;j<JY;j++) {
 		for (k=0;k<JY;k++) {
 			if ((fixomega[j+JY*k]==0)&(j<=k)) {
@@ -265,7 +298,7 @@ for (i=0;i<ns;i++) {
 					r8mat_mmt_new(1,JY,1,help5,help4,help6);
 					newlogLH=newlogLH+help6[0];
 				}
-				newlogLH=newlogLH*(-0.5)-IY*detom/2;
+				newlogLH=newlogLH*(-0.5)-IY*log(detom)/2;
 				if (((( double ) unif_rand ( ))<exp(newlogLH-logLH))&(flag==1)) {
 					REAL(omega)[j+JY*k]=newomega[j+JY*k];
 					REAL(omega)[k+JY*j]=newomega[k+JY*j];

@@ -89,7 +89,7 @@ for (i in 1:5) {
 #Here we use the BaBooN library to apply Rubins rules:
 
 #library("BaBooN")
-#MI.inference(estimates, ses)
-#MI.inference(estimates2, ses2)
+#MI.inference(estimates, ses^2)
+#MI.inference(estimates2, ses2^2)
 
 }

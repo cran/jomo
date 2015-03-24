@@ -91,7 +91,7 @@ betap<-matrix(0,2,3)
 up<-matrix(0,10,3)
 covp<-diag(1,3)
 covu<-diag(1,3)
-Sp=diag(0,3);
+Sp=diag(1,3);
 Sup=diag(1,3);
 nburn=as.integer(100);
 nbetween=as.integer(100);

@@ -4,7 +4,6 @@
 #include <time.h>
 #include <string.h>
 #include "pdflib.h"
-#include "rnglib.h"
 #include "wishart.h"
 #include<R.h>
 #include<Rinternals.h>
@@ -127,8 +126,8 @@ u_new=log(a+JY);
 precision=0.001;
 GetRNGstate();
 
-for (i=0;i<JY*JY;i++) Gammapr[i]=0.2;
-for (i=0;i<JY;i++) Gammapr[i+JY*i]=1;
+for (i=0;i<JY*JY;i++) Gammapr[i]=REAL(Sp)[i];
+
 r8mat_pofac(JY,Gammapr,help,1);
 r8mat_poinv(JY, help, invgamma);
 for (jj=1;jj<JY;jj++) for (tt=0;tt<jj;tt++) invgamma[jj+JY*tt]=invgamma[tt+JY*jj];

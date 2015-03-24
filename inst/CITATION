@@ -4,3 +4,4 @@ bibentry(bibtype = "Manual",
                     person("James", "Carpenter")),        
          year = 2014,
          url = "http://CRAN.R-project.org/package=jomo")
+		 

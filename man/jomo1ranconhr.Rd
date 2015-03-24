@@ -130,6 +130,6 @@ for (i in 1:5) {
 # And finally we combine results with Rubin's rules, using package BaBooN.
 
 #library("BaBooN")
-#MI.inference(estimates, ses)
-#MI.inference(estimates2, ses2)
+#MI.inference(estimates, ses^2)
+#MI.inference(estimates2, ses2^2)
 }

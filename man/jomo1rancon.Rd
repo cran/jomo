@@ -111,7 +111,7 @@ for (i in 1:5) {
 #And finally we aggregate results through RUbin's rules with package BaBooN.
 
 #library("BaBooN")
-#MI.inference(estimates, ses)
-#MI.inference(estimates2, ses2)
+#MI.inference(estimates, ses^2)
+#MI.inference(estimates2, ses2^2)
 
 }

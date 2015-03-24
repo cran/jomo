@@ -77,7 +77,7 @@ Y_numcat=matrix(4,1,1)
 X=data.frame(rep(1,300),sex)
 betap<-matrix(0,2,5)
 covp<-diag(1,5)
-Sp=diag(0,5);
+Sp=diag(1,5);
 nburn=as.integer(100);
 nbetween=as.integer(100);
 nimp=as.integer(5);
@@ -104,10 +104,10 @@ for (i in 1:5) {
 # and we aggregate he results with Rubin's rules through the BaBooN package:
 
 #library("BaBooN")
-#MI.inference(estimates[,1], ses[,1])
-#MI.inference(estimates[,2], ses[,2])
-#MI.inference(estimates[,3], ses[,3])
-#MI.inference(estimates[,4], ses[,4])
-#MI.inference(estimates[,5], ses[,5])
+#MI.inference(estimates[,1], ses[,1]^2)
+#MI.inference(estimates[,2], ses[,2]^2)
+#MI.inference(estimates[,3], ses[,3]^2)
+#MI.inference(estimates[,4], ses[,4]^2)
+#MI.inference(estimates[,5], ses[,5]^2)
 
 }

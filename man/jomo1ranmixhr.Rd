@@ -101,7 +101,7 @@ betap<-matrix(0,2,5)
 up<-matrix(0,10,5)
 covp<-matrix(diag(1,5),50,5,2)
 covu<-diag(1,5)
-Sp=diag(0,5);
+Sp=diag(1,5);
 Sup=diag(1,5);
 nburn=as.integer(80);
 nbetween=as.integer(50);
@@ -127,10 +127,10 @@ for (i in 1:5) {
 # And to conclude, we aggregate estimates with Rubin's rules, using BaBooN package:
 
 #library("BaBooN")
-#MI.inference(estimates[,1], ses[,1])
-#MI.inference(estimates[,2], ses[,2])
-#MI.inference(estimates[,3], ses[,3])
-#MI.inference(estimates[,4], ses[,4])
-#MI.inference(estimates[,5], ses[,5])
+#MI.inference(estimates[,1], ses[,1]^2)
+#MI.inference(estimates[,2], ses[,2]^2)
+#MI.inference(estimates[,3], ses[,3]^2)
+#MI.inference(estimates[,4], ses[,4]^2)
+#MI.inference(estimates[,5], ses[,5]^2)
 
 }

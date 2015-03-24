@@ -13,7 +13,6 @@
 # include "wishart.h"
 
 # include "pdflib.h"
-# include "rnglib.h"
 
 
 

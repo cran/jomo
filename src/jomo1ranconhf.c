@@ -4,7 +4,6 @@
 #include <time.h>
 #include <string.h>
 #include "pdflib.h"
-#include "rnglib.h"
 #include "wishart.h"
 #include<R.h>
 #include<Rinternals.h>
