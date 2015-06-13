@@ -1,22 +1,24 @@
-\name{jomo1ranmixhr}
-\alias{jomo1ranmixhr}
-%- Also NEED an '\alias' for EACH other topic documented here.
+\name{jomo1ranmixhr.MCMCchain}
+\alias{jomo1ranmixhr.MCMCchain}
+
 \title{
-JM Imputation of clustered data with mixed variable types with cluster-specific covariance matrices
+JM Imputation of clustered data with mixed variable types with cluster-specific covariance matrices -
+A tool to check convergence of the MCMC
 }
 \description{
-Impute a clustered dataset with mixed data types as outcome. A joint multivariate model for partially observed data is assumed and imputations are generated through the use of a Gibbs sampler where a different covariance matrix is sampled within each cluster. Fully observed categorical covariates may be considered as covariates as well, but they have to be included as dummy variables.
+This function is similar to jomo1ranmixhr, but it returns the values of all the parameters in the model at each step of the MCMC instead of the imputations. It is useful to check the convergence of the MCMC sampler.
 }
 \usage{
-jomo1ranmixhr(Y_con, Y_cat, Y_numcat, X=matrix(1,nrow(Y_cat),1), 
-Z=matrix(1,nrow(Y_cat),1), clus,
+jomo1ranmixhr.MCMCchain(Y_con, Y_cat, Y_numcat, X=matrix(1,nrow(Y_cat),1), 
+Z=matrix(1,nrow(Y_cat),1), clus, 
 betap=matrix(0,ncol(X),(ncol(Y_con)+(sum(Y_numcat)-length(Y_numcat)))), 
 up=matrix(0,nrow(unique(clus)),ncol(Z)*(ncol(Y_con)+(sum(Y_numcat)-length(Y_numcat)))), 
-covp=matrix(diag(1,ncol(betap)),ncol(betap)*nrow(unique(clus)),ncol(betap),2),
+covp=matrix(diag(1,ncol(betap)),ncol(betap)*nrow(unique(clus)),ncol(betap),2), 
 covu=diag(1,ncol(up)), Sp=diag(1,ncol(betap)), Sup=diag(1,ncol(up)), 
-nburn=100, nbetween=100, nimp=5,a=ncol(betap),meth="random")
-}
+nburn=100,a=ncol(betap),meth="random") 
 
+}
+%- maybe also 'usage' for other objects documented here.
 \arguments{
   \item{Y_con}{
 A data frame, or matrix, with continuous responses of the joint imputation model. Rows correspond to different observations, while columns are different variables. Missing values are coded as NA. If no continuous outcomes are present in the model, jomo1rancathr must be used instead.
@@ -55,14 +57,9 @@ Scale matrix for the inverse-Wishart prior for the covariance matrices. The defa
 Scale matrix for the inverse-Wishart prior for the level 2 covariance matrix. The default is the identity matrix.
 }
    \item{nburn}{
-Number of burn in iterations. Default is 100.
+Number of iterations. Default is 100.
 }
-  \item{nbetween}{
-Number of iterations between two successive imputations. Default is 100.
-}
-  \item{nimp}{
-Number of Imputations. Default is 5.
-}
+
   \item{a}{
 Starting value for the degrees of freedom of the wishart distribution from which all of the covariance matrices are drawn. Default is the minimum possible, i.e. the dimension of the covariance matrices.
 }
@@ -72,16 +69,9 @@ When set to "random", we are assuming that all the covariance matrices are draws
 }
 
 }
-\details{
-The Gibbs sampler algorithm used is obtained is a mixture of the ones described in chapter 5 and 9 of Carpenter and Kenward (2013). We update the covariance matrices element-wise with a Metropolis-Hastings step. When meth="fixed", we use a flat prior for rhe matrices, while with meth="random" we use an inverse-Wishar tprior and we assume that all the covariance matrices are drawn from an inverse Wishart distribution. We update values of a and A, degrees of freedom and scale matrix of the inverse Wishart distribution from which all the covariance matrices are sampled, from the proper conditional distributions. A flat prior is considered for beta.   Binary or continuous covariates in the imputation model may be considered without any problem, but when considering a categorical covariate it has to be included with dummy variables (binary indicators) only.
-}
-\value{
-On screen, the posterior mean of the fixed effects estimates and of the covariance matrix are shown. The only argument returned is the imputed dataset in long format. Column "Imputation" indexes the imputations. Imputation number 0 are the original data.
-}
-\references{
-Carpenter J.R., Kenward M.G., (2013), Multiple Imputation and its Application. Chapter 9, Wiley, ISBN: 978-0-470-74052-1.
 
-Yucel R.M., (2011), Random-covariances and mixed-effects models for imputing multivariate multilevel continuous data, Statistical Modelling, 11 (4), 351-370, DOI: 10.1177/1471082X100110040.
+\value{
+A list with six elements is returned: the final imputed dataset (finimp) and five 3-dimensional matrices, containing all the values for beta (collectbeta), the random effects (collectu), level 1 (collectomega) and level 2 covariance matrices (collectcovu),  and the "imputed" data at each step (collectimp).
 
 }
 
@@ -109,33 +99,19 @@ covu<-diag(1,5)
 Sp=diag(1,5);
 Sup=diag(1,5);
 nburn=as.integer(80);
-nbetween=as.integer(50);
-nimp=as.integer(5);
+
 a=6
 
 # And we are finally able to run the imputation:
 
-imp<-jomo1ranmixhr(Y_con, Y_cat, Y_numcat, X,Z,clus,betap,up,covp, covu,Sp,Sup,
-                  nburn,nbetween,nimp, a, meth="random")
+imp<-jomo1ranmixhr.MCMCchain(Y_con, Y_cat, Y_numcat, X,Z,clus,betap,up,covp, covu,Sp,Sup,
+        nburn, a)
+#We can check the convergence of the first element of beta:
 
-#We analyse our imputed datasets with standard techniques:
+plot(c(1:nburn),imp$collectbeta[1,1,1:nburn],type="l")
 
-estimates<-matrix(0,5,5)
-ses<-matrix(0,5,5)
-for (i in 1:5) {
-  dat<-imp[imp$Imputation==i,]
-  fit<-lm(measure~age+sex+factor(social)+factor(clus),data=dat)
-  estimates[i,1:5]<-coef(summary(fit))[2:6,1]
-  ses[i,1:5]<-coef(summary(fit))[2:6,2]
+#Or similarly we can check the convergence of any element of th elevel 2 covariance matrix:
+
+plot(c(1:nburn),imp$collectcovu[1,2,1:nburn],type="l")
 }
 
-# And to conclude, we aggregate estimates with Rubin's rules, using BaBooN package:
-
-#library("BaBooN")
-#MI.inference(estimates[,1], ses[,1]^2)
-#MI.inference(estimates[,2], ses[,2]^2)
-#MI.inference(estimates[,3], ses[,3]^2)
-#MI.inference(estimates[,4], ses[,4]^2)
-#MI.inference(estimates[,5], ses[,5]^2)
-
-}

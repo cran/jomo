@@ -1,6 +1,6 @@
 \name{jomo1con}
 \alias{jomo1con}
-%- Also NEED an '\alias' for EACH other topic documented here.
+ 
 \title{
 JM Imputation of single level data with continuous variables only
 }
@@ -40,7 +40,7 @@ Number of Imputations. Default is 5.
 
 }
 \details{
-The Gibbs sampler algorithm used is described in detail in Chapter 3 of Carpenter and Kenward (2013). Regarding the choice of the priors, a flat prior is considered for beta, while an inverse-Wishart prior is given to the covariance matrix, with p-1 degrees of freedom, aka the minimum possible, to guarantee the greatest uncertainty. Binary or continuous covariates in the imputation model may be considered without any problem, but when considering a categorical covariate it has to be included with dummy variables (binary indicators) only. 
+The Gibbs sampler algorithm used is described in detail in Chapter 3 of Carpenter and Kenward (2013). Regarding the choice of the priors, a flat prior is considered for beta, while an inverse-Wishart prior is given to the covariance matrix, with p-1 degrees of freedom, aka the minimum possible, to guarantee the greatest uncertainty. Binary or continuous covariates in the imputation model may be considered without any problem, but when considering a categorical covariate it has to be included through dummy variables (binary indicators) only. 
 }
 \value{
 On screen, the posterior mean of the fixed effects estimates and of the covariance matrix are shown. The only argument returned is the imputed dataset in long format. Column "Imputation" indexes the imputations. Imputation number 0 are the original data.

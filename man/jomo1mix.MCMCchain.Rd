@@ -1,0 +1,78 @@
+\name{jomo1mix.MCMCchain}
+\alias{jomo1mix.MCMCchain}
+
+\title{
+JM Imputation of single level data with mixed variable types 
+}
+\description{
+This function is similar to jomo1mix, but it returns the values of all the parameters in the model at each step of the MCMC instead of the imputations. It is useful to check the convergence of the MCMC sampler.
+}
+\usage{
+jomo1mix.MCMCchain(Y_con, Y_cat, Y_numcat, X=matrix(1,nrow(Y_cat),1), 
+betap=matrix(0,ncol(X),(ncol(Y_con)+(sum(Y_numcat)-length(Y_numcat)))), 
+covp=diag(1,ncol(betap)), Sp=diag(1,ncol(betap)), nburn=100) 
+ 
+}
+%- maybe also 'usage' for other objects documented here.
+\arguments{
+   \item{Y_con}{
+A data frame, or matrix, with continuous responses of the joint imputation model. Rows correspond to different observations, while columns are different variables. Missing values are coded as NA. If no continuous outcomes are present in the model, jomo1cat should be used instead.
+}
+  \item{Y_cat}{
+A data frame, or matrix, with categorical (or binary) responses of the joint imputation model. Rows correspond to different observations, while columns are different variables. Categories must be integer numbers from 1 to N. Missing values are coded as NA.
+}
+  \item{Y_numcat}{
+A vector with the number of categories in each categorical (or binary) variable.
+}
+  \item{X}{
+A data frame, or matrix, with covariates of the joint imputation model. Rows correspond to different observations, while columns are different variables. Missing values are not allowed in these variables. In case we want an intercept, a column of 1 is needed. The default is a column of 1.
+}
+  \item{betap}{
+Starting value for beta, the vector(s) of fixed effects. Rows index different covariates and columns index different outcomes. For each n-category variable we define n-1 latent normals. The default is a matrix of zeros.
+}
+  \item{covp}{
+Starting value for the covariance matrix. Dimension of this square matrix is equal to the number of outcomes (continuous plus latent normals) in the imputation model. The default is the identity matrix.
+}
+  \item{Sp}{
+Scale matrix for the inverse-Wishart prior for the covariance matrix. The default is the identity matrix.
+}
+  \item{nburn}{
+Number of iterations. Default is 100.
+}
+
+}
+
+\examples{
+#First of all we load and attach sldata
+
+data(sldata)
+attach(sldata)
+
+#Then, we define all the inputs:
+# nimp, nburn and nbetween are smaller than they should. This is
+#just because of CRAN policies on the examples.
+
+Y_con=data.frame(measure,age)
+Y_cat=data.frame(social)
+Y_numcat=matrix(4,1,1)
+X=data.frame(rep(1,300),sex)
+betap<-matrix(0,2,5)
+covp<-diag(1,5)
+Sp=diag(1,5);
+nburn=as.integer(100);
+
+
+#Then we run the sampler:
+
+imp<-jomo1mix.MCMCchain(Y_con,Y_cat,Y_numcat,X,betap,covp,Sp,nburn)
+
+#We can check the convergence of the first element of beta:
+
+plot(c(1:nburn),imp$collectbeta[1,1,1:nburn],type="l")
+
+#Or similarly we can check the convergence of any element of omega:
+
+plot(c(1:nburn),imp$collectomega[1,2,1:nburn],type="l")
+
+
+}

@@ -1982,7 +1982,7 @@ d2=
 r8mat_podet ( dim, help )
 
 ;
-res=(-df*dim/2)*log(2)-(df/2)*log(d2)-log_mul_gamma(dim,df/2)+((df-dim-1)/2)*log(d1);
+res=(-df*dim/2)*log(2)-(df/2)*log(1/d2)-log_mul_gamma(dim,df/2)+((df-dim-1)/2)*log(d1);
 return res;
 
 }
@@ -1993,7 +1993,7 @@ return res;
 /******************************************************************************/
 
 
-double log_f_u ( double eta, double a, int dim, int nclus, double allinvomega[], double omega[], double invA[], double help[], double help2[], double gamma, double Gammastar[])
+double log_f_u ( double eta, double a, int dim, int nclus, double allinvomega[], double omega[], double invA[], double help[], double help2[])
 
 
 
@@ -2026,7 +2026,7 @@ return res;
 /******************************************************************************/
 
 
-double derive_log_f_u ( double dx, double eta, double u, int dim, int nclus, double allomega[], double omega[], double invA[], double help[], double help2[], double gamma, double Gammastar[])
+double derive_log_f_u ( double dx, double eta, double u, int dim, int nclus, double allomega[], double omega[], double invA[], double help[], double help2[])
 
 
 
@@ -2037,7 +2037,7 @@ double derive_log_f_u ( double dx, double eta, double u, int dim, int nclus, dou
   
 
 double res;
-res=(log_f_u(eta, (u+dx), dim, nclus, allomega, omega,  invA,  help,  help2, gamma, Gammastar)-log_f_u(eta, (u-dx), dim, nclus, allomega, omega,  invA,  help,  help2, gamma, Gammastar))/(2*dx);
+res=(log_f_u(eta, (u+dx), dim, nclus, allomega, omega,  invA,  help,  help2)-log_f_u(eta, (u-dx), dim, nclus, allomega, omega,  invA,  help,  help2))/(2*dx);
 return res;
 
 }
@@ -2046,7 +2046,7 @@ return res;
 /******************************************************************************/
 
 
-double derive2_log_f_u ( double dx, double eta, double u, int dim, int nclus, double allomega[], double omega[], double invA[], double help[], double help2[], double gamma, double Gammastar[])
+double derive2_log_f_u ( double dx, double eta, double u, int dim, int nclus, double allomega[], double omega[], double invA[], double help[], double help2[])
 
 
 
@@ -2057,7 +2057,7 @@ double derive2_log_f_u ( double dx, double eta, double u, int dim, int nclus, do
   
 
 double res;
-res=(log_f_u(eta, (u+dx), dim, nclus, allomega, omega,  invA,  help,  help2, gamma, Gammastar)-2*log_f_u(eta, u, dim, nclus, allomega, omega,  invA,  help,  help2, gamma, Gammastar)+log_f_u(eta, (u-dx), dim, nclus, allomega, omega,  invA,  help,  help2, gamma, Gammastar))/(dx*dx);
+res=(log_f_u(eta, (u+dx), dim, nclus, allomega, omega,  invA,  help,  help2)-2*log_f_u(eta, u, dim, nclus, allomega, omega,  invA,  help,  help2)+log_f_u(eta, (u-dx), dim, nclus, allomega, omega,  invA,  help,  help2))/(dx*dx);
 return res;
 
 }
@@ -2066,7 +2066,7 @@ return res;
 /******************************************************************************/
 
 
-double derive2_f_u ( double dx, double eta, double u, int dim, int nclus, double allomega[], double omega[], double invA[], double help[], double help2[], double gamma, double Gammastar[], double K)
+double derive2_f_u ( double dx, double eta, double u, int dim, int nclus, double allomega[], double omega[], double invA[], double help[], double help2[], double K)
 
 
 
@@ -2077,7 +2077,7 @@ double derive2_f_u ( double dx, double eta, double u, int dim, int nclus, double
   
 
 double res;
-res=(exp(K+log_f_u(eta, (u+dx), dim, nclus, allomega, omega,  invA,  help,  help2, gamma, Gammastar))-2*exp(K+log_f_u(eta, u, dim, nclus, allomega, omega,  invA,  help,  help2, gamma, Gammastar))+exp(K+log_f_u(eta, (u-dx), dim, nclus, allomega, omega,  invA,  help,  help2, gamma, Gammastar)))/(dx*dx);
+res=(exp(K+log_f_u(eta, (u+dx), dim, nclus, allomega, omega,  invA,  help,  help2))-2*exp(K+log_f_u(eta, u, dim, nclus, allomega, omega,  invA,  help,  help2))+exp(K+log_f_u(eta, (u-dx), dim, nclus, allomega, omega,  invA,  help,  help2)))/(dx*dx);
 return res;
 
 }
@@ -2085,7 +2085,7 @@ return res;
 
 /******************************************************************************/
 
-double newton_raphson ( double x, double precision, double dx, double eta, int dim, int nclus, double allomega[], double omega[], double invA[], double help[], double help2[], double gamma, double Gammastar[])
+double newton_raphson ( double x, double precision, double dx, double eta, int dim, int nclus, double allomega[], double omega[], double invA[], double help[], double help2[])
 
 
 
@@ -2102,8 +2102,8 @@ int flag=0;
 
 for (i8=0;i8<NMAX;i8++) {
 	if (flag==0) {
-		d1=derive_log_f_u(dx, eta, x, dim, nclus, allomega, omega,  invA,  help,  help2, gamma, Gammastar);
-		d2=derive2_log_f_u(dx,eta, x, dim, nclus, allomega, omega,  invA,  help,  help2, gamma, Gammastar);
+		d1=derive_log_f_u(dx, eta, x, dim, nclus, allomega, omega,  invA,  help,  help2);
+		d2=derive2_log_f_u(dx,eta, x, dim, nclus, allomega, omega,  invA,  help,  help2);
 		res=x-(d1/d2);
 		if (fabs((res-x)/res)<precision) flag=1;
 		x=res;

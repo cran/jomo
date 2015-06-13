@@ -1,6 +1,24 @@
 jomo1ranmixhr <-
-function(Y_con, Y_cat, Y_numcat, X=matrix(1,nrow(Y_cat),1), Z=matrix(1,nrow(Y_cat),1), clus, betap=matrix(0,ncol(X),(ncol(Y_con)+(sum(Y_numcat)-length(Y_numcat)))), up=matrix(0,nrow(unique(clus)),ncol(Z)*(ncol(Y_con)+(sum(Y_numcat)-length(Y_numcat)))), covp=matrix(diag(1,ncol(betap)),ncol(betap)*nrow(unique(clus)),ncol(betap),2), covu=diag(1,ncol(up)), Sp=diag(1,ncol(betap)), Sup=diag(1,ncol(up)), nburn=100, nbetween=100, nimp=5,a=ncol(betap)) {
-  stopifnot(nrow(Y_con)==nrow(clus),nrow(Y_con)==nrow(X), nrow(betap)==ncol(X), ncol(betap)==(ncol(Y_con)+(sum(Y_numcat)-length(Y_numcat))),nrow(covp)==nrow(up)*ncol(covp), nrow(covp)==nrow(up)*ncol(betap), nrow(Sp)==ncol(Sp),nrow(covp)==nrow(up)*nrow(Sp),nrow(Z)==nrow(Y_con), ncol(covu)==ncol(up), ncol(up)==ncol(Z)*(ncol(Y_con)+(sum(Y_numcat)-length(Y_numcat))))
+function(Y_con, Y_cat, Y_numcat, X=matrix(1,nrow(Y_cat),1), Z=matrix(1,nrow(Y_cat),1), clus, betap=matrix(0,ncol(X),(ncol(Y_con)+(sum(Y_numcat)-length(Y_numcat)))), up=matrix(0,nrow(unique(clus)),ncol(Z)*(ncol(Y_con)+(sum(Y_numcat)-length(Y_numcat)))), covp=matrix(diag(1,ncol(betap)),ncol(betap)*nrow(unique(clus)),ncol(betap),2), covu=diag(1,ncol(up)), Sp=diag(1,ncol(betap)), Sup=diag(1,ncol(up)), nburn=100, nbetween=100, nimp=5,a=ncol(betap),meth="random") {
+  stopifnot((meth=="fixed"|meth=="random"),nrow(Y_con)==nrow(clus),nrow(Y_con)==nrow(X), nrow(betap)==ncol(X), ncol(betap)==(ncol(Y_con)+(sum(Y_numcat)-length(Y_numcat))),nrow(covp)==nrow(up)*ncol(covp), nrow(covp)==nrow(up)*ncol(betap), nrow(Sp)==ncol(Sp),nrow(covp)==nrow(up)*nrow(Sp),nrow(Z)==nrow(Y_con), ncol(covu)==ncol(up), ncol(up)==ncol(Z)*(ncol(Y_con)+(sum(Y_numcat)-length(Y_numcat))))
+  betait=matrix(0,nrow(betap),ncol(betap))
+  for (i in 1:nrow(betap)) {
+    for (j in 1:ncol(betap)) betait[i,j]=betap[i,j]
+  }
+  covit=matrix(0,nrow(covp),ncol(covp))
+  for (i in 1:nrow(covp)) {
+    for (j in 1:ncol(covp)) covit[i,j]=covp[i,j]
+  }   
+  uit=matrix(0,nrow(up),ncol(up))
+  for (i in 1:nrow(up)) {
+    for (j in 1:ncol(up)) uit[i,j]=up[i,j]
+  }
+  covuit=matrix(0,nrow(covu),ncol(covu))
+  for (i in 1:nrow(covu)) {
+    for (j in 1:ncol(covu)) covuit[i,j]=covu[i,j]
+  }   
+  ait=0
+  ait=a
   rngflag=0
   colnamycon<-colnames(Y_con)
   colnamycat<-colnames(Y_cat)
@@ -45,11 +63,16 @@ function(Y_con, Y_cat, Y_numcat, X=matrix(1,nrow(Y_cat),1), Z=matrix(1,nrow(Y_ca
   cpost<-matrix(0,nrow(covu),ncol(covu))
   meanobs<-colMeans(Yi,na.rm=TRUE)
   for (i in 1:nrow(Yi)) for (j in 1:ncol(Yi)) if (is.na(Yimp[i,j])) Yimp2[i,j]=meanobs[j]
-  .Call("jomo1ranmixhr", Y, Yimp, Yimp2, Y_cat, X, Z, clus,betap,up,bpost,upost,covp,opost, covu,cpost,nburn, Sp,Sup,Y_numcat, ncol(Y_con),a,rngflag, PACKAGE = "jomo")
+  if (meth=="fixed") {
+    .Call("jomo1ranmixhf", Y, Yimp, Yimp2, Y_cat, X, Z, clus,betait,uit,bpost,upost,covit,opost, covuit,cpost,nburn, Sp,Sup,Y_numcat, ncol(Y_con),ait,rngflag, PACKAGE = "jomo")
+  }
+  if (meth=="random") {
+    .Call("jomo1ranmixhr", Y, Yimp, Yimp2, Y_cat, X, Z, clus,betait,uit,bpost,upost,covit,opost, covuit,cpost,nburn, Sp,Sup,Y_numcat, ncol(Y_con),ait,rngflag, PACKAGE = "jomo")
+  }
   #betapost[,,1]=bpost
   #upostall[,,1]=upost
   #omegapost[,,(1)]=opost
-  #covupost[,,(1)]=cpost
+  #covupost[,,(1)]=cpost  
   bpost<-matrix(0,nrow(betap),ncol(betap))
   opost<-matrix(0,nrow(covp),ncol(covp))
   upost<-matrix(0,nrow(up),ncol(up))
@@ -63,8 +86,13 @@ function(Y_con, Y_cat, Y_numcat, X=matrix(1,nrow(Y_cat),1), Z=matrix(1,nrow(Y_ca
     imp[(i*nrow(Z)+1):((i+1)*nrow(Z)), (ncol(Y)+ncol(X)+1):(ncol(Y)+ncol(X)+ncol(Z))]=Z
     imp[(i*nrow(clus)+1):((i+1)*nrow(clus)), (ncol(Y)+ncol(X)+ncol(Z)+1)]=clus
     imp[(i*nrow(Z)+1):((i+1)*nrow(Z)), (ncol(Y)+ncol(X)+ncol(Z)+2)]=c(1:nrow(Y))
-    imp[(i*nrow(Z)+1):((i+1)*nrow(Z)), (ncol(Y)+ncol(X)+ncol(Z)+3)]=i      
-    .Call("jomo1ranmixhr", Y, Yimp, Yimp2, Y_cat, X, Z, clus,betap,up,bpost,upost,covp,opost, covu,cpost,nbetween, Sp,Sup,Y_numcat, ncol(Y_con),a,rngflag, PACKAGE = "jomo")
+    imp[(i*nrow(Z)+1):((i+1)*nrow(Z)), (ncol(Y)+ncol(X)+ncol(Z)+3)]=i  
+    if (meth=="fixed") {
+      .Call("jomo1ranmixhf", Y, Yimp, Yimp2, Y_cat, X, Z, clus,betait,uit,bpost,upost,covit,opost, covuit,cpost,nbetween, Sp,Sup,Y_numcat, ncol(Y_con),ait,rngflag, PACKAGE = "jomo")
+    }
+    if (meth=="random") {
+      .Call("jomo1ranmixhr", Y, Yimp, Yimp2, Y_cat, X, Z, clus,betait,uit,bpost,upost,covit,opost, covuit,cpost,nbetween, Sp,Sup,Y_numcat, ncol(Y_con),ait,rngflag, PACKAGE = "jomo")
+    }
     betapost[,,(i-1)]=bpost
     upostall[,,(i-1)]=upost
     omegapost[,,(i-1)]=opost

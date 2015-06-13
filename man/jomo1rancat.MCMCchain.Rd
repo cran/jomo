@@ -1,22 +1,25 @@
-\name{jomo1rancat}
-\alias{jomo1rancat}
-%- Also NEED an '\alias' for EACH other topic documented here.
+\name{jomo1rancat.MCMCchain}
+\alias{jomo1rancat.MCMCchain}
+
 \title{
-JM Imputation of clustered data with categorical variables
+JM Imputation of clustered data with categorical variables - 
+A tool to check convergence of the MCMC
 }
 \description{
-Impute a clustered dataset with categorical variables as outcome. A joint multivariate model for partially observed data is assumed and imputations are generated through the use of a Gibbs sampler where the covariance matrix is updated with a Metropolis-Hastings step. Fully observed categorical covariates may be considered as covariates as well, but they have to be included as dummy variables.
+This function is similar to jomo1rancat, but it returns the values of all the parameters in the model at each step of the MCMC instead of the imputations. It is useful to check the convergence of the MCMC sampler.
 }
 \usage{
-jomo1rancat( Y_cat, Y_numcat, X=matrix(1,nrow(Y_cat),1), Z=matrix(1,nrow(Y_cat),1), 
-            clus, betap=matrix(0,ncol(X),((sum(Y_numcat)-length(Y_numcat)))), 
-            up=matrix(0,nrow(unique(clus)),ncol(Z)*((sum(Y_numcat)-length(Y_numcat)))), 
-            covp=diag(1,ncol(betap)), covu=diag(1,ncol(up)), Sp=diag(1,ncol(covp)), 
-            Sup=diag(1,ncol(covu)), nburn=100, nbetween=100, nimp=5)
+jomo1rancat.MCMCchain(Y_cat, Y_numcat, X=matrix(1,nrow(Y_cat),1), 
+Z=matrix(1,nrow(Y_cat),1),clus, 
+betap=matrix(0,ncol(X),((sum(Y_numcat)-length(Y_numcat)))), 
+up=matrix(0,nrow(unique(clus)),ncol(Z)*((sum(Y_numcat)-length(Y_numcat)))), 
+covp=diag(1,ncol(betap)), covu=diag(1,ncol(up)), 
+Sp=diag(1,ncol(covp)), Sup=diag(1,ncol(covu)), nburn=100) 
+
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
-   \item{Y_cat}{
+  \item{Y_cat}{
 A data frame, or matrix, with categorical (or binary) responses of the joint imputation model. Rows correspond to different observations, while columns are different variables. Categories must be integer numbers from 1 to N. Missing values are coded as NA.
 }
   \item{Y_numcat}{
@@ -52,26 +55,14 @@ Scale matrix for the inverse-Wishart prior for the level 2 covariance matrix. Th
   \item{nburn}{
 Number of burn in iterations. Default is 100.
 }
-  \item{nbetween}{
-Number of iterations between two successive imputations. Default is 100.
-}
-  \item{nimp}{
-Number of Imputations. Default is 5.
-}
 
-
-}
-\details{
-The Gibbs sampler algorithm used is described in detail in Chapter 9 of Carpenter and Kenward (2013). Regarding the choice of the priors, a flat prior is considered for beta and for the covariance matrix. A Metropolis Hastings step is implemented to update the covariance matrix, as described in the book. Binary or continuous covariates in the imputation model may be considered without any problem, but when considering a categorical covariate it has to be included with dummy variables (binary indicators) only.
 }
 \value{
-On screen, the posterior mean of the fixed effects estimates and of the covariance matrix are shown. The only argument returned is the imputed dataset in long format. Column "Imputation" indexes the imputations. Imputation number 0 are the original data.
-}
-\references{
-Carpenter J.R., Kenward M.G., (2013), Multiple Imputation and its Application. Chapter 9, Wiley, ISBN: 978-0-470-74052-1.
-}
-\examples{
+A list with six elements is returned: the final imputed dataset (finimp) and five 3-dimensional matrices, containing all the values for beta (collectbeta), the random effects (collectu), level 1 (collectomega) and level 2 covariance matrices (collectcovu),  and the "imputed" data at each step (collectimp).
 
+}
+
+\examples{
 #First of all we load and attach the data:
 data(mldata)
 attach(mldata)
@@ -92,14 +83,16 @@ covu<-diag(1,3)
 Sp=diag(1,3);
 Sup=diag(1,3);
 nburn=as.integer(100);
-nbetween=as.integer(100);
-nimp=as.integer(4);
 
 #And finally we run the imputation function:
 
-imp<-jomo1rancat(Y_cat, Y_numcat, X,Z,clus,betap,up,covp, covu,Sp,Sup,
-                nburn,nbetween,nimp)
+imp<-jomo1rancat.MCMCchain(Y_cat, Y_numcat, X,Z,clus,betap,up,covp, covu,Sp,Sup,
+                nburn)
+#We can check the convergence of the first element of beta:
 
-              
+plot(c(1:nburn),imp$collectbeta[1,1,1:nburn],type="l")
 
+#Or similarly we can check the convergence of any element of th elevel 2 covariance matrix:
+
+plot(c(1:nburn),imp$collectcovu[1,2,1:nburn],type="l")
 }

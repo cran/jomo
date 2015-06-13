@@ -6,15 +6,15 @@
 A package for Multilevel Joint Modelling Multiple Imputation
 }
 \description{
-Building on Schafer's pan and on standalone program REALCOM, jomo is a package for multilevel joint modelling multiple imputation.
-Binary and categorical variables are handled through latent normal variables and algorithms for cluster specific covariance matrices are introduced. 
+Similarly to Schafer's package pan, jomo is a package for multilevel joint modelling multiple imputation.
+ Novel aspects of jomo are the possibility of handling binary and categorical data through latent normal variables and the option to use cluster-specific covariance matrices.
 }
 \details{
 \tabular{ll}{
 Package: \tab jomo\cr
 Type: \tab Package\cr
-Version: \tab 0.1-1\cr
-Date: \tab 2014-10-24\cr
+Version: \tab 1.1-0\cr
+Date: \tab 2015-06-12\cr
 License: \tab GPL-2\cr
 }
 

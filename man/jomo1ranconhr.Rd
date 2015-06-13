@@ -59,15 +59,15 @@ Number of iterations between two successive imputations. Default is 100.
 Number of Imputations. Default is 5.
 }
   \item{a}{
-Starting value for the degrees of freedom of the wishart distribution from which all of the covariance matrices are drawn in case method="random" option in specified. Default is the minimum possible, i.e. the dimension of the covariance matrices.
+Starting value for the degrees of freedom of the inverse Wishart distribution from which all of the covariance matrices are drawn in case method="random" option in specified. Default is the minimum possible, i.e. the dimension of the covariance matrices.
 }
 \item{meth}{
-This can be set to "Fixed" or "Random". In the first case the fucntion will consider fixed study-specific covarianc ematrices, in the second, random study-specific distributed according to an inverse-Wishart distribution.
+This can be set to "Fixed" or "Random". In the first case the function will consider fixed study-specific covariance matrices, in the second, random study-specific distributed according to an inverse-Wishart distribution.
 }
 
 }
 \details{
-The Gibbs sampler algorithm used is similar to the one described in detail in Chapter 9 of Carpenter and Kenward (2013), where we exclude the presence of level 2 variables and we estimate separetely different covariance matrices within each study. When option meth="random" is specified, all the covariance matrices ae assume dto be random draws from the same underlying inverse Wishart distributions. Details of thi algorithm may be found in (Yucel, 2011). Regarding the choice of the priors, a flat prior is considered for beta, while an inverse-Wishart prior is given to the covariance matrices, with p-1 degrees of freedom, aka the minimum possible, to guarantee the greatest uncertainty. Binary or continuous covariates in the imputation model may be considered without any problem, but when considering a categorical covariate it has to be included with dummy variables (binary indicators) only. 
+The Gibbs sampler algorithm used is similar to the one described in detail in Chapter 9 of Carpenter and Kenward (2013), where we exclude the presence of level 2 variables and we estimate separetely different covariance matrices within each study. When option meth="random" is specified, all the covariance matrices ae assumed to be random draws from the same underlying inverse Wishart distributions. Details of this algorithm may be found in (Yucel, 2011). Regarding the choice of the priors, a flat prior is considered for beta, while an inverse-Wishart prior is given to the covariance matrices, with p-1 degrees of freedom, aka the minimum possible, to guarantee the greatest uncertainty. Binary or continuous covariates in the imputation model may be considered without any problem, but when considering a categorical covariate it has to be included with dummy variables (binary indicators) only. 
 }
 \value{
 On screen, the posterior mean of the fixed effects estimates and of the covariance matrix are shown. The only argument returned is the imputed dataset in long format. Column "Imputation" indexes the imputations. Imputation number 0 are the original data.
@@ -104,13 +104,13 @@ nimp=as.integer(5);
 Sup=diag(1,5);
 a=3
 
-# And finally we can run either he model with fixed or random cluster-specific covariance matrices:
+# And finally we can run either the model with fixed or random cluster-specific covariance matrices:
 
 imp<-jomo1ranconhr(Y,X,Z,clus,betap,up,covp, covu,Sp,Sup,nburn,nbetween,nimp,meth="fixed")
 
 #or:
 
-imp<-jomo1ranconhr(Y,X,Z,clus,betap,up,covp, covu,Sp,Sup,nburn,nbetween,nimp,a,meth="random")
+#imp<-jomo1ranconhr(Y,X,Z,clus,betap,up,covp, covu,Sp,Sup,nburn,nbetween,nimp,a,meth="random")
 
 # Then we analyse the imputed datasets:
 

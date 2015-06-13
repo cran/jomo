@@ -9,7 +9,7 @@
 #include<Rinternals.h>
 #include<Rmath.h>
 
-SEXP jomo1ranconhr(SEXP Y, SEXP Yimp, SEXP Yimp2, SEXP X, SEXP Z, SEXP clus, SEXP beta, SEXP u, SEXP betapost, SEXP upost, SEXP omega, SEXP omegapost, SEXP covu, SEXP covupost, SEXP nstep, SEXP Sp, SEXP Sup, SEXP a_start, SEXP flagrng){
+SEXP MCMCjomo1ranconhr(SEXP Y, SEXP Yimp, SEXP Yimp2, SEXP X, SEXP Z, SEXP clus, SEXP beta, SEXP u, SEXP betapost, SEXP upost, SEXP omega, SEXP omegapost, SEXP covu, SEXP covupost, SEXP nstep, SEXP Sp, SEXP Sup, SEXP a_start, SEXP flagrng, SEXP collectimp){
 int i,j,k, IY,JY, IX, JX, Io, Jo, Ib, Jb, IZ, JZ, Iu, Ju, ns,nj, nmiss=0,t, countm=0, counto=0, countmm=0, countmo=0, countoo=0,countt=0, jj, tt, c,flag=0, fl;
 SEXP RdimY, RdimX, Rdimo, Rdimb, RdimZ, Rdimu;
 double *betaX, *Yobs, *Ymiss, *mumiss, *omegadrawmiss, *betamiss, *betaobs, *omegaoo, *omegaom, *omegamo, *omegamm, *invomega, *help, *imp, *zi, *sumxi, *yi, *xi, *help5;
@@ -59,6 +59,7 @@ fl=INTEGER(flagrng)[0];
 a_start=PROTECT(coerceVector(a_start,REALSXP));
 a=REAL(a_start)[0];
 nj=Iu;
+collectimp=PROTECT(coerceVector(collectimp,REALSXP));
 
 /*Allocating memory for C objects in R*/
 
@@ -152,7 +153,6 @@ for (i=0;i<nj;i++) {
 }
 cumclus[1]=clusnum[1];
 r8mat_copy_new(IY, JY, REAL(Yimp), imp);
-for (i=0;i<Ib*Jb;i++) REAL(betapost)[i]=0;
 
 // Running ns iterations of Gibbs sampler
 
@@ -204,7 +204,13 @@ for (i=0;i<ns;i++) {
 	r8mat_mm_new(JY*JX,JY*JX,1,invomega2,sumxy,mu);
 	r8mat_pofac(JY * JX,invomega2,help3,4);
 	r8vec_multinormal_sample(JY*JX, mu,help3, REAL(beta),newbeta,fl);
-	r8mat_add(Ib,Jb,REAL(beta),REAL(betapost));
+
+	for (j=0;j<Ib;j++) {
+		for (t=0;t<Jb;t++) {
+			REAL(betapost)[j+Ib*t+i*Ib*Jb]=REAL(beta)[j+Ib*t];
+			}
+		}
+
 	for (c=0;c<nj;c++) {
 		for (j=0;j<JY;j++) {
 			for (t=0;t<JY;t++) invomega[j+t*JY]=allinvomega[(c*JY+j)+t*(JY*nj)];
@@ -247,7 +253,11 @@ for (i=0;i<ns;i++) {
 		for (t=0;t<JY;t++) for (k=0;k<JZ;k++) REAL(u)[c+nj*(k+t*JZ)] = newu[k+t*JZ];
 		
 	}
-	r8mat_add(Iu,Ju,REAL(u),REAL(upost));
+	for (j=0;j<Iu;j++) {
+		for (t=0;t<Ju;t++) {
+			REAL(upost)[j+Iu*t+i*Iu*Ju]=REAL(u)[j+Iu*t];
+			}
+		}
 
 
 	for (j=0;j<JY*JY*JZ*JZ;j++) mu3[j]=0;
@@ -267,7 +277,11 @@ for (i=0;i<ns;i++) {
 	for (jj=1;jj<(JY*JZ);jj++) for (tt=0;tt<jj;tt++) invomega3[jj+(JZ*JY)*tt]=invomega3[tt+(JZ*JY)*jj];
 	for(k=0;k<(JY*JZ);k++)  for(j=0;j<(JY*JZ);j++)  REAL(covu)[j+(JZ*JY)*k]=invomega3[j+(JZ*JY)*k];
 	
-	r8mat_add(JY*JZ,JY*JZ,REAL(covu),REAL(covupost));
+	for (j=0;j<JY*JZ;j++) {
+		for (t=0;t<JY*JZ;t++) {
+			REAL(covupost)[j+JY*JZ*t+i*JY*JY*JZ*JZ]=REAL(covu)[j+JY*JZ*t];
+			}
+		}
 
 	
 	for (t=0;t<JY*JY;t++) help[t]=0;
@@ -343,7 +357,11 @@ for (i=0;i<ns;i++) {
 		for (jj=1;jj<JY;jj++) for (tt=0;tt<jj;tt++) invomega[jj+JY*tt]=invomega[tt+JY*jj];
 		for(k=0;k<JY;k++)  for(j=0;j<JY;j++)  REAL(omega)[(c*JY+j)+k*(JY*nj)]=invomega[j+JY*k];
 	}
-	r8mat_add(Io,Jo,REAL(omega),REAL(omegapost));
+	for (j=0;j<Io;j++) {
+		for (t=0;t<Jo;t++) {
+			REAL(omegapost)[j+Io*t+i*Jo*Io]=REAL(omega)[j+Io*t];
+			}
+		}
 
 
 	for (j=0; j<IY; j++) {
@@ -425,7 +443,11 @@ for (i=0;i<ns;i++) {
 		}
 	
 	}
-
+		for (j=0;j<IY;j++) {
+			for (t=0;t<JY;t++) {
+				REAL(collectimp)[j+IY*t+i*IY*JY]=imp[j+IY*t];
+			}
+		}
 if ((i+1)%10==0) Rprintf("Iteration %d completed\n",i+1);
 }
 for(i=0;i<IY;i++)  {
@@ -434,12 +456,8 @@ for(i=0;i<IY;i++)  {
 	}
 }
 
-r8mat_divide(Ib,Jb,ns,REAL(betapost));
-r8mat_divide(Iu,Ju,ns,REAL(upost));
-r8mat_divide(Io,Jo,ns,REAL(omegapost));
-r8mat_divide(JY*JZ,JY*JZ,ns,REAL(covupost));
 REAL(a_start)[0]=a;
 PutRNGstate();
-UNPROTECT(25);
+UNPROTECT(26);
 return R_NilValue;
 }

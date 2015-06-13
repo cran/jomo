@@ -1,26 +1,21 @@
-\name{jomo1rancat}
-\alias{jomo1rancat}
-%- Also NEED an '\alias' for EACH other topic documented here.
+\name{jomo1ran}
+\alias{jomo1ran}
+
 \title{
-JM Imputation of clustered data with categorical variables
+JM Imputation of 2-level data
 }
 \description{
-Impute a clustered dataset with categorical variables as outcome. A joint multivariate model for partially observed data is assumed and imputations are generated through the use of a Gibbs sampler where the covariance matrix is updated with a Metropolis-Hastings step. Fully observed categorical covariates may be considered as covariates as well, but they have to be included as dummy variables.
-}
+A wrapper function linking the six 2-level JM Imputation functions. The matrix of responses Y, must be a data.frame where continuous variables are numeric and binary/categorical variables are factors.}
 \usage{
-jomo1rancat( Y_cat, Y_numcat, X=matrix(1,nrow(Y_cat),1), Z=matrix(1,nrow(Y_cat),1), 
-            clus, betap=matrix(0,ncol(X),((sum(Y_numcat)-length(Y_numcat)))), 
-            up=matrix(0,nrow(unique(clus)),ncol(Z)*((sum(Y_numcat)-length(Y_numcat)))), 
-            covp=diag(1,ncol(betap)), covu=diag(1,ncol(up)), Sp=diag(1,ncol(covp)), 
-            Sup=diag(1,ncol(covu)), nburn=100, nbetween=100, nimp=5)
+jomo1ran(Y, X=NULL, Z=NULL,clus, 
+      betap=NULL, up=NULL, covp=NULL, covu=NULL, Sp=NULL, Sup=NULL, 
+      nburn=500, nbetween=100, nimp=5, a=NULL, meth="common") 
+
 }
-%- maybe also 'usage' for other objects documented here.
+
 \arguments{
-   \item{Y_cat}{
-A data frame, or matrix, with categorical (or binary) responses of the joint imputation model. Rows correspond to different observations, while columns are different variables. Categories must be integer numbers from 1 to N. Missing values are coded as NA.
-}
-  \item{Y_numcat}{
-A vector with the number of categories in each categorical (or binary) variable.
+   \item{Y}{
+a data.frame where columns related to continuous variables are numeric and columns related to binary/categorical variables are factors. 
 }
   \item{X}{
 A data frame, or matrix, with covariates of the joint imputation model. Rows correspond to different observations, while columns are different variables. Missing values are not allowed in these variables. In case we want an intercept, a column of 1 is needed. The default is a column of 1.
@@ -58,48 +53,45 @@ Number of iterations between two successive imputations. Default is 100.
   \item{nimp}{
 Number of Imputations. Default is 5.
 }
+\item{a}{
+Starting value for the degrees of freedom of the inverse Wishart distribution from which all of the covariance matrices are drawn in case method="random" option in specified. Default is the minimum possible, i.e. the dimension of the covariance matrices.
+}
 
-
+\item{meth}{
+Method used to deal with level 1 covariance matrix. When set to "common", a common matrix across clusters is used (functions jomo1rancon, jomo1rancat and jomo1ranmix). When set to "fixed", fixed study-specific matrices are considered (jomo1ranconhr, jomo1rancathr and jomo1ranmixhr with coption meth="fixed"). Finally, when set to "random", random study-specific matrices are considered (jomo1ranconhr, jomo1rancathr and jomo1ranmixhr with coption meth="random")
+}
 }
 \details{
-The Gibbs sampler algorithm used is described in detail in Chapter 9 of Carpenter and Kenward (2013). Regarding the choice of the priors, a flat prior is considered for beta and for the covariance matrix. A Metropolis Hastings step is implemented to update the covariance matrix, as described in the book. Binary or continuous covariates in the imputation model may be considered without any problem, but when considering a categorical covariate it has to be included with dummy variables (binary indicators) only.
-}
+This is just a wrapper function to link jomo1rancon, jomo1rancat and jomo1ranmix and the respective "hr" (heterogeneity in covariance matrices) versions. Format of the columns of Y is crucial in order for the function to be using the right sub-function. }
 \value{
 On screen, the posterior mean of the fixed effects estimates and of the covariance matrix are shown. The only argument returned is the imputed dataset in long format. Column "Imputation" indexes the imputations. Imputation number 0 are the original data.
 }
 \references{
 Carpenter J.R., Kenward M.G., (2013), Multiple Imputation and its Application. Chapter 9, Wiley, ISBN: 978-0-470-74052-1.
 }
-\examples{
 
-#First of all we load and attach the data:
+\examples{
+  #First of all we load and atach the data:
+  
 data(mldata)
 attach(mldata)
 
 #Then we define all the inputs:
-# nimp, nburn and nbetween are smaller than they should. This is
-#just because of CRAN policies on the examples.
 
-Y_cat=data.frame(social)
-Y_numcat=matrix(4,1,1)
-X=data.frame(rep(1,1000),sex)
-Z<-data.frame(rep(1,1000))
+Y<-data.frame(measure,age)
 clus<-data.frame(city)
-betap<-matrix(0,2,3)
-up<-matrix(0,10,3)
-covp<-diag(1,3)
-covu<-diag(1,3)
-Sp=diag(1,3);
-Sup=diag(1,3);
-nburn=as.integer(100);
-nbetween=as.integer(100);
-nimp=as.integer(4);
+nburn=as.integer(200);
+nbetween=as.integer(200);
+nimp=as.integer(5);
+
 
 #And finally we run the imputation function:
+imp<-jomo1ran(Y,clus=clus,nburn=nburn,nbetween=nbetween,nimp=nimp)
 
-imp<-jomo1rancat(Y_cat, Y_numcat, X,Z,clus,betap,up,covp, covu,Sp,Sup,
-                nburn,nbetween,nimp)
+#we could even run it with fixed or random cluster-specific covariance matrices:
 
-              
+#imp<-jomo1ran(Y,clus=clus,nburn=nburn,nbetween=nbetween,nimp=nimp, meth="fixed")
+#or:
+#imp<-jomo1ran(Y,clus=clus,nburn=nburn,nbetween=nbetween,nimp=nimp, meth="random")
 
 }

@@ -71,7 +71,7 @@ Carpenter J.R., Kenward M.G., (2013), Multiple Imputation and its Application. C
 
 \examples{
 
-#First of all we load and atach the data:
+#First of all we load and attach the data:
 data(mldata)
 attach(mldata)
 

@@ -1,5 +1,5 @@
-jomo1cat <-
-  function(Y_cat, Y_numcat, X=matrix(1,nrow(Y_cat),1), betap=matrix(0,ncol(X),((sum(Y_numcat)-length(Y_numcat)))), covp=diag(1,ncol(betap)), Sp=diag(1,ncol(betap)), nburn=100, nbetween=100, nimp=5) {
+jomo1cat.MCMCchain <-
+  function(Y_cat, Y_numcat, X=matrix(1,nrow(Y_cat),1), betap=matrix(0,ncol(X),((sum(Y_numcat)-length(Y_numcat)))), covp=diag(1,ncol(betap)), Sp=diag(1,ncol(betap)), nburn=100) {
     stopifnot( nrow(betap)==ncol(X), ncol(betap)==((sum(Y_numcat)-length(Y_numcat))),nrow(covp)==ncol(covp), nrow(covp)==ncol(betap), nrow(Sp)==ncol(Sp),nrow(Sp)==nrow(covp))
     betait=matrix(0,nrow(betap),ncol(betap))
     for (i in 1:nrow(betap)) {
@@ -10,6 +10,7 @@ jomo1cat <-
       for (j in 1:ncol(covp)) covit[i,j]=covp[i,j]
     }    
     rngflag=0;
+    nimp=1;
     colnamycat<-colnames(Y_cat)
     colnamx<-colnames(X)
     Y_cat<-as.matrix(Y_cat,nrow(Y_cat),ncol(Y_cat))
@@ -34,32 +35,13 @@ jomo1cat <-
     imp[(nrow(X)+1):(2*nrow(X)),(ncol(Y)+1):(ncol(Y)+ncol(X))]=X
     imp[(nrow(X)+1):(2*nrow(X)), (ncol(Y)+ncol(X)+1)]=1
     imp[(nrow(X)+1):(2*nrow(X)), (ncol(Y)+ncol(X)+2)]=c(1:nrow(Y))
-    betapost<- array(0, dim=c(nrow(betap),ncol(betap),(nimp-1)))
-    bpost<-matrix(0,nrow(betap),ncol(betap))
-    omegapost<- array(0, dim=c(nrow(covp),ncol(covp),(nimp-1)))
-    opost<-matrix(0,nrow(covp),ncol(covp))
+    betapost<- array(0, dim=c(nrow(betap),ncol(betap),nburn))
+    omegapost<- array(0, dim=c(nrow(covp),ncol(covp),nburn))
+    collectimp<- array(0, dim=c(nrow(Y),ncol(covp),nburn))
     meanobs<-colMeans(Yi,na.rm=TRUE)
     for (i in 1:nrow(Yi)) for (j in 1:ncol(Yi)) if (is.na(Yimp[i,j])) Yimp2[i,j]=meanobs[j]
-    .Call("jomo1mix", Y, Yimp, Yimp2, Y_cat, X,betait,bpost,covit,opost, nburn, Sp,Y_numcat, 0, rngflag, PACKAGE = "jomo")
-    #betapost[,,1]=bpost
-    #omegapost[,,1]=opost
-    bpost<-matrix(0,nrow(betap),ncol(betap))
-    opost<-matrix(0,nrow(covp),ncol(covp))
+    .Call("MCMCjomo1mix", Y, Yimp, Yimp2, Y_cat, X,betait,betapost,covit,omegapost, nburn, Sp,Y_numcat, 0, rngflag,collectimp, PACKAGE = "jomo")
     imp[(nrow(Y)+1):(2*nrow(Y)),1:ncol(Y)]=Y_cat
-    cat("First imputation registered.", "\n")
-    for (i in 2:nimp) {
-      imp[(i*nrow(X)+1):((i+1)*nrow(X)),(ncol(Y)+1):(ncol(Y)+ncol(X))]=X
-      imp[(i*nrow(X)+1):((i+1)*nrow(X)), (ncol(Y)+ncol(X)+1)]=i
-      imp[(i*nrow(X)+1):((i+1)*nrow(X)), (ncol(Y)+ncol(X)+2)]=c(1:nrow(Y))
-      .Call("jomo1mix", Y, Yimp, Yimp2, Y_cat, X,betait,bpost,covit, opost, nbetween, Sp, Y_numcat, 0,rngflag, PACKAGE = "jomo") 
-      
-      betapost[,,(i-1)]=bpost
-      omegapost[,,(i-1)]=opost
-      bpost<-matrix(0,nrow(betap),ncol(betap))
-      opost<-matrix(0,nrow(covp),ncol(covp))      
-      imp[(i*nrow(X)+1):((i+1)*nrow(X)),1:ncol(Y)]=Y_cat
-      cat("Imputation number ", i, "registered", "\n")
-    }
     betapostmean<-apply(betapost, c(1,2), mean)
     omegapostmean<-apply(omegapost, c(1,2), mean)
     cat("The posterior mean of the fixed effects estimates is:\n")
@@ -70,5 +52,5 @@ jomo1cat <-
     if (is.null(colnamycat)) colnamycat=paste("Y", 1:ncol(Y_cat), sep = "")
     if (is.null(colnamx)) colnamx=paste("X", 1:ncol(X), sep = "")
     colnames(imp)<-c(colnamycat,colnamx,"Imputation","id")
-    return(imp)
+    return(list("finimp"=imp,"collectimp"=collectimp,"collectbeta"=betapost,"collectomega"=omegapost))
   }

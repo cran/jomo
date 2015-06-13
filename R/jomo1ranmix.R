@@ -1,6 +1,22 @@
 jomo1ranmix <-
-function(Y_con, Y_cat, Y_numcat, X=matrix(1,nrow(Y_cat),1), Z=matrix(1,nrow(Y_cat),1), clus, betap=matrix(0,ncol(X),(ncol(Y_con)+(sum(Y_numcat)-length(Y_numcat)))), up=matrix(0,nrow(unique(clus)),ncol(Z)*(ncol(Y_con)+(sum(Y_numcat)-length(Y_numcat)))), covp=diag(1,ncol(betap)), covu=diag(1,ncol(up)), Sp=diag(1,ncol(covp)), Sup=diag(1,ncol(covu)), nburn=100, nbetween=100, nimp=5,meth="MH") {
-  stopifnot((meth=="MH"|meth=="IW"),nrow(Y_con)==nrow(clus),nrow(Y_con)==nrow(X), nrow(betap)==ncol(X), ncol(betap)==(ncol(Y_con)+(sum(Y_numcat)-length(Y_numcat))),nrow(covp)==ncol(covp), nrow(covp)==ncol(betap), nrow(Sp)==ncol(Sp),nrow(Sp)==nrow(covp),nrow(Z)==nrow(Y_con), ncol(covu)==ncol(up), ncol(up)==ncol(Z)*(ncol(Y_con)+(sum(Y_numcat)-length(Y_numcat))))
+function(Y_con, Y_cat, Y_numcat, X=matrix(1,nrow(Y_cat),1), Z=matrix(1,nrow(Y_cat),1), clus, betap=matrix(0,ncol(X),(ncol(Y_con)+(sum(Y_numcat)-length(Y_numcat)))), up=matrix(0,nrow(unique(clus)),ncol(Z)*(ncol(Y_con)+(sum(Y_numcat)-length(Y_numcat)))), covp=diag(1,ncol(betap)), covu=diag(1,ncol(up)), Sp=diag(1,ncol(covp)), Sup=diag(1,ncol(covu)), nburn=100, nbetween=100, nimp=5) {
+  stopifnot(nrow(Y_con)==nrow(clus),nrow(Y_con)==nrow(X), nrow(betap)==ncol(X), ncol(betap)==(ncol(Y_con)+(sum(Y_numcat)-length(Y_numcat))),nrow(covp)==ncol(covp), nrow(covp)==ncol(betap), nrow(Sp)==ncol(Sp),nrow(Sp)==nrow(covp),nrow(Z)==nrow(Y_con), ncol(covu)==ncol(up), ncol(up)==ncol(Z)*(ncol(Y_con)+(sum(Y_numcat)-length(Y_numcat))))
+  betait=matrix(0,nrow(betap),ncol(betap))
+  for (i in 1:nrow(betap)) {
+    for (j in 1:ncol(betap)) betait[i,j]=betap[i,j]
+  }
+  covit=matrix(0,nrow(covp),ncol(covp))
+  for (i in 1:nrow(covp)) {
+    for (j in 1:ncol(covp)) covit[i,j]=covp[i,j]
+  }   
+  uit=matrix(0,nrow(up),ncol(up))
+  for (i in 1:nrow(up)) {
+    for (j in 1:ncol(up)) uit[i,j]=up[i,j]
+  }
+  covuit=matrix(0,nrow(covu),ncol(covu))
+  for (i in 1:nrow(covu)) {
+    for (j in 1:ncol(covu)) covuit[i,j]=covu[i,j]
+  }   
   rngflag=0
   colnamycon<-colnames(Y_con)
   colnamycat<-colnames(Y_cat)
@@ -45,12 +61,7 @@ function(Y_con, Y_cat, Y_numcat, X=matrix(1,nrow(Y_cat),1), Z=matrix(1,nrow(Y_ca
   cpost<-matrix(0,nrow(covu),ncol(covu))
   meanobs<-colMeans(Yi,na.rm=TRUE)
   for (i in 1:nrow(Yi)) for (j in 1:ncol(Yi)) if (is.na(Yimp[i,j])) Yimp2[i,j]=meanobs[j]
-  if (meth=="MH") {
-    .Call("jomo1ranmix", Y, Yimp, Yimp2, Y_cat, X, Z, clus,betap,up,bpost,upost,covp,opost, covu, cpost, nburn, Sp,Sup,Y_numcat, ncol(Y_con),rngflag, PACKAGE = "jomo")
-  }
-  if (meth=="IW") {
-    .Call("jomo1ranmix2", Y, Yimp, Yimp2, Y_cat, X, Z, clus,betap,up,bpost,upost,covp,opost, covu, cpost, nburn, Sp,Sup,Y_numcat, ncol(Y_con),rngflag, PACKAGE = "jomo")
-  }
+  .Call("jomo1ranmix", Y, Yimp, Yimp2, Y_cat, X, Z, clus,betait,uit,bpost,upost,covit,opost, covuit, cpost, nburn, Sp,Sup,Y_numcat, ncol(Y_con),rngflag, PACKAGE = "jomo")
   #betapost[,,1]=bpost
   #upostall[,,1]=upost
   #omegapost[,,(1)]=opost
@@ -69,12 +80,7 @@ function(Y_con, Y_cat, Y_numcat, X=matrix(1,nrow(Y_cat),1), Z=matrix(1,nrow(Y_ca
     imp[(i*nrow(clus)+1):((i+1)*nrow(clus)), (ncol(Y)+ncol(X)+ncol(Z)+1)]=clus
     imp[(i*nrow(Z)+1):((i+1)*nrow(Z)), (ncol(Y)+ncol(X)+ncol(Z)+2)]=c(1:nrow(Y))
     imp[(i*nrow(Z)+1):((i+1)*nrow(Z)), (ncol(Y)+ncol(X)+ncol(Z)+3)]=i 
-    if (meth=="MH") {
-      .Call("jomo1ranmix", Y, Yimp, Yimp2, Y_cat, X, Z, clus,betap,up,bpost,upost,covp,opost, covu, cpost, nbetween, Sp,Sup,Y_numcat, ncol(Y_con),rngflag, PACKAGE = "jomo")
-    }
-    if (meth=="IW") {
-      .Call("jomo1ranmix2", Y, Yimp, Yimp2, Y_cat, X, Z, clus,betap,up,bpost,upost,covp,opost, covu, cpost, nbetween, Sp,Sup,Y_numcat, ncol(Y_con), rngflag, PACKAGE = "jomo")
-    }
+    .Call("jomo1ranmix", Y, Yimp, Yimp2, Y_cat, X, Z, clus,betait,uit,bpost,upost,covit,opost, covuit, cpost, nbetween, Sp,Sup,Y_numcat, ncol(Y_con),rngflag, PACKAGE = "jomo")
     betapost[,,(i-1)]=bpost
     upostall[,,(i-1)]=upost
     omegapost[,,(i-1)]=opost
