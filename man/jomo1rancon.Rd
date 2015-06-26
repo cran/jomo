@@ -12,7 +12,7 @@ jomo1rancon(Y, X=matrix(1,nrow(Y),1), Z=matrix(1,nrow(Y),1), clus,
             betap=matrix(0,ncol(X),ncol(Y)),
             up=matrix(0,nrow(unique(clus)),ncol(Z)*ncol(Y)), covp=diag(1,ncol(Y)),
             covu=diag(1,ncol(Y)*ncol(Z)), Sp=diag(1,ncol(Y)), Sup=diag(1,ncol(Y)*ncol(Z)),
-            nburn=100, nbetween=100, nimp=5)
+            nburn=100, nbetween=100, nimp=5, output=1, out.iter=10)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -56,6 +56,13 @@ Number of iterations between two successive imputations. Default is 100.
 }
   \item{nimp}{
 Number of Imputations. Default is 5.
+}
+
+ \item{output}{
+When set to any value different from 1 (default), no output is shown on screen at the end of the process.
+}
+\item{out.iter}{
+When set to K, every K iterations a message "Iteration number N*K completed" is printed on screen. Default is 10. 
 }
 
 }

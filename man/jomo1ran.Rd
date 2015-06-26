@@ -9,7 +9,8 @@ A wrapper function linking the six 2-level JM Imputation functions. The matrix o
 \usage{
 jomo1ran(Y, X=NULL, Z=NULL,clus, 
       betap=NULL, up=NULL, covp=NULL, covu=NULL, Sp=NULL, Sup=NULL, 
-      nburn=500, nbetween=100, nimp=5, a=NULL, meth="common") 
+      nburn=500, nbetween=100, nimp=5, a=NULL, 
+      meth="common", output=1, out.iter=10) 
 
 }
 
@@ -60,6 +61,14 @@ Starting value for the degrees of freedom of the inverse Wishart distribution fr
 \item{meth}{
 Method used to deal with level 1 covariance matrix. When set to "common", a common matrix across clusters is used (functions jomo1rancon, jomo1rancat and jomo1ranmix). When set to "fixed", fixed study-specific matrices are considered (jomo1ranconhr, jomo1rancathr and jomo1ranmixhr with coption meth="fixed"). Finally, when set to "random", random study-specific matrices are considered (jomo1ranconhr, jomo1rancathr and jomo1ranmixhr with coption meth="random")
 }
+
+ \item{output}{
+When set to any value different from 1 (default), no output is shown on screen at the end of the process.
+}
+\item{out.iter}{
+When set to K, every K iterations a message "Iteration number N*K completed" is printed on screen. Default is 10. 
+}
+
 }
 \details{
 This is just a wrapper function to link jomo1rancon, jomo1rancat and jomo1ranmix and the respective "hr" (heterogeneity in covariance matrices) versions. Format of the columns of Y is crucial in order for the function to be using the right sub-function. }

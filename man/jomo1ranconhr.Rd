@@ -14,7 +14,8 @@ jomo1ranconhr(Y, X=matrix(1,nrow(Y),1), Z=matrix(1,nrow(Y),1), clus,
               covp=matrix(diag(1,ncol(Y)),nrow(unique(clus))*ncol(Y),ncol(Y),2), 
               covu=diag(1,ncol(Y)*ncol(Z)), Sp=diag(1,ncol(Y)), 
               Sup=diag(1,ncol(Y)*ncol(Z)), 
-              nburn=100, nbetween=100, nimp=5, a=ncol(Y), meth="random") 
+              nburn=100, nbetween=100, nimp=5, a=ncol(Y), 
+              meth="random", output=1, out.iter=10) 
 
 }
 %- maybe also 'usage' for other objects documented here.
@@ -64,7 +65,12 @@ Starting value for the degrees of freedom of the inverse Wishart distribution fr
 \item{meth}{
 This can be set to "Fixed" or "Random". In the first case the function will consider fixed study-specific covariance matrices, in the second, random study-specific distributed according to an inverse-Wishart distribution.
 }
-
+ \item{output}{
+When set to any value different from 1 (default), no output is shown on screen at the end of the process.
+}
+\item{out.iter}{
+When set to K, every K iterations a message "Iteration number N*K completed" is printed on screen. Default is 10. 
+}
 }
 \details{
 The Gibbs sampler algorithm used is similar to the one described in detail in Chapter 9 of Carpenter and Kenward (2013), where we exclude the presence of level 2 variables and we estimate separetely different covariance matrices within each study. When option meth="random" is specified, all the covariance matrices ae assumed to be random draws from the same underlying inverse Wishart distributions. Details of this algorithm may be found in (Yucel, 2011). Regarding the choice of the priors, a flat prior is considered for beta, while an inverse-Wishart prior is given to the covariance matrices, with p-1 degrees of freedom, aka the minimum possible, to guarantee the greatest uncertainty. Binary or continuous covariates in the imputation model may be considered without any problem, but when considering a categorical covariate it has to be included with dummy variables (binary indicators) only. 

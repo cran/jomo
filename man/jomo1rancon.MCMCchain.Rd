@@ -12,7 +12,7 @@ This function is similar to jomo1rancon, but it returns the values of all the pa
 jomo1rancon.MCMCchain(Y, X=matrix(1,nrow(Y),1), Z=matrix(1,nrow(Y),1), clus, 
 betap=matrix(0,ncol(X),ncol(Y)), up=matrix(0,nrow(unique(clus)),ncol(Z)*ncol(Y)), 
 covp=diag(1,ncol(Y)), covu=diag(1,ncol(Y)*ncol(Z)), Sp=diag(1,ncol(Y)), 
-Sup=diag(1,ncol(Y)*ncol(Z)), nburn=100) 
+Sup=diag(1,ncol(Y)*ncol(Z)), nburn=100, output=1, out.iter=10) 
 
 }
 %- maybe also 'usage' for other objects documented here.
@@ -52,11 +52,16 @@ Scale matrix for the inverse-Wishart prior for the level 2 covariance matrix. Th
    \item{nburn}{
 Number of iterations. Default is 100.
 }
+ \item{output}{
+When set to any value different from 1 (default), no output is shown on screen at the end of the process.
+}
+\item{out.iter}{
+When set to K, every K iterations a message "Iteration number N*K completed" is printed on screen. Default is 10. 
+}
 }
 
 \value{
-A list with six elements is returned: the final imputed dataset (finimp) and five 3-dimensional matrices, containing all the values for beta (collectbeta), the random effects (collectu), level 1 (collectomega) and level 2 covariance matrices (collectcovu),  and the "imputed" data at each step (collectimp).
-
+A list with five elements is returned: the final imputed dataset (finimp) and four 3-dimensional matrices, containing all the values for beta (collectbeta), the random effects (collectu) and the level 1 (collectomega) and level 2 covariance matrices (collectcovu).
 }
 
 \examples{

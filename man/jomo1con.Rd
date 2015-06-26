@@ -9,7 +9,8 @@ Impute a single level dataset with continuous outcomes only. A joint multivariat
 }
 \usage{
 jomo1con(Y, X=matrix(1,nrow(Y),1), betap=matrix(0,ncol(X),ncol(Y)), 
-covp=diag(1,ncol(Y)), Sp=diag(1,ncol(Y)), nburn=100, nbetween=100, nimp=5)
+covp=diag(1,ncol(Y)), Sp=diag(1,ncol(Y)), nburn=100, nbetween=100, 
+nimp=5, output=1, out.iter=10)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -38,6 +39,12 @@ Number of iterations between two successive imputations. Default is 100.
 Number of Imputations. Default is 5.
 }
 
+ \item{output}{
+When set to any value different from 1 (default), no output is shown on screen at the end of the process.
+}
+\item{out.iter}{
+When set to K, every K iterations a message "Iteration number N*K completed" is printed on screen. Default is 10. 
+}
 }
 \details{
 The Gibbs sampler algorithm used is described in detail in Chapter 3 of Carpenter and Kenward (2013). Regarding the choice of the priors, a flat prior is considered for beta, while an inverse-Wishart prior is given to the covariance matrix, with p-1 degrees of freedom, aka the minimum possible, to guarantee the greatest uncertainty. Binary or continuous covariates in the imputation model may be considered without any problem, but when considering a categorical covariate it has to be included through dummy variables (binary indicators) only. 

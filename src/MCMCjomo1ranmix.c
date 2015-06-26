@@ -9,7 +9,7 @@
 #include<Rinternals.h>
 #include<Rmath.h>
 
-SEXP MCMCjomo1ranmix(SEXP Y, SEXP Yimp, SEXP Yimp2, SEXP Yimpcat, SEXP X, SEXP Z, SEXP clus, SEXP beta, SEXP u, SEXP betapost, SEXP upost, SEXP omega, SEXP omegapost, SEXP covu, SEXP covupost, SEXP nstep, SEXP Sp, SEXP Sup, SEXP Y_numcat, SEXP num_con, SEXP flagrng, SEXP collectimp){
+SEXP MCMCjomo1ranmix(SEXP Y, SEXP Yimp, SEXP Yimp2, SEXP Yimpcat, SEXP X, SEXP Z, SEXP clus, SEXP beta, SEXP u, SEXP betapost, SEXP upost, SEXP omega, SEXP omegapost, SEXP covu, SEXP covupost, SEXP nstep, SEXP Sp, SEXP Sup, SEXP Y_numcat, SEXP num_con, SEXP flagrng){
 int indic=0,i,j,k, IY,JY, IX, JX, Io, Jo, Ib, Jb, ns, nmiss=0,t, countm=0, counto=0, countmm=0, countmo=0,countoo=0, jj, tt, kk, ncon,ncat, pos,flag=0,nmaxx,h;
 int Iu, Ju, IZ, JZ, nj,c,fl, currncat;
 SEXP RdimY, RdimX, Rdimo, Rdimb, RdimZ, Rdimu;
@@ -63,7 +63,6 @@ flagrng=PROTECT(coerceVector(flagrng,INTSXP));
 fl=INTEGER(flagrng)[0];
 ncat=length(Y_numcat);
 nj=Iu;
-collectimp=PROTECT(coerceVector(collectimp,REALSXP));
 
 /*Allocating memory for C objects in R*/
 
@@ -223,7 +222,7 @@ for (i=0;i<ns;i++) {
 				kk=0;
 				if (REAL(Y)[t+(ncon+j)*IY]==INTEGER(Y_numcat)[j]) {
 					while ((flag==0)&(kk<10000)) {
-						r8vec_multinormal_sample((INTEGER(Y_numcat)[j]-1), mumiss,omegamm, newbeta,mu4,fl);
+						r8vec_multinormal_sample((INTEGER(Y_numcat)[j]-1), mumiss,omegamm, newbeta,mu4,0);
 						maxim=maxvec((INTEGER(Y_numcat)[j]-1),newbeta);
 						if (maxim<0) {
 						
@@ -236,7 +235,7 @@ for (i=0;i<ns;i++) {
 				}
 				else {
 					while ((flag==0)&(kk<10000)) {
-						r8vec_multinormal_sample((INTEGER(Y_numcat)[j]-1), mumiss,omegamm, newbeta,mu4,fl);
+						r8vec_multinormal_sample((INTEGER(Y_numcat)[j]-1), mumiss,omegamm, newbeta,mu4,0);
 						maxim=argmaxvec((INTEGER(Y_numcat)[j]-1),newbeta);
 						maxim2=maxvec((INTEGER(Y_numcat)[j]-1),newbeta);
 						if (((maxim+1)==REAL(Y)[t+(ncon+j)*IY])&(maxim2>0)) {
@@ -290,7 +289,7 @@ for (i=0;i<ns;i++) {
 	for (jj=1;jj<JX*JY;jj++) for (tt=0;tt<jj;tt++) invomega2[jj+JX*JY*tt]=invomega2[tt+JX*JY*jj];
 	r8mat_mm_new(JY*JX,JY*JX,1,invomega2,sumxy,mu);
 	r8mat_pofac(JY * JX,invomega2,help3,5);
-	r8vec_multinormal_sample(JY*JX, mu,help3, REAL(beta),newbeta,fl);
+	r8vec_multinormal_sample(JY*JX, mu,help3, REAL(beta),newbeta,0);
 	for (j=0;j<Ib;j++) {
 		for (t=0;t<Jb;t++) {
 			REAL(betapost)[j+Ib*t+i*Ib*Jb]=REAL(beta)[j+Ib*t];
@@ -340,7 +339,7 @@ for (i=0;i<ns;i++) {
 		r8mat_mm_new(JY*JZ,JY*JZ,1,invomega3,sumzy,mu2);
 
 		r8mat_pofac(JY * JZ,invomega3,help4,9); 
-		r8vec_multinormal_sample(JY*JZ, mu2,help4,newu, incrzy,fl);
+		r8vec_multinormal_sample(JY*JZ, mu2,help4,newu, incrzy,0);
 		for (t=0;t<JY;t++) for (k=0;k<JZ;k++) REAL(u)[c+nj*(k+t*JZ)] = newu[k+t*JZ];
 		
 	}
@@ -363,7 +362,7 @@ for (i=0;i<ns;i++) {
 	r8mat_poinv(JY*JZ, help4, invomega3);
 	for (jj=1;jj<(JY*JZ);jj++) for (tt=0;tt<jj;tt++) invomega3[jj+(JZ*JY)*tt]=invomega3[tt+(JZ*JY)*jj];
 
-	wishart_sample(JY*JZ,(nj+JY*JZ),invomega3,newomega2, help4,sumzi,incrzz,mu3,fl);
+	wishart_sample(JY*JZ,(nj+JY*JZ),invomega3,newomega2, help4,sumzi,incrzz,mu3,0);
 	
 	r8mat_pofac(JY * JZ,newomega2, help4,11);
 	r8mat_poinv(JY * JZ, help4,invomega3);
@@ -415,7 +414,7 @@ for (i=0;i<ns;i++) {
 				}
 				kk=0;
 				while ((flag==0)&(kk<100)) {
-					newomega[j+JY*k]=r8_normal_sample(meanom,sdom,fl);
+					newomega[j+JY*k]=r8_normal_sample(meanom,sdom,0);
 					newomega[k+JY*j]=newomega[j+JY*k];
 					flag=checkposdef(JY,newomega,help,help5);
 					kk++;
@@ -512,7 +511,7 @@ for (i=0;i<ns;i++) {
 			r8mat_divide(nmiss,nmiss,-1,omegadrawmiss);
 			r8mat_add(nmiss,nmiss,omegamm,omegadrawmiss);
 			r8mat_pofac(nmiss,omegadrawmiss,help9,15);
-			r8vec_multinormal_sample(nmiss,mumiss,help9,Ymiss,help6,fl);
+			r8vec_multinormal_sample(nmiss,mumiss,help9,Ymiss,help6,0);
 			countm=0;
 			for (k=0;k<JY;k++) {
 				if (ISNAN(REAL(Yimp)[j+k*IY])) {
@@ -530,12 +529,7 @@ for (i=0;i<ns;i++) {
 		}
 	
 	}
-	for (j=0;j<IY;j++) {
-		for (t=0;t<JY;t++) {
-			REAL(collectimp)[j+IY*t+i*IY*JY]=imp[j+IY*t];
-			}
-		}
-	if ((i+1)%10==0) Rprintf("Iteration %d completed\n",i+1);
+	if ((i+1)%fl==0) Rprintf("Iteration %d completed\n",i+1);
 }
 for(i=0;i<IY;i++)  {
 	for(j=0;j<JY;j++)  {
@@ -559,6 +553,6 @@ for(i=0;i<IY;i++)  {
 }
 
 PutRNGstate();
-UNPROTECT(28);
+UNPROTECT(27);
 return R_NilValue;
 }

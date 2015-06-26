@@ -10,7 +10,7 @@ This function is similar to jomo1mix, but it returns the values of all the param
 \usage{
 jomo1mix.MCMCchain(Y_con, Y_cat, Y_numcat, X=matrix(1,nrow(Y_cat),1), 
 betap=matrix(0,ncol(X),(ncol(Y_con)+(sum(Y_numcat)-length(Y_numcat)))), 
-covp=diag(1,ncol(betap)), Sp=diag(1,ncol(betap)), nburn=100) 
+covp=diag(1,ncol(betap)), Sp=diag(1,ncol(betap)), nburn=100, output=1, out.iter=10) 
  
 }
 %- maybe also 'usage' for other objects documented here.
@@ -40,7 +40,18 @@ Scale matrix for the inverse-Wishart prior for the covariance matrix. The defaul
 Number of iterations. Default is 100.
 }
 
+ \item{output}{
+When set to any value different from 1 (default), no output is shown on screen at the end of the process.
 }
+\item{out.iter}{
+When set to K, every K iterations a message "Iteration number N*K completed" is printed on screen. Default is 10. 
+}
+}
+
+\value{
+A list with three elements is returned: the final imputed dataset (finimp) and three 3-dimensional matrices, containing all the values for beta (collectbeta) and omega (collectomega).
+}
+
 
 \examples{
 #First of all we load and attach sldata

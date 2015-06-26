@@ -1,5 +1,5 @@
 jomo1ran <-
-  function(Y, X=NULL, Z=NULL,clus, betap=NULL, up=NULL, covp=NULL, covu=NULL, Sp=NULL, Sup=NULL, nburn=500, nbetween=100, nimp=5, a=NULL, meth="common") {
+  function(Y, X=NULL, Z=NULL,clus, betap=NULL, up=NULL, covp=NULL, covu=NULL, Sp=NULL, Sup=NULL, nburn=500, nbetween=100, nimp=5, a=NULL, meth="common",output=1, out.iter=10) {
     stopifnot(meth=="common"|meth=="fixed"|meth=="random")
     ncon=0
     ncat=0
@@ -16,7 +16,7 @@ jomo1ran <-
         ncat=ncat+1
         Y_cat<-cbind(Y_cat,Y[,i])
         colnames(Y_cat)[ncat]<-colnames(Y)[i]
-        Y_numcat<-cbind(Y_numcat,max(as.numeric(Y[,i])))
+        Y_numcat<-cbind(Y_numcat,max(as.numeric(Y[!is.na(Y[,i]),i])))
       }
     }
     if (is.null(X)) X=matrix(1,nrow(Y),1)
@@ -30,7 +30,7 @@ jomo1ran <-
         if (is.null(covu)) covu=diag(1,ncol(Y)*ncol(Z))
         if (is.null(Sp)) Sp=diag(1,ncol(Y))
         if (is.null(Sup)) Sup=diag(1,ncol(Y)*ncol(Z))
-        imp<-jomo1rancon(Y_con, X, Z, clus, betap, up, covp, covu, Sp, Sup, nburn, nbetween, nimp)
+        imp<-jomo1rancon(Y_con, X, Z, clus, betap, up, covp, covu, Sp, Sup, nburn, nbetween, nimp, output, out.iter)
       }
       if (ncat>0 & ncon==0) {
         cat("Found ", ncat, "categorical outcomes and no continuous. Using function jomo1rancat.", "\n")
@@ -40,7 +40,7 @@ jomo1ran <-
         if (is.null(covu)) covu=diag(1,ncol(up))
         if (is.null(Sp)) Sp=diag(1,ncol(covp))
         if (is.null(Sup)) Sup=diag(1,ncol(covu))
-        imp<-jomo1rancat(Y_cat,Y_numcat, X, Z, clus, betap, up, covp, covu, Sp, Sup, nburn, nbetween, nimp)
+        imp<-jomo1rancat(Y_cat,Y_numcat, X, Z, clus, betap, up, covp, covu, Sp, Sup, nburn, nbetween, nimp, output, out.iter)
       }
       if (ncat>0 & ncon>0) {
         cat("Found ", ncon, "continuous outcomes and ", ncat, "categorical. Using function jomo1ranmix.", "\n")
@@ -50,7 +50,7 @@ jomo1ran <-
         if (is.null(covu)) covu=diag(1,ncol(up))
         if (is.null(Sp)) Sp=diag(1,ncol(covp))
         if (is.null(Sup)) Sup=diag(1,ncol(covu))
-        imp<-jomo1ranmix(Y_con, Y_cat, Y_numcat, X, Z, clus, betap, up, covp, covu, Sp, Sup, nburn, nbetween, nimp)
+        imp<-jomo1ranmix(Y_con, Y_cat, Y_numcat, X, Z, clus, betap, up, covp, covu, Sp, Sup, nburn, nbetween, nimp, output, out.iter)
       }
     }
     if (meth=="fixed") {
@@ -62,7 +62,7 @@ jomo1ran <-
         if (is.null(covu)) covu=diag(1,ncol(Y)*ncol(Z))
         if (is.null(Sp)) Sp=diag(1,ncol(Y))
         if (is.null(Sup)) Sup=diag(1,ncol(Y)*ncol(Z))
-        imp<-jomo1ranconhr(Y_con, X, Z, clus, betap, up, covp, covu, Sp, Sup, nburn, nbetween, nimp,a=15000,meth="fixed")
+        imp<-jomo1ranconhr(Y_con, X, Z, clus, betap, up, covp, covu, Sp, Sup, nburn, nbetween, nimp,a=15000,meth="fixed", output, out.iter)
       }
       if (ncat>0 & ncon==0) {
         cat("Found ", ncat, "categorical outcomes and no continuous. Using function jomo1rancathr with fixed cluster-specific covariance matrices.", "\n")
@@ -72,7 +72,7 @@ jomo1ran <-
         if (is.null(covu)) covu=diag(1,ncol(up))
         if (is.null(Sp)) Sp=diag(1,ncol(covp))
         if (is.null(Sup)) Sup=diag(1,ncol(covu))
-        imp<-jomo1rancathr(Y_cat,Y_numcat, X, Z, clus, betap, up, covp, covu, Sp, Sup, nburn, nbetween, nimp,a=15000, meth="fixed")
+        imp<-jomo1rancathr(Y_cat,Y_numcat, X, Z, clus, betap, up, covp, covu, Sp, Sup, nburn, nbetween, nimp,a=15000, meth="fixed", output, out.iter)
       }
       if (ncat>0 & ncon>0) {
         cat("Found ", ncon, "continuous outcomes and ", ncat, "categorical. Using function jomo1ranmixhr with fixed cluster-specific covariance matrices.", "\n")
@@ -82,7 +82,7 @@ jomo1ran <-
         if (is.null(covu)) covu=diag(1,ncol(up))
         if (is.null(Sp)) Sp=diag(1,ncol(covp))
         if (is.null(Sup)) Sup=diag(1,ncol(covu))
-        imp<-jomo1ranmixhr(Y_con, Y_cat, Y_numcat, X, Z, clus, betap, up, covp, covu, Sp, Sup, nburn, nbetween, nimp,a=15000, meth="fixed")
+        imp<-jomo1ranmixhr(Y_con, Y_cat, Y_numcat, X, Z, clus, betap, up, covp, covu, Sp, Sup, nburn, nbetween, nimp,a=15000, meth="fixed", output, out.iter)
       }
     }
     if (meth=="random") {
@@ -95,7 +95,7 @@ jomo1ran <-
         if (is.null(Sp)) Sp=diag(1,ncol(Y))
         if (is.null(Sup)) Sup=diag(1,ncol(Y)*ncol(Z))
         if (is.null(a)) a=ncol(covp)
-        imp<-jomo1ranconhr(Y_con, X, Z, clus, betap, up, covp, covu, Sp, Sup, nburn, nbetween, nimp,a=a,meth="random")
+        imp<-jomo1ranconhr(Y_con, X, Z, clus, betap, up, covp, covu, Sp, Sup, nburn, nbetween, nimp,a=a,meth="random", output, out.iter)
       }
       if (ncat>0 & ncon==0) {
         cat("Found ", ncat, "categorical outcomes and no continuous. Using function jomo1rancathr with random cluster-specific covariance matrices.", "\n")
@@ -106,7 +106,7 @@ jomo1ran <-
         if (is.null(Sp)) Sp=diag(1,ncol(covp))
         if (is.null(Sup)) Sup=diag(1,ncol(covu))
         if (is.null(a)) a=ncol(covp)
-        imp<-jomo1rancathr(Y_cat,Y_numcat, X, Z, clus, betap, up, covp, covu, Sp, Sup, nburn, nbetween, nimp,a=a, meth="random")
+        imp<-jomo1rancathr(Y_cat,Y_numcat, X, Z, clus, betap, up, covp, covu, Sp, Sup, nburn, nbetween, nimp,a=a, meth="random", output, out.iter)
       }
       if (ncat>0 & ncon>0) {
         cat("Found ", ncon, "continuous outcomes and ", ncat, "categorical. Using function jomo1ranmixhr with random cluster-specific covariance matrices.", "\n")
@@ -117,7 +117,7 @@ jomo1ran <-
         if (is.null(Sp)) Sp=diag(1,ncol(covp))
         if (is.null(Sup)) Sup=diag(1,ncol(covu))
         if (is.null(a)) a=ncol(covp)
-        imp<-jomo1ranmixhr(Y_con, Y_cat, Y_numcat, X, Z, clus, betap, up, covp, covu, Sp, Sup, nburn, nbetween, nimp,a=a, meth="random")
+        imp<-jomo1ranmixhr(Y_con, Y_cat, Y_numcat, X, Z, clus, betap, up, covp, covu, Sp, Sup, nburn, nbetween, nimp,a=a, meth="random", output, out.iter)
       }
     }
     return(imp)

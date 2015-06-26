@@ -125,7 +125,7 @@ for (i=0;i<ns;i++) {
 	for (jj=1;jj<JX*JY;jj++) for (tt=0;tt<jj;tt++) invomega2[jj+JX*JY*tt]=invomega2[tt+JX*JY*jj];
 	r8mat_mm_new(JY*JX,JY*JX,1,invomega2,sumzy,mu);
 	r8mat_pofac(JY * JX,invomega2,help3,3);
-	r8vec_multinormal_sample(JY*JX, mu,help3, REAL(beta),newbeta,fl);
+	r8vec_multinormal_sample(JY*JX, mu,help3, REAL(beta),newbeta,0);
 	r8mat_add(Ib,Jb,REAL(beta),REAL(betapost));
 
 	/*Updating omega*/
@@ -143,7 +143,7 @@ for (i=0;i<ns;i++) {
 	r8mat_pofac(JY,mu2,help,4);
 	r8mat_poinv(JY, help,invomega);
 	for (jj=1;jj<Io;jj++) for (tt=0;tt<jj;tt++) invomega[jj+Io*tt]=invomega[tt+Io*jj];
-	wishart_sample(JY,IY-1,invomega,newomega,help,omegaoo,omegamm,omegaom,fl);
+	wishart_sample(JY,IY-1,invomega,newomega,help,omegaoo,omegamm,omegaom,0);
 	r8mat_pofac(JY,newomega,help,5);
 	r8mat_poinv(JY, help,invomega);
 	for(k=0;k<Io;k++)  {
@@ -202,7 +202,7 @@ for (i=0;i<ns;i++) {
 			r8mat_divide(nmiss,nmiss,-1,omegadrawmiss);
 			r8mat_add(nmiss,nmiss,omegamm,omegadrawmiss);
 			r8mat_pofac(nmiss,omegadrawmiss,help7,12);
-			r8vec_multinormal_sample(nmiss,mumiss,help7,Ymiss,help6,fl);
+			r8vec_multinormal_sample(nmiss,mumiss,help7,Ymiss,help6,0);
 			countm=0;
 			for (k=0;k<JY;k++) {
 				if (ISNAN(REAL(Y)[j+k*IY])) {
@@ -219,7 +219,7 @@ for (i=0;i<ns;i++) {
 			
 		}
 	}
-if ((i+1)%10==0) Rprintf("Iteration %d completed\n",i+1);
+if ((i+1)%fl==0) Rprintf("Iteration %d completed\n",i+1);
 }
 for(i=0;i<IY;i++)  {
 	for(j=0;j<JY;j++)  {

@@ -8,7 +8,8 @@ JM Imputation of single level data - A tool to check convergence of the MCMC
 This function is similar to jomo1, but it returns the values of all the parameters in the model at each step of the MCMC instead of the imputations. It is useful to check the convergence of the MCMC sampler.
 }
 \usage{
-jomo1.MCMCchain(Y, X=NULL, betap=NULL, covp=NULL, Sp=NULL, nburn=500)
+jomo1.MCMCchain(Y, X=NULL, betap=NULL, covp=NULL, Sp=NULL,
+nburn=500, output=1, out.iter=10)
 }
 
 \arguments{
@@ -30,11 +31,18 @@ Scale matrix for the inverse-Wishart prior for the covariance matrix. The defaul
   \item{nburn}{
 Number of iterations. Default is 100.
 }
+ \item{output}{
+When set to any value different from 1 (default), no output is shown on screen at the end of the process.
+}
+
+\item{out.iter}{
+When set to K, every K iterations a message "Iteration number N*K completed" is printed on screen. Default is 10. 
+}
 
 }
 
 \value{
-A list with four elements is returned: the final imputed dataset (finimp) and three 3-dimensional matrices, containing all the values for beta (collectbeta), omega (collectomega) and the "imputed" data at each step (collectimp).
+A list with three elements is returned: the final imputed dataset (finimp) and three 3-dimensional matrices, containing all the values for beta (collectbeta) and omega (collectomega).
 }
 
 \examples{

@@ -12,7 +12,7 @@ jomo1ranmix(Y_con, Y_cat, Y_numcat, X=matrix(1,nrow(Y_cat),1), Z=matrix(1,nrow(Y
 clus, betap=matrix(0,ncol(X),(ncol(Y_con)+(sum(Y_numcat)-length(Y_numcat)))), 
 up=matrix(0,nrow(unique(clus)),ncol(Z)*(ncol(Y_con)+(sum(Y_numcat)-length(Y_numcat)))),
 covp=diag(1,ncol(betap)), covu=diag(1,ncol(up)), Sp=diag(1,ncol(covp)), 
-Sup=diag(1,ncol(covu)), nburn=100, nbetween=100, nimp=5) 
+Sup=diag(1,ncol(covu)), nburn=100, nbetween=100, nimp=5, output=1, out.iter=10) 
 
 }
 %- maybe also 'usage' for other objects documented here.
@@ -62,7 +62,12 @@ Number of iterations between two successive imputations. Default is 100.
   \item{nimp}{
 Number of Imputations. Default is 5.
 }
-
+ \item{output}{
+When set to any value different from 1 (default), no output is shown on screen at the end of the process.
+}
+\item{out.iter}{
+When set to K, every K iterations a message "Iteration number N*K completed" is printed on screen. Default is 10. 
+}
 }
 \details{
 TThe Gibbs sampler algorithm used is described in detail in Chapter 9 of Carpenter and Kenward (2013). Regarding the choice of the priors, a flat prior is considered for beta and for the covariance matrix. A Metropolis Hastings step is implemented to update the covariance matrix, as described in the book. Binary or continuous covariates in the imputation model may be considered without any problem, but when considering a categorical covariate it has to be included with dummy variables (binary indicators) only.

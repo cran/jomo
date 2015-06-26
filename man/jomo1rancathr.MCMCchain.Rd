@@ -15,7 +15,7 @@ betap=matrix(0,ncol(X),((sum(Y_numcat)-length(Y_numcat)))),
 up=matrix(0,nrow(unique(clus)),ncol(Z)*((sum(Y_numcat)-length(Y_numcat)))), 
 covp=matrix(diag(1,ncol(betap)),ncol(betap)*nrow(unique(clus)),ncol(betap),2), 
 covu=diag(1,ncol(up)), Sp=diag(1,ncol(betap)), Sup=diag(1,ncol(up)),nburn=100,
-a=ncol(betap),meth="random") 
+a=ncol(betap),meth="random", output=1, out.iter=10) 
 
 }
 
@@ -66,10 +66,17 @@ When set to "fixed", a flat prior is put on the study-specific covariance matric
 When set to "random", we are assuming that all the covariance matrices are draws from an inverse-Wishart distribution, whose parameter values are updated with 2 steps similar to the ones presented in the case of continuous data only for function jomo1ranconhr.
 }
 
+ \item{output}{
+When set to any value different from 1 (default), no output is shown on screen at the end of the process.
+}
+\item{out.iter}{
+When set to K, every K iterations a message "Iteration number N*K completed" is printed on screen. Default is 10. 
+}
+
 }
 
 \value{
-A list with six elements is returned: the final imputed dataset (finimp) and five 3-dimensional matrices, containing all the values for beta (collectbeta), the random effects (collectu), level 1 (collectomega) and level 2 covariance matrices (collectcovu),  and the "imputed" data at each step (collectimp).
+A list with five elements is returned: the final imputed dataset (finimp) and four 3-dimensional matrices, containing all the values for beta (collectbeta), the random effects (collectu) and the level 1 (collectomega) and level 2 covariance matrices (collectcovu).
 }
 
 \examples{

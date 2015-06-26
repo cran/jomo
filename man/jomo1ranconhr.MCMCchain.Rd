@@ -13,7 +13,7 @@ jomo1ranconhr.MCMCchain(Y, X=matrix(1,nrow(Y),1), Z=matrix(1,nrow(Y),1), clus,
 betap=matrix(0,ncol(X),ncol(Y)), up=matrix(0,nrow(unique(clus)),ncol(Z)*ncol(Y)), 
 covp=matrix(diag(1,ncol(Y)),nrow(unique(clus))*ncol(Y),ncol(Y),2), 
 covu=diag(1,ncol(Y)*ncol(Z)), Sp=diag(1,ncol(Y)), Sup=diag(1,ncol(Y)*ncol(Z)), 
-nburn=100, a=ncol(Y),meth="random") 
+nburn=100, a=ncol(Y),meth="random", output=1, out.iter=10) 
 
 }
 %- maybe also 'usage' for other objects documented here.
@@ -58,12 +58,16 @@ Starting value for the degrees of freedom of the wishart distribution from which
 \item{meth}{
 This can be set to "Fixed" or "Random". In the first case the function will consider fixed study-specific covariance matrices, in the second, random study-specific distributed according to an inverse-Wishart distribution.
 }
-
+ \item{output}{
+When set to any value different from 1 (default), no output is shown on screen at the end of the process.
+}
+\item{out.iter}{
+When set to K, every K iterations a message "Iteration number N*K completed" is printed on screen. Default is 10. 
+}
 }
 
 \value{
-A list with six elements is returned: the final imputed dataset (finimp) and five 3-dimensional matrices, containing all the values for beta (collectbeta), the random effects (collectu), level 1 (collectomega) and level 2 covariance matrices (collectcovu),  and the "imputed" data at each step (collectimp).
-
+A list with five elements is returned: the final imputed dataset (finimp) and four 3-dimensional matrices, containing all the values for beta (collectbeta), the random effects (collectu) and the level 1 (collectomega) and level 2 covariance matrices (collectcovu).
 }
 
 \examples{

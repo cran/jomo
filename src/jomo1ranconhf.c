@@ -187,7 +187,7 @@ for (i=0;i<ns;i++) {
 	for (jj=1;jj<JX*JY;jj++) for (tt=0;tt<jj;tt++) invomega2[jj+JX*JY*tt]=invomega2[tt+JX*JY*jj];
 	r8mat_mm_new(JY*JX,JY*JX,1,invomega2,sumxy,mu);
 	r8mat_pofac(JY * JX,invomega2,help3,3);
-	r8vec_multinormal_sample(JY*JX, mu,help3, REAL(beta),newbeta, fl);
+	r8vec_multinormal_sample(JY*JX, mu,help3, REAL(beta),newbeta, 0);
 	r8mat_add(Ib,Jb,REAL(beta),REAL(betapost));
 	for (c=0;c<nj;c++) {
 		for (j=0;j<JY;j++) {
@@ -231,7 +231,7 @@ for (i=0;i<ns;i++) {
 		r8mat_mm_new(JY*JZ,JY*JZ,1,invomega3,sumzy,mu2);
 
 		r8mat_pofac(JY * JZ,invomega3,help5,6); 
-		r8vec_multinormal_sample(JY*JZ, mu2,help5,newu, incrzy, fl);
+		r8vec_multinormal_sample(JY*JZ, mu2,help5,newu, incrzy, 0);
 		for (t=0;t<JY;t++) for (k=0;k<JZ;k++) REAL(u)[c+nj*(k+t*JZ)] = newu[k+t*JZ];
 		
 	}
@@ -249,7 +249,7 @@ for (i=0;i<ns;i++) {
 	r8mat_pofac(JY*JZ,mu3,help5,7);
 	r8mat_poinv(JY*JZ, help5, invomega3);
 	for (jj=1;jj<(JY*JZ);jj++) for (tt=0;tt<jj;tt++) invomega3[jj+(JZ*JY)*tt]=invomega3[tt+(JZ*JY)*jj];
-	wishart_sample(JY*JZ,(nj+JY*JZ),invomega3,newomega, help5,sumzi,incrzz,mu3, fl);
+	wishart_sample(JY*JZ,(nj+JY*JZ),invomega3,newomega, help5,sumzi,incrzz,mu3, 0);
 	
 	r8mat_pofac(JY * JZ,newomega, help5,8);
 	r8mat_poinv(JY * JZ, help5,invomega3);
@@ -286,7 +286,7 @@ for (i=0;i<ns;i++) {
 		r8mat_pofac(JY,mu4,help,9);
 		r8mat_poinv(JY, help,invomega);
 		for (jj=1;jj<JY;jj++) for (tt=0;tt<jj;tt++) invomega[jj+JY*tt]=invomega[tt+JY*jj];
-		wishart_sample(JY,clusnum[c],invomega,newomega2,help, omegaoo,omegaom,omegamm, fl);	
+		wishart_sample(JY,clusnum[c],invomega,newomega2,help, omegaoo,omegaom,omegamm, 0);	
 		r8mat_pofac(JY,newomega2,help,10);
 		r8mat_poinv(JY, help,invomega);
 		for (jj=1;jj<JY;jj++) for (tt=0;tt<jj;tt++) invomega[jj+JY*tt]=invomega[tt+JY*jj];
@@ -355,7 +355,7 @@ for (i=0;i<ns;i++) {
 			r8mat_divide(nmiss,nmiss,-1,omegadrawmiss);
 			r8mat_add(nmiss,nmiss,omegamm,omegadrawmiss);
 			r8mat_pofac(nmiss,omegadrawmiss,help9,12);
-			r8vec_multinormal_sample(nmiss,mumiss,help9,Ymiss,help6, fl);
+			r8vec_multinormal_sample(nmiss,mumiss,help9,Ymiss,help6, 0);
 			countm=0;
 			for (k=0;k<JY;k++) {
 				if (ISNAN(REAL(Y)[j+k*IY])) {
@@ -374,7 +374,7 @@ for (i=0;i<ns;i++) {
 		}
 	
 	}
-if ((i+1)%10==0) Rprintf("Iteration %d completed\n",i+1);
+if ((i+1)%fl==0) Rprintf("Iteration %d completed\n",i+1);
 }
 for(i=0;i<IY;i++)  {
 	for(j=0;j<JY;j++)  {

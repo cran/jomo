@@ -9,7 +9,7 @@ A wrapper function linking the 3 single level JM Imputation functions. The matri
 }
 \usage{
 jomo1 (Y, X=NULL, betap=NULL, covp=NULL, Sp=NULL, 
-      nburn=500, nbetween=100, nimp=5)
+      nburn=500, nbetween=100, nimp=5, output=1, out.iter=10)
 }
 
 \arguments{
@@ -37,7 +37,12 @@ Number of iterations between two successive imputations. Default is 100.
   \item{nimp}{
 Number of Imputations. Default is 5.
 }
-
+ \item{output}{
+When set to any value different from 1 (default), no output is shown on screen at the end of the process.
+}
+\item{out.iter}{
+When set to K, every K iterations a message "Iteration number N*K completed" is printed on screen. Default is 10. 
+}
 }
 \details{
 This is just a wrapper function to link jomo1con, jomo1cat and jomo1mix. Format of the columns of Y is crucial in order for the function to be using the right sub-function. 

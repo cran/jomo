@@ -185,7 +185,7 @@ for (i=0;i<ns;i++) {
 
 				if (REAL(Y)[t+(ncon+j)*IY]==INTEGER(Y_numcat)[j]) {
 					while ((flag==0)&(kk<10000)) {
-						r8vec_multinormal_sample((INTEGER(Y_numcat)[j]-1), mumiss,omegamm, newbeta,mu2,fl);
+						r8vec_multinormal_sample((INTEGER(Y_numcat)[j]-1), mumiss,omegamm, newbeta,mu2,0);
 						maxim=maxvec((INTEGER(Y_numcat)[j]-1),newbeta);
 						if (maxim<0) {
 
@@ -199,7 +199,7 @@ for (i=0;i<ns;i++) {
 				}
 				else {
 					while ((flag==0)&(kk<10000)) {
-						r8vec_multinormal_sample((INTEGER(Y_numcat)[j]-1), mumiss,omegamm, newbeta,mu2,fl);
+						r8vec_multinormal_sample((INTEGER(Y_numcat)[j]-1), mumiss,omegamm, newbeta,mu2,0);
 						maxim=argmaxvec((INTEGER(Y_numcat)[j]-1),newbeta);
 						maxim2=maxvec((INTEGER(Y_numcat)[j]-1),newbeta);
 						if (((maxim+1)==REAL(Y)[t+(ncon+j)*IY])&(maxim2>0)) {
@@ -243,7 +243,7 @@ for (i=0;i<ns;i++) {
 	for (jj=1;jj<JX*JY;jj++) for (tt=0;tt<jj;tt++) invomega2[jj+JX*JY*tt]=invomega2[tt+JX*JY*jj];
 	r8mat_mm_new(JY*JX,JY*JX,1,invomega2,sumzy,mu);
 	r8mat_pofac(JY * JX,invomega2,help3,5);
-	r8vec_multinormal_sample(JY*JX, mu,help3, REAL(beta),newbeta,fl);
+	r8vec_multinormal_sample(JY*JX, mu,help3, REAL(beta),newbeta,0);
 	r8mat_add(Ib,Jb,REAL(beta),REAL(betapost));
 
 	//Updating residuals
@@ -282,7 +282,7 @@ for (i=0;i<ns;i++) {
 				}
 				kk=0;
 				while ((flag==0)&(kk<100)) {
-					newomega[j+JY*k]=r8_normal_sample(meanom,sdom,fl);
+					newomega[j+JY*k]=r8_normal_sample(meanom,sdom,0);
 					newomega[k+JY*j]=newomega[j+JY*k];
 					flag=checkposdef(JY,newomega,help,help5);
 					kk++;
@@ -365,7 +365,7 @@ for (i=0;i<ns;i++) {
 			r8mat_divide(nmiss,nmiss,-1,omegadrawmiss);
 			r8mat_add(nmiss,nmiss,omegamm,omegadrawmiss);
 			r8mat_pofac(nmiss,omegadrawmiss,help7,12);
-			r8vec_multinormal_sample(nmiss,mumiss,help7,Ymiss,help6,fl);
+			r8vec_multinormal_sample(nmiss,mumiss,help7,Ymiss,help6,0);
 			countm=0;
 			for (k=0;k<JY;k++) {
 				if (ISNAN(REAL(Yimp)[j+k*IY])) {
@@ -382,7 +382,7 @@ for (i=0;i<ns;i++) {
 			
 		}
 	}
-if ((i+1)%10==0) Rprintf("Iteration %d completed\n",i+1);
+if ((i+1)%fl==0) Rprintf("Iteration %d completed\n",i+1);
 }
 for(i=0;i<IY;i++)  {
 	for(j=0;j<JY;j++)  {

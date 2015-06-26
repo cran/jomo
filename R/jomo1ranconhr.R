@@ -1,5 +1,11 @@
 jomo1ranconhr <-
-  function(Y, X=matrix(1,nrow(Y),1), Z=matrix(1,nrow(Y),1), clus, betap=matrix(0,ncol(X),ncol(Y)), up=matrix(0,nrow(unique(clus)),ncol(Z)*ncol(Y)), covp=matrix(diag(1,ncol(Y)),nrow(unique(clus))*ncol(Y),ncol(Y),2), covu=diag(1,ncol(Y)*ncol(Z)), Sp=diag(1,ncol(Y)), Sup=diag(1,ncol(Y)*ncol(Z)), nburn=100, nbetween=100, nimp=5, a=ncol(Y),meth="random") {
+  function(Y, X=matrix(1,nrow(Y),1), Z=matrix(1,nrow(Y),1), clus, betap=matrix(0,ncol(X),ncol(Y)), up=matrix(0,nrow(unique(clus)),ncol(Z)*ncol(Y)), covp=matrix(diag(1,ncol(Y)),nrow(unique(clus))*ncol(Y),ncol(Y),2), covu=diag(1,ncol(Y)*ncol(Z)), Sp=diag(1,ncol(Y)), Sup=diag(1,ncol(Y)*ncol(Z)), nburn=100, nbetween=100, nimp=5, a=ncol(Y),meth="random", output=1, out.iter=10) {
+    for (i in 1:ncol(X)) {
+      if (is.factor(X[,i])) X[,i]<-as.numeric(X[,i])
+    }
+    for (i in 1:ncol(Z)) {
+      if (is.factor(Z[,i])) Z[,i]<-as.numeric(Z[,i])
+    }
     stopifnot((meth=="fixed"|meth=="random"),nrow(Y)==nrow(clus),nrow(Y)==nrow(X), nrow(betap)==ncol(X), ncol(betap)==ncol(Y),nrow(covp)==nrow(up)*ncol(covp), nrow(covp)==nrow(up)*ncol(Y), nrow(Sp)==ncol(Sp),nrow(covp)==nrow(up)*nrow(Sp), nrow(Z)==nrow(Y), ncol(covu)==ncol(up), ncol(up)==ncol(Z)*ncol(Y))
     betait=matrix(0,nrow(betap),ncol(betap))
     for (i in 1:nrow(betap)) {
@@ -19,7 +25,6 @@ jomo1ranconhr <-
     }   
     ait=0
     ait=a
-    rngflag=0
     colnamy<-colnames(Y)
     colnamx<-colnames(X)
     colnamz<-colnames(Z)
@@ -27,6 +32,7 @@ jomo1ranconhr <-
     X<-as.matrix(X,nrow(X),ncol(X))
     Z<-as.matrix(Z,nrow(Z),ncol(Z))
     clus<-as.matrix(clus,nrow(clus),ncol(clus))
+    if (output!=1) out.iter=nburn+nbetween
     imp=matrix(0,nrow(Y)*(nimp+1),ncol(Y)+ncol(X)+ncol(Z)+3)
     imp[1:nrow(Y),1:ncol(Y)]=Y
     imp[1:nrow(X), (ncol(Y)+1):(ncol(Y)+ncol(X))]=X
@@ -53,10 +59,10 @@ jomo1ranconhr <-
     for (i in 1:nrow(Y)) for (j in 1:ncol(Y)) if (is.na(Yimp[i,j])) Yimp[i,j]=meanobs[j]
     #for (i in 1:nrow(Y)) for (j in 1:ncol(Y)) if (is.na(Yimp[i,j])) Yimp[i,j]=rnorm(1,mean=meanobs[j], sd=0.01)
     if (meth=="fixed") {
-      .Call("jomo1ranconhf", Y, Yimp, Yimp2, X, Z, clus, betait, uit, bpost, upost, covit,opost, covuit,cpost, nburn, Sp, Sup,rngflag=0, PACKAGE = "jomo") 
+      .Call("jomo1ranconhf", Y, Yimp, Yimp2, X, Z, clus, betait, uit, bpost, upost, covit,opost, covuit,cpost, nburn, Sp, Sup,out.iter, PACKAGE = "jomo") 
     }
     if (meth=="random") {
-      .Call("jomo1ranconhr", Y, Yimp, Yimp2, X, Z, clus, betait, uit, bpost, upost, covit,opost, covuit,cpost, nburn, Sp, Sup, ait,rngflag=0, PACKAGE = "jomo") 
+      .Call("jomo1ranconhr", Y, Yimp, Yimp2, X, Z, clus, betait, uit, bpost, upost, covit,opost, covuit,cpost, nburn, Sp, Sup, ait,out.iter, PACKAGE = "jomo") 
     }
     #betapost[,,1]=bpost
     #upostall[,,1]=upost
@@ -68,7 +74,7 @@ jomo1ranconhr <-
     cpost<-matrix(0,nrow(covu),ncol(covu))
     imp[(nrow(Y)+1):(2*nrow(Y)),1:ncol(Y)]=Yimp2
     Yimp=Yimp2
-    cat("First imputation registered.", "\n")
+    if (output==1) cat("First imputation registered.", "\n")
     for (i in 2:nimp) {
       Yimp2=matrix(0, nrow(Y),ncol(Y))
       imp[(i*nrow(X)+1):((i+1)*nrow(X)),(ncol(Y)+1):(ncol(Y)+ncol(X))]=X
@@ -77,10 +83,10 @@ jomo1ranconhr <-
       imp[(i*nrow(Z)+1):((i+1)*nrow(Z)), (ncol(Y)+ncol(X)+ncol(Z)+2)]=c(1:nrow(Y))
       imp[(i*nrow(Z)+1):((i+1)*nrow(Z)), (ncol(Y)+ncol(X)+ncol(Z)+3)]=i
       if (meth=="fixed") {
-        .Call("jomo1ranconhf", Y, Yimp, Yimp2, X, Z, clus, betait, uit, bpost, upost, covit, opost, covuit, cpost, nbetween, Sp, Sup,rngflag=0, PACKAGE = "jomo") 
+        .Call("jomo1ranconhf", Y, Yimp, Yimp2, X, Z, clus, betait, uit, bpost, upost, covit, opost, covuit, cpost, nbetween, Sp, Sup,out.iter, PACKAGE = "jomo") 
       }
       if (meth=="random") {
-        .Call("jomo1ranconhr", Y, Yimp, Yimp2, X, Z, clus, betait, uit, bpost, upost, covit, opost, covuit, cpost, nbetween, Sp, Sup, ait,rngflag=0, PACKAGE = "jomo")   
+        .Call("jomo1ranconhr", Y, Yimp, Yimp2, X, Z, clus, betait, uit, bpost, upost, covit, opost, covuit, cpost, nbetween, Sp, Sup, ait,out.iter, PACKAGE = "jomo")   
       }
       betapost[,,(i-1)]=bpost
       upostall[,,(i-1)]=upost
@@ -92,20 +98,22 @@ jomo1ranconhr <-
       cpost<-matrix(0,nrow(covu),ncol(covu))
       imp[(i*nrow(Y)+1):((i+1)*nrow(Y)),1:ncol(Y)]=Yimp2
       Yimp=Yimp2
-      cat("Imputation number ", i, "registered", "\n")
+      if (output==1) cat("Imputation number ", i, "registered", "\n")
     }
     betapostmean<-apply(betapost, c(1,2), mean)
     upostmean<-apply(upostall, c(1,2), mean)
     omegapostmean<-apply(omegapost, c(1,2), mean)
     covupostmean<-apply(covupost, c(1,2), mean)
-    cat("The posterior mean of the fixed effects estimates is:\n")
-    print(betapostmean)
-    cat("The posterior mean of the random effects estimates is:\n")
-    print(upostmean)
-    cat("The posterior mean of the level 1 covariance matrices is:\n")
-    print(omegapostmean)
-    cat("The posterior mean of the level 2 covariance matrix is:\n")
-    print(covupostmean)
+    if (output==1) {
+      cat("The posterior mean of the fixed effects estimates is:\n")
+      print(betapostmean)
+      cat("The posterior mean of the random effects estimates is:\n")
+      print(upostmean)
+      cat("The posterior mean of the level 1 covariance matrices is:\n")
+      print(omegapostmean)
+      cat("The posterior mean of the level 2 covariance matrix is:\n")
+      print(covupostmean)
+    }
     imp<-data.frame(imp)
     if (is.null(colnamy)) colnamy=paste("Y", 1:ncol(Y), sep = "")
     if (is.null(colnamz)) colnamz=paste("Z", 1:ncol(Z), sep = "")

@@ -9,7 +9,8 @@ This function is similar to jomo1ran, but it returns the values of all the param
 }
 \usage{
 jomo1ran.MCMCchain(Y, X=NULL, Z=NULL,clus, betap=NULL, up=NULL, covp=NULL,
-     covu=NULL, Sp=NULL, Sup=NULL, nburn=500, a=NULL, meth="common") 
+     covu=NULL, Sp=NULL, Sup=NULL, nburn=500, a=NULL, 
+     meth="common", output=1, out.iter=10) 
 
 }
 %- maybe also 'usage' for other objects documented here.
@@ -54,10 +55,17 @@ Starting value for the degrees of freedom of the inverse Wishart distribution fr
 Method used to deal with level 1 covariance matrix. When set to "common", a common matrix across clusters is used (functions jomo1rancon, jomo1rancat and jomo1ranmix). When set to "fixed", fixed study-specific matrices are considered (jomo1ranconhr, jomo1rancathr and jomo1ranmixhr with coption meth="fixed"). Finally, when set to "random", random study-specific matrices are considered (jomo1ranconhr, jomo1rancathr and jomo1ranmixhr with coption meth="random")
 }
 
+ \item{output}{
+When set to any value different from 1 (default), no output is shown on screen at the end of the process.
+}
+\item{out.iter}{
+When set to K, every K iterations a message "Iteration number N*K completed" is printed on screen. Default is 10. 
+}
+
 }
 
 \value{
-A list with six elements is returned: the final imputed dataset (finimp) and five 3-dimensional matrices, containing all the values for beta (collectbeta), the random effects (collectu), level 1 (collectomega) and level 2 covariance matrices (collectcovu),  and the "imputed" data at each step (collectimp).
+A list with five elements is returned: the final imputed dataset (finimp) and four 3-dimensional matrices, containing all the values for beta (collectbeta), the random effects (collectu) and the level 1 (collectomega) and level 2 covariance matrices (collectcovu).
 }
 
 \examples{

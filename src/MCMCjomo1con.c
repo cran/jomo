@@ -9,7 +9,7 @@
 #include<Rinternals.h>
 #include<Rmath.h>
 
-SEXP MCMCjomo1con(SEXP Y, SEXP Yimp, SEXP Yimp2, SEXP X, SEXP beta, SEXP betapost, SEXP omega, SEXP omegapost, SEXP nstep, SEXP Sp, SEXP flagrng, SEXP collectimp){
+SEXP MCMCjomo1con(SEXP Y, SEXP Yimp, SEXP Yimp2, SEXP X, SEXP beta, SEXP betapost, SEXP omega, SEXP omegapost, SEXP nstep, SEXP Sp, SEXP flagrng){
 int i,j,k, IY,JY, IX, JX, Io, Ib, Jb, ns, nmiss=0,t, countm=0, counto=0, countmm=0, countmo=0, countoo=0, jj, tt,fl;
 SEXP RdimY, RdimX, Rdimo, Rdimb;
 double *betaX, *Yobs, *Ymiss, *mumiss, *omegadrawmiss, *betamiss, *betaobs, *omegaoo, *omegaom, *omegamo, *omegamm, *invomega, *invomega2, *help, *help2, *help3, *imp, *zi;
@@ -41,7 +41,6 @@ nstep=PROTECT(coerceVector(nstep,INTSXP));
 ns=INTEGER(nstep)[0];
 flagrng=PROTECT(coerceVector(flagrng,INTSXP));
 fl=INTEGER(flagrng)[0];
-collectimp=PROTECT(coerceVector(collectimp,REALSXP));
 
 /*Allocating memory for C objects in R*/
 
@@ -124,7 +123,7 @@ for (i=0;i<ns;i++) {
 	for (jj=1;jj<JX*JY;jj++) for (tt=0;tt<jj;tt++) invomega2[jj+JX*JY*tt]=invomega2[tt+JX*JY*jj];
 	r8mat_mm_new(JY*JX,JY*JX,1,invomega2,sumzy,mu);
 	r8mat_pofac(JY * JX,invomega2,help3,3);
-	r8vec_multinormal_sample(JY*JX, mu,help3, REAL(beta),newbeta,fl);
+	r8vec_multinormal_sample(JY*JX, mu,help3, REAL(beta),newbeta,0);
 
 	for (j=0;j<Ib;j++) {
 		for (t=0;t<Jb;t++) {
@@ -147,7 +146,7 @@ for (i=0;i<ns;i++) {
 	r8mat_pofac(JY,mu2,help,4);
 	r8mat_poinv(JY, help,invomega);
 	for (jj=1;jj<Io;jj++) for (tt=0;tt<jj;tt++) invomega[jj+Io*tt]=invomega[tt+Io*jj];
-	wishart_sample(JY,IY-1,invomega,newomega,help,omegaoo,omegamm,omegaom,fl);
+	wishart_sample(JY,IY-1,invomega,newomega,help,omegaoo,omegamm,omegaom,0);
 	r8mat_pofac(JY,newomega,help,5);
 	r8mat_poinv(JY, help,invomega);
 	for(k=0;k<Io;k++)  {
@@ -210,7 +209,7 @@ for (i=0;i<ns;i++) {
 			r8mat_divide(nmiss,nmiss,-1,omegadrawmiss);
 			r8mat_add(nmiss,nmiss,omegamm,omegadrawmiss);
 			r8mat_pofac(nmiss,omegadrawmiss,help7,12);
-			r8vec_multinormal_sample(nmiss,mumiss,help7,Ymiss,help6,fl);
+			r8vec_multinormal_sample(nmiss,mumiss,help7,Ymiss,help6,0);
 			countm=0;
 			for (k=0;k<JY;k++) {
 				if (ISNAN(REAL(Y)[j+k*IY])) {
@@ -227,12 +226,7 @@ for (i=0;i<ns;i++) {
 			
 		}
 	}
-	for (j=0;j<IY;j++) {
-		for (t=0;t<JY;t++) {
-			REAL(collectimp)[j+IY*t+i*IY*JY]=imp[j+IY*t];
-			}
-		}
-if ((i+1)%10==0) Rprintf("Iteration %d completed\n",i+1);
+if ((i+1)%fl==0) Rprintf("Iteration %d completed\n",i+1);
 }
 for(i=0;i<IY;i++)  {
 	for(j=0;j<JY;j++)  {
@@ -240,6 +234,6 @@ for(i=0;i<IY;i++)  {
 	}
 }
 PutRNGstate();
-UNPROTECT(16);
+UNPROTECT(15);
 return R_NilValue;
 }

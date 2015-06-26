@@ -1,5 +1,18 @@
 jomo1ranmix <-
-function(Y_con, Y_cat, Y_numcat, X=matrix(1,nrow(Y_cat),1), Z=matrix(1,nrow(Y_cat),1), clus, betap=matrix(0,ncol(X),(ncol(Y_con)+(sum(Y_numcat)-length(Y_numcat)))), up=matrix(0,nrow(unique(clus)),ncol(Z)*(ncol(Y_con)+(sum(Y_numcat)-length(Y_numcat)))), covp=diag(1,ncol(betap)), covu=diag(1,ncol(up)), Sp=diag(1,ncol(covp)), Sup=diag(1,ncol(covu)), nburn=100, nbetween=100, nimp=5) {
+function(Y_con, Y_cat, Y_numcat, X=matrix(1,nrow(Y_cat),1), Z=matrix(1,nrow(Y_cat),1), clus, betap=matrix(0,ncol(X),(ncol(Y_con)+(sum(Y_numcat)-length(Y_numcat)))), up=matrix(0,nrow(unique(clus)),ncol(Z)*(ncol(Y_con)+(sum(Y_numcat)-length(Y_numcat)))), covp=diag(1,ncol(betap)), covu=diag(1,ncol(up)), Sp=diag(1,ncol(covp)), Sup=diag(1,ncol(covu)), nburn=100, nbetween=100, nimp=5, output=1, out.iter=10) {
+  Ycatsum1<-rep(0,ncol(Y_cat))
+  for (i in 1:ncol(Y_cat)) {
+    if (min(as.numeric(Y_cat[!is.na(Y_cat[,i]),i]))==0) {
+      Y_cat[,i]<-factor(as.numeric(Y_cat[,i])+1)
+      Ycatsum1[i]<-1
+    }
+  }
+  for (i in 1:ncol(X)) {
+    if (is.factor(X[,i])) X[,i]<-as.numeric(X[,i])
+  }
+  for (i in 1:ncol(Z)) {
+    if (is.factor(Z[,i])) Z[,i]<-as.numeric(Z[,i])
+  }
   stopifnot(nrow(Y_con)==nrow(clus),nrow(Y_con)==nrow(X), nrow(betap)==ncol(X), ncol(betap)==(ncol(Y_con)+(sum(Y_numcat)-length(Y_numcat))),nrow(covp)==ncol(covp), nrow(covp)==ncol(betap), nrow(Sp)==ncol(Sp),nrow(Sp)==nrow(covp),nrow(Z)==nrow(Y_con), ncol(covu)==ncol(up), ncol(up)==ncol(Z)*(ncol(Y_con)+(sum(Y_numcat)-length(Y_numcat))))
   betait=matrix(0,nrow(betap),ncol(betap))
   for (i in 1:nrow(betap)) {
@@ -17,7 +30,6 @@ function(Y_con, Y_cat, Y_numcat, X=matrix(1,nrow(Y_cat),1), Z=matrix(1,nrow(Y_ca
   for (i in 1:nrow(covu)) {
     for (j in 1:ncol(covu)) covuit[i,j]=covu[i,j]
   }   
-  rngflag=0
   colnamycon<-colnames(Y_con)
   colnamycat<-colnames(Y_cat)
   colnamx<-colnames(X)
@@ -38,6 +50,7 @@ function(Y_con, Y_cat, Y_numcat, X=matrix(1,nrow(Y_cat),1), Z=matrix(1,nrow(Y_ca
     } 
     h=h+Y_numcat[i]-1
   }
+  if (output!=1) out.iter=nburn+nbetween
   imp=matrix(0,nrow(Y)*(nimp+1),ncol(Y)+ncol(X)+ncol(Z)+3)
   imp[1:nrow(Y),1:ncol(Y)]=Y
   imp[1:nrow(X), (ncol(Y)+1):(ncol(Y)+ncol(X))]=X
@@ -61,7 +74,7 @@ function(Y_con, Y_cat, Y_numcat, X=matrix(1,nrow(Y_cat),1), Z=matrix(1,nrow(Y_ca
   cpost<-matrix(0,nrow(covu),ncol(covu))
   meanobs<-colMeans(Yi,na.rm=TRUE)
   for (i in 1:nrow(Yi)) for (j in 1:ncol(Yi)) if (is.na(Yimp[i,j])) Yimp2[i,j]=meanobs[j]
-  .Call("jomo1ranmix", Y, Yimp, Yimp2, Y_cat, X, Z, clus,betait,uit,bpost,upost,covit,opost, covuit, cpost, nburn, Sp,Sup,Y_numcat, ncol(Y_con),rngflag, PACKAGE = "jomo")
+  .Call("jomo1ranmix", Y, Yimp, Yimp2, Y_cat, X, Z, clus,betait,uit,bpost,upost,covit,opost, covuit, cpost, nburn, Sp,Sup,Y_numcat, ncol(Y_con),out.iter, PACKAGE = "jomo")
   #betapost[,,1]=bpost
   #upostall[,,1]=upost
   #omegapost[,,(1)]=opost
@@ -72,7 +85,7 @@ function(Y_con, Y_cat, Y_numcat, X=matrix(1,nrow(Y_cat),1), Z=matrix(1,nrow(Y_ca
   cpost<-matrix(0,nrow(covu),ncol(covu))
   imp[(nrow(Y)+1):(2*nrow(Y)),1:ncol(Y_con)]=Yimp2[,1:ncol(Y_con)]
   imp[(nrow(Y)+1):(2*nrow(Y)),(ncol(Y_con)+1):ncol(Y)]=Y_cat
-  cat("First imputation registered.", "\n")
+  if (output==1) cat("First imputation registered.", "\n")
   for (i in 2:nimp) {
     #Yimp2=matrix(0, nrow(Yimp),ncol(Yimp))
     imp[(i*nrow(X)+1):((i+1)*nrow(X)),(ncol(Y)+1):(ncol(Y)+ncol(X))]=X
@@ -80,7 +93,7 @@ function(Y_con, Y_cat, Y_numcat, X=matrix(1,nrow(Y_cat),1), Z=matrix(1,nrow(Y_ca
     imp[(i*nrow(clus)+1):((i+1)*nrow(clus)), (ncol(Y)+ncol(X)+ncol(Z)+1)]=clus
     imp[(i*nrow(Z)+1):((i+1)*nrow(Z)), (ncol(Y)+ncol(X)+ncol(Z)+2)]=c(1:nrow(Y))
     imp[(i*nrow(Z)+1):((i+1)*nrow(Z)), (ncol(Y)+ncol(X)+ncol(Z)+3)]=i 
-    .Call("jomo1ranmix", Y, Yimp, Yimp2, Y_cat, X, Z, clus,betait,uit,bpost,upost,covit,opost, covuit, cpost, nbetween, Sp,Sup,Y_numcat, ncol(Y_con),rngflag, PACKAGE = "jomo")
+    .Call("jomo1ranmix", Y, Yimp, Yimp2, Y_cat, X, Z, clus,betait,uit,bpost,upost,covit,opost, covuit, cpost, nbetween, Sp,Sup,Y_numcat, ncol(Y_con),out.iter, PACKAGE = "jomo")
     betapost[,,(i-1)]=bpost
     upostall[,,(i-1)]=upost
     omegapost[,,(i-1)]=opost
@@ -91,20 +104,27 @@ function(Y_con, Y_cat, Y_numcat, X=matrix(1,nrow(Y_cat),1), Z=matrix(1,nrow(Y_ca
     cpost<-matrix(0,nrow(covu),ncol(covu))
     imp[(i*nrow(X)+1):((i+1)*nrow(X)),1:ncol(Y_con)]=Yimp2[,1:ncol(Y_con)]
     imp[(i*nrow(X)+1):((i+1)*nrow(X)),(ncol(Y_con)+1):ncol(Y)]=Y_cat
-    cat("Imputation number ", i, "registered", "\n")
+    if (output==1) cat("Imputation number ", i, "registered", "\n")
+  }
+  for (i in 1:ncol(Y_cat)) {
+    if (Ycatsum1[i]==1) {
+      imp[,(ncol(Y_con)+i)]<-factor(as.numeric(imp[,(ncol(Y_con)+i)])-1)                   
+    }
   }
   betapostmean<-apply(betapost, c(1,2), mean)
   upostmean<-apply(upostall, c(1,2), mean)
   omegapostmean<-apply(omegapost, c(1,2), mean)
   covupostmean<-apply(covupost, c(1,2), mean)
-  cat("The posterior mean of the fixed effects estimates is:\n")
-  print(betapostmean)
-  cat("The posterior mean of the random effects estimates is:\n")
-  print(upostmean)
-  cat("The posterior mean of the level 1 covariance matrices is:\n")
-  print(omegapostmean)
-  cat("The posterior mean of the level 2 covariance matrix is:\n")
-  print(covupostmean)
+  if (output==1) {
+    cat("The posterior mean of the fixed effects estimates is:\n")
+    print(betapostmean)
+    cat("The posterior mean of the random effects estimates is:\n")
+    print(upostmean)
+    cat("The posterior mean of the level 1 covariance matrices is:\n")
+    print(omegapostmean)
+    cat("The posterior mean of the level 2 covariance matrix is:\n")
+    print(covupostmean)
+  }
   imp<-data.frame(imp)
   if (is.null(colnamycat)) colnamycat=paste("Ycat", 1:ncol(Y_cat), sep = "")
   if (is.null(colnamycon)) colnamycon=paste("Ycon", 1:ncol(Y_con), sep = "")

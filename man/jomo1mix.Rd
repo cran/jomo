@@ -11,7 +11,7 @@ Impute a single level dataset with mixed data types as outcome. A joint multivar
 jomo1mix(Y_con, Y_cat, Y_numcat, X=matrix(1,nrow(Y_cat),1), 
          betap=matrix(0,ncol(X),(ncol(Y_con)+(sum(Y_numcat)-length(Y_numcat)))), 
          covp=diag(1,ncol(betap)), Sp=diag(1,ncol(betap)), 
-         nburn=100, nbetween=100, nimp=5)
+         nburn=100, nbetween=100, nimp=5, output=1,out.iter=10)
  
 }
 %- maybe also 'usage' for other objects documented here.
@@ -47,7 +47,12 @@ Number of iterations between two successive imputations. Default is 100.
 Number of Imputations. Default is 5.
 }
 
-
+ \item{output}{
+When set to any value different from 1 (default), no output is shown on screen at the end of the process.
+}
+\item{out.iter}{
+When set to K, every K iterations a message "Iteration number N*K completed" is printed on screen. Default is 10. 
+}
 }
 \details{
 Regarding the choice of the priors, a flat prior is considered for beta and for the covariance matrix. A Metropolis Hastings step is implemented to update the covariance matrix, as described in the book. Binary or continuous covariates in the imputation model may be considered without any problem, but when considering a categorical covariate it has to be included with dummy variables (binary indicators) only. 
