@@ -52,7 +52,6 @@ jomo1rancon<- function(Y, X=matrix(1,nrow(Y),1), Z=matrix(1,nrow(Y),1), clus, be
   covupost<- array(0, dim=c(nrow(covu),ncol(covu),(nimp-1)))
   cpost<-matrix(0,nrow(covu),ncol(covu))
   meanobs<-colMeans(Y,na.rm=TRUE)
-  varobs<-apply(Y,2,sd,na.rm=TRUE)
   for (i in 1:nrow(Y)) for (j in 1:ncol(Y)) if (is.na(Yimp[i,j])) Yimp[i,j]=meanobs[j]
   #for (i in 1:nrow(Y)) for (j in 1:ncol(Y)) if (is.na(Yimp[i,j])) Yimp[i,j]=rnorm(1,mean=meanobs[j], sd=0.01)
   .Call("jomo1rancon", Y, Yimp, Yimp2, X, Z, clus, betait, uit, bpost, upost, covit, opost, covuit, cpost, nburn, Sp, Sup,out.iter, PACKAGE = "jomo")

@@ -3,7 +3,7 @@ jomo1cat.MCMCchain <-
     Ycatsum1<-rep(0,ncol(Y_cat))
     for (i in 1:ncol(Y_cat)) {
       if (min(as.numeric(Y_cat[!is.na(Y_cat[,i]),i]))==0) {
-        Y_cat[,i]<-factor(as.numeric(Y_cat[,i])+1)
+        Y_cat[!is.na(Y_cat[,i]),i]<-factor(as.numeric(Y_cat[!is.na(Y_cat[,i]),i])+1)
         Ycatsum1[i]<-1
       }
     }
@@ -51,11 +51,6 @@ jomo1cat.MCMCchain <-
     for (i in 1:nrow(Yi)) for (j in 1:ncol(Yi)) if (is.na(Yimp[i,j])) Yimp2[i,j]=meanobs[j]
     .Call("MCMCjomo1mix", Y, Yimp, Yimp2, Y_cat, X,betait,betapost,covit,omegapost, nburn, Sp,Y_numcat, 0, out.iter, PACKAGE = "jomo")
     imp[(nrow(Y)+1):(2*nrow(Y)),1:ncol(Y)]=Y_cat
-    for (i in 1:ncol(Y)) {
-      if (Ycatsum1[i]==1) {
-        imp[,i]<-factor(as.numeric(imp[,i])-1)                   
-      }
-    }
     betapostmean<-apply(betapost, c(1,2), mean)
     omegapostmean<-apply(omegapost, c(1,2), mean)
     if (output==1) {
@@ -65,6 +60,14 @@ jomo1cat.MCMCchain <-
       print(omegapostmean)
     }
     imp<-data.frame(imp)
+    for (i in 1:ncol(Y)) {
+      if (Ycatsum1[i]==1) {
+        imp[,i]<-as.factor(imp[,i]-1)                  
+      }
+      else {
+        imp[,i]<-as.factor(imp[,i]) 
+      }
+    }
     if (is.null(colnamycat)) colnamycat=paste("Y", 1:ncol(Y_cat), sep = "")
     if (is.null(colnamx)) colnamx=paste("X", 1:ncol(X), sep = "")
     colnames(imp)<-c(colnamycat,colnamx,"Imputation","id")

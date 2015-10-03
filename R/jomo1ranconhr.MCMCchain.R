@@ -52,7 +52,6 @@ jomo1ranconhr.MCMCchain <-
     upostall<-array(0, dim=c(nrow(up),ncol(up),nburn))
     covupost<- array(0, dim=c(nrow(covu),ncol(covu),nburn))
     meanobs<-colMeans(Y,na.rm=TRUE)
-    varobs<-apply(Y,2,sd,na.rm=TRUE)
     for (i in 1:nrow(Y)) for (j in 1:ncol(Y)) if (is.na(Yimp[i,j])) Yimp[i,j]=meanobs[j]
     #for (i in 1:nrow(Y)) for (j in 1:ncol(Y)) if (is.na(Yimp[i,j])) Yimp[i,j]=rnorm(1,mean=meanobs[j], sd=0.01)
     if (meth=="fixed") {

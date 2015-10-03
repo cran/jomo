@@ -3,7 +3,7 @@ jomo1mix <-
     Ycatsum1<-rep(0,ncol(Y_cat))
     for (i in 1:ncol(Y_cat)) {
       if (min(as.numeric(Y_cat[!is.na(Y_cat[,i]),i]))==0) {
-        Y_cat[,i]<-factor(as.numeric(Y_cat[,i])+1)
+        Y_cat[!is.na(Y_cat[,i]),i]<-factor(as.numeric(Y_cat[!is.na(Y_cat[,i]),i])+1)
         Ycatsum1[i]<-1
       }
     }
@@ -74,11 +74,6 @@ jomo1mix <-
       imp[(i*nrow(X)+1):((i+1)*nrow(X)),(ncol(Y_con)+1):ncol(Y)]=Y_cat
       if (output==1) cat("Imputation number ", i, "registered", "\n")
     }
-    for (i in 1:ncol(Y_cat)) {
-      if (Ycatsum1[i]==1) {
-        imp[,(ncol(Y_con)+i)]<-factor(as.numeric(imp[,(ncol(Y_con)+i)])-1)                   
-      }
-    }
     betapostmean<-apply(betapost, c(1,2), mean)
     omegapostmean<-apply(omegapost, c(1,2), mean)
     if (output==1) {
@@ -88,6 +83,14 @@ jomo1mix <-
       print(omegapostmean)
     }
     imp<-data.frame(imp)
+    for (i in 1:ncol(Y_cat)) {
+      if (Ycatsum1[i]==1) {
+        imp[,(ncol(Y_con)+i)]<-as.factor(imp[,(ncol(Y_con)+i)]-1)                  
+      }
+      else {
+        imp[,(ncol(Y_con)+i)]<-as.factor(imp[,(ncol(Y_con)+i)]) 
+      }
+    }
     if (is.null(colnamycat)) colnamycat=paste("Ycat", 1:ncol(Y_cat), sep = "")
     if (is.null(colnamycon)) colnamycon=paste("Ycon", 1:ncol(Y_con), sep = "")
     if (is.null(colnamx)) colnamx=paste("X", 1:ncol(X), sep = "")

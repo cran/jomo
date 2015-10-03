@@ -12,11 +12,13 @@ jomo1ran <-
         Y_con<-cbind(Y_con,Y[,i])
         colnames(Y_con)[ncon]<-colnames(Y)[i]
       }
-      else if (is.factor(Y[,i])) {
+      else {
+        if (is.factor(Y[,i])) {
         ncat=ncat+1
         Y_cat<-cbind(Y_cat,Y[,i])
         colnames(Y_cat)[ncat]<-colnames(Y)[i]
         Y_numcat<-cbind(Y_numcat,max(as.numeric(Y[!is.na(Y[,i]),i])))
+        }
       }
     }
     if (is.null(X)) X=matrix(1,nrow(Y),1)

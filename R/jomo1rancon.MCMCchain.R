@@ -49,7 +49,6 @@ jomo1rancon.MCMCchain<- function(Y, X=matrix(1,nrow(Y),1), Z=matrix(1,nrow(Y),1)
   upostall<-array(0, dim=c(nrow(up),ncol(up),nburn))
   covupost<- array(0, dim=c(nrow(covu),ncol(covu),nburn))
   meanobs<-colMeans(Y,na.rm=TRUE)
-  varobs<-apply(Y,2,sd,na.rm=TRUE)
   for (i in 1:nrow(Y)) for (j in 1:ncol(Y)) if (is.na(Yimp[i,j])) Yimp[i,j]=meanobs[j]
   #for (i in 1:nrow(Y)) for (j in 1:ncol(Y)) if (is.na(Yimp[i,j])) Yimp[i,j]=rnorm(1,mean=meanobs[j], sd=0.01)
   .Call("MCMCjomo1rancon", Y, Yimp, Yimp2, X, Z, clus, betait, uit, betapost, upostall, covit, omegapost, covuit, covupost, nburn, Sp, Sup,out.iter, PACKAGE = "jomo")

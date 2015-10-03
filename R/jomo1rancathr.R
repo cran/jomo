@@ -3,7 +3,7 @@ jomo1rancathr <-
     Ycatsum1<-rep(0,ncol(Y_cat))
     for (i in 1:ncol(Y_cat)) {
       if (min(as.numeric(Y_cat[!is.na(Y_cat[,i]),i]))==0) {
-        Y_cat[,i]<-factor(as.numeric(Y_cat[,i])+1)
+        Y_cat[!is.na(Y_cat[,i]),i]<-factor(as.numeric(Y_cat[!is.na(Y_cat[,i]),i])+1)
         Ycatsum1[i]<-1
       }
     }
@@ -114,11 +114,6 @@ jomo1rancathr <-
       imp[(i*nrow(X)+1):((i+1)*nrow(X)),1:ncol(Y)]=Y_cat
       if (output==1) cat("Imputation number ", i, "registered", "\n")
     }
-    for (i in 1:ncol(Y)) {
-      if (Ycatsum1[i]==1) {
-        imp[,i]<-factor(as.numeric(imp[,i])-1)                   
-      }
-    }
     betapostmean<-apply(betapost, c(1,2), mean)
     upostmean<-apply(upostall, c(1,2), mean)
     omegapostmean<-apply(omegapost, c(1,2), mean)
@@ -134,6 +129,14 @@ jomo1rancathr <-
       print(covupostmean)
     }
     imp<-data.frame(imp)
+    for (i in 1:ncol(Y)) {
+      if (Ycatsum1[i]==1) {
+        imp[,i]<-as.factor(imp[,i]-1)                  
+      }
+      else {
+        imp[,i]<-as.factor(imp[,i]) 
+      }
+    }
     if (is.null(colnamycat)) colnamycat=paste("Ycat", 1:ncol(Y_cat), sep = "")
     if (is.null(colnamz)) colnamz=paste("Z", 1:ncol(Z), sep = "")
     if (is.null(colnamx)) colnamx=paste("X", 1:ncol(X), sep = "")
