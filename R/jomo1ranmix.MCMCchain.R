@@ -1,11 +1,10 @@
 jomo1ranmix.MCMCchain <-
   function(Y_con, Y_cat, Y_numcat, X=matrix(1,nrow(Y_cat),1), Z=matrix(1,nrow(Y_cat),1), clus, betap=matrix(0,ncol(X),(ncol(Y_con)+(sum(Y_numcat)-length(Y_numcat)))), up=matrix(0,nrow(unique(clus)),ncol(Z)*(ncol(Y_con)+(sum(Y_numcat)-length(Y_numcat)))), covp=diag(1,ncol(betap)), covu=diag(1,ncol(up)), Sp=diag(1,ncol(covp)), Sup=diag(1,ncol(covu)), nburn=100, output=1, out.iter=10) {
-    Ycatsum1<-rep(0,ncol(Y_cat))
+    previous_levels<-list()
     for (i in 1:ncol(Y_cat)) {
-      if (min(as.numeric(Y_cat[!is.na(Y_cat[,i]),i]))==0) {
-        Y_cat[!is.na(Y_cat[,i]),i]<-factor(as.numeric(Y_cat[!is.na(Y_cat[,i]),i])+1)
-        Ycatsum1[i]<-1
-      }
+      Y_cat[,i]<-factor(Y_cat[,i])
+      previous_levels[[i]]<-levels(Y_cat[,i])
+      levels(Y_cat[,i])<-1:nlevels(Y_cat[,i])
     }
     for (i in 1:ncol(X)) {
       if (is.factor(X[,i])) X[,i]<-as.numeric(X[,i])
@@ -35,11 +34,11 @@ jomo1ranmix.MCMCchain <-
     colnamycat<-colnames(Y_cat)
     colnamx<-colnames(X)
     colnamz<-colnames(Z)
-    Y_con<-as.matrix(Y_con,nrow(Y_con),ncol(Y_con))
-    Y_cat<-as.matrix(Y_cat,nrow(Y_cat),ncol(Y_cat))
-    X<-as.matrix(X,nrow(X),ncol(X))
-    Z<-as.matrix(Z,nrow(Z),ncol(Z))
-    clus<-as.matrix(clus,nrow(clus),ncol(clus))
+    Y_con<-data.matrix(Y_con)
+    Y_cat<-data.matrix(Y_cat)
+    X<-data.matrix(X)
+    Z<-data.matrix(Z)
+    clus<-data.matrix(clus)
     Y=cbind(Y_con,Y_cat)
     Yi=cbind(Y_con, matrix(0,nrow(Y_con),(sum(Y_numcat)-length(Y_numcat))))
     h=1
@@ -90,12 +89,8 @@ jomo1ranmix.MCMCchain <-
     }
     imp<-data.frame(imp)
     for (i in 1:ncol(Y_cat)) {
-      if (Ycatsum1[i]==1) {
-        imp[,(ncol(Y_con)+i)]<-as.factor(imp[,(ncol(Y_con)+i)]-1)                  
-      }
-      else {
-        imp[,(ncol(Y_con)+i)]<-as.factor(imp[,(ncol(Y_con)+i)]) 
-      }
+      imp[,(ncol(Y_con)+i)]<-as.factor(imp[,(ncol(Y_con)+i)]) 
+      levels(imp[,(ncol(Y_con)+i)])<-previous_levels[[i]]
     }
     if (is.null(colnamycat)) colnamycat=paste("Ycat", 1:ncol(Y_cat), sep = "")
     if (is.null(colnamycon)) colnamycon=paste("Ycon", 1:ncol(Y_con), sep = "")

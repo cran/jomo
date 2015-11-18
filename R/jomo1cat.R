@@ -1,11 +1,10 @@
 jomo1cat <-
   function(Y_cat, Y_numcat, X=matrix(1,nrow(Y_cat),1), betap=matrix(0,ncol(X),((sum(Y_numcat)-length(Y_numcat)))), covp=diag(1,ncol(betap)), Sp=diag(1,ncol(betap)), nburn=100, nbetween=100, nimp=5, output=1, out.iter=10) {
-    Ycatsum1<-rep(0,ncol(Y_cat))
+    previous_levels<-list()
     for (i in 1:ncol(Y_cat)) {
-      if (min(as.numeric(Y_cat[!is.na(Y_cat[,i]),i]))==0) {
-            Y_cat[!is.na(Y_cat[,i]),i]<-factor(as.numeric(Y_cat[!is.na(Y_cat[,i]),i])+1)
-            Ycatsum1[i]<-1
-      }
+      Y_cat[,i]<-factor(Y_cat[,i])
+      previous_levels[[i]]<-levels(Y_cat[,i])
+      levels(Y_cat[,i])<-1:nlevels(Y_cat[,i])
     }
     for (i in 1:ncol(X)) {
       if (is.factor(X[,i])) X[,i]<-as.numeric(X[,i])
@@ -21,8 +20,8 @@ jomo1cat <-
     }    
     colnamycat<-colnames(Y_cat)
     colnamx<-colnames(X)
-    Y_cat<-as.matrix(Y_cat,nrow(Y_cat),ncol(Y_cat))
-    X<-as.matrix(X,nrow(X),ncol(X))
+    Y_cat<-data.matrix(Y_cat)
+    X<-data.matrix(X)
     Y=cbind(Y_cat)
     Yi=cbind(matrix(0,nrow(Y_cat),(sum(Y_numcat)-length(Y_numcat))))
     h=1
@@ -81,12 +80,8 @@ jomo1cat <-
     }
     imp<-data.frame(imp)
     for (i in 1:ncol(Y)) {
-      if (Ycatsum1[i]==1) {
-        imp[,i]<-as.factor(imp[,i]-1)                  
-      }
-      else {
         imp[,i]<-as.factor(imp[,i]) 
-      }
+        levels(imp[,i])<-previous_levels[[i]]
     }
     if (is.null(colnamycat)) colnamycat=paste("Y", 1:ncol(Y_cat), sep = "")
     if (is.null(colnamx)) colnamx=paste("X", 1:ncol(X), sep = "")

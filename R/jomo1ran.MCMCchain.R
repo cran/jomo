@@ -17,7 +17,7 @@ jomo1ran.MCMCchain <-
         ncat=ncat+1
         Y_cat<-cbind(Y_cat,Y[,i])
         colnames(Y_cat)[ncat]<-colnames(Y)[i]
-        Y_numcat<-cbind(Y_numcat,max(as.numeric(Y[!is.na(Y[,2]),i])))
+        Y_numcat<-cbind(Y_numcat,nlevels(Y[,i]))
         }
       }
     }

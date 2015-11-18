@@ -14,8 +14,8 @@ jomo1con.MCMCchain<- function(Y, X=matrix(1,nrow(Y),1), betap=matrix(0,ncol(X),n
   nimp=1
   colnamy<-colnames(Y)
   colnamx<-colnames(X)
-  Y<-as.matrix(Y,nrow(Y),ncol(Y))
-  X<-as.matrix(X,nrow(X),ncol(X))
+  Y<-data.matrix(Y)
+  X<-data.matrix(X)
   if (output!=1) out.iter=nburn+2
   imp=matrix(0,nrow(Y)*(nimp+1),ncol(Y)+ncol(X)+2)
   imp[1:nrow(Y),1:ncol(Y)]=Y

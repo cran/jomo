@@ -1,6 +1,5 @@
 \name{jomo-package}
 \alias{jomo-package}
-\alias{jomo}
 \docType{package}
 \title{
 A package for Multilevel Joint Modelling Multiple Imputation

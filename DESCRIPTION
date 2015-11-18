@@ -1,15 +1,15 @@
 Package: jomo
 Type: Package
 Title: Multilevel Joint Modelling Multiple Imputation
-Version: 1.2-1
-Date: 2015-10-02
+Version: 1.2-2
+Date: 2015-11-17
 Author: Matteo Quartagno, James Carpenter
 Maintainer: Matteo Quartagno <matteo.quartagno@lshtm.ac.uk>
 Description: Similarly to Schafer's package pan, jomo is a package for multilevel joint modelling multiple imputation.
  Novel aspects of jomo are the possibility of handling binary and categorical data through latent normal variables and the option to use cluster-specific covariance matrices. 
 License: GPL-2
 Suggests: BaBooN
-Packaged: 2015-10-02 20:10:07 UTC; lsh366965
 NeedsCompilation: yes
+Packaged: 2015-11-17 13:51:52 UTC; lsh366965
 Repository: CRAN
-Date/Publication: 2015-10-03 07:58:01
+Date/Publication: 2015-11-18 09:31:24

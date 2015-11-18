@@ -29,10 +29,10 @@ jomo1ranconhr.MCMCchain <-
     colnamy<-colnames(Y)
     colnamx<-colnames(X)
     colnamz<-colnames(Z)
-    Y<-as.matrix(Y,nrow(Y),ncol(Y))
-    X<-as.matrix(X,nrow(X),ncol(X))
-    Z<-as.matrix(Z,nrow(Z),ncol(Z))
-    clus<-as.matrix(clus,nrow(clus),ncol(clus))
+    Y<-data.matrix(Y)
+    X<-data.matrix(X)
+    Z<-data.matrix(Z)
+    clus<-data.matrix(clus)
     if (output!=1) out.iter=nburn+2
     imp=matrix(0,nrow(Y)*(nimp+1),ncol(Y)+ncol(X)+ncol(Z)+3)
     imp[1:nrow(Y),1:ncol(Y)]=Y
