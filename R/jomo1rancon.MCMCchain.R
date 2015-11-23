@@ -1,4 +1,7 @@
 jomo1rancon.MCMCchain<- function(Y, X=matrix(1,nrow(Y),1), Z=matrix(1,nrow(Y),1), clus, betap=matrix(0,ncol(X),ncol(Y)), up=matrix(0,nrow(unique(clus)),ncol(Z)*ncol(Y)), covp=diag(1,ncol(Y)), covu=diag(1,ncol(Y)*ncol(Z)), Sp=diag(1,ncol(Y)), Sup=diag(1,ncol(Y)*ncol(Z)), nburn=100, output=1, out.iter=10) {
+  clus<-factor(unlist(clus))
+  previous_levels_clus<-levels(clus)
+  levels(clus)<-0:(nlevels(clus)-1)
   for (i in 1:ncol(X)) {
     if (is.factor(X[,i])) X[,i]<-as.numeric(X[,i])
   }
@@ -27,8 +30,11 @@ jomo1rancon.MCMCchain<- function(Y, X=matrix(1,nrow(Y),1), Z=matrix(1,nrow(Y),1)
   colnamx<-colnames(X)
   colnamz<-colnames(Z)
   Y<-data.matrix(Y)
+  storage.mode(Y) <- "numeric"    
   X<-data.matrix(X)
+  storage.mode(X) <- "numeric"    
   Z<-data.matrix(Z)
+  storage.mode(Z) <- "numeric"    
   clus<-data.matrix(clus)
   if (output!=1) out.iter=nburn+2
   imp=matrix(0,nrow(Y)*(nimp+1),ncol(Y)+ncol(X)+ncol(Z)+3)
@@ -70,6 +76,8 @@ jomo1rancon.MCMCchain<- function(Y, X=matrix(1,nrow(Y),1), Z=matrix(1,nrow(Y),1)
     print(covupostmean)
   }
   imp<-data.frame(imp)
+  levels(imp[,(ncol(Y)+ncol(X)+ncol(Z)+1)])<-previous_levels_clus
+  levels(clus)<-previous_levels_clus
   if (is.null(colnamy)) colnamy=paste("Y", 1:ncol(Y), sep = "")
   if (is.null(colnamz)) colnamz=paste("Z", 1:ncol(Z), sep = "")
   if (is.null(colnamx)) colnamx=paste("X", 1:ncol(X), sep = "")

@@ -23,8 +23,11 @@ jomo1mix.MCMCchain <-
     colnamycat<-colnames(Y_cat)
     colnamx<-colnames(X)
     Y_con<-data.matrix(Y_con)
+    storage.mode(Y_con) <- "numeric"    
     Y_cat<-data.matrix(Y_cat)
+    storage.mode(Y_cat) <- "numeric"    
     X<-data.matrix(X)
+    storage.mode(X) <- "numeric"    
     Y=cbind(Y_con,Y_cat)
     Yi=cbind(Y_con, matrix(0,nrow(Y_con),(sum(Y_numcat)-length(Y_numcat))))
     h=1

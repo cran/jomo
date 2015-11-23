@@ -1,5 +1,8 @@
 jomo1ranmixhr.MCMCchain <-
   function(Y_con, Y_cat, Y_numcat, X=matrix(1,nrow(Y_cat),1), Z=matrix(1,nrow(Y_cat),1), clus, betap=matrix(0,ncol(X),(ncol(Y_con)+(sum(Y_numcat)-length(Y_numcat)))), up=matrix(0,nrow(unique(clus)),ncol(Z)*(ncol(Y_con)+(sum(Y_numcat)-length(Y_numcat)))), covp=matrix(diag(1,ncol(betap)),ncol(betap)*nrow(unique(clus)),ncol(betap),2), covu=diag(1,ncol(up)), Sp=diag(1,ncol(betap)), Sup=diag(1,ncol(up)), nburn=100,a=ncol(betap),meth="random", output=1, out.iter=10) {
+    clus<-factor(unlist(clus))
+    previous_levels_clus<-levels(clus)
+    levels(clus)<-0:(nlevels(clus)-1)
     previous_levels<-list()
     for (i in 1:ncol(Y_cat)) {
       Y_cat[,i]<-factor(Y_cat[,i])
@@ -37,9 +40,13 @@ jomo1ranmixhr.MCMCchain <-
     colnamx<-colnames(X)
     colnamz<-colnames(Z)
     Y_con<-data.matrix(Y_con)
+    storage.mode(Y_con) <- "numeric"    
     Y_cat<-data.matrix(Y_cat)
+    storage.mode(Y_cat) <- "numeric"    
     X<-data.matrix(X)
+    storage.mode(X) <- "numeric"    
     Z<-data.matrix(Z)
+    storage.mode(Z) <- "numeric"    
     clus<-data.matrix(clus)
     Y=cbind(Y_con,Y_cat)
     Yi=cbind(Y_con, matrix(0,nrow(Y_con),(sum(Y_numcat)-length(Y_numcat))))
@@ -101,6 +108,8 @@ jomo1ranmixhr.MCMCchain <-
       imp[,(ncol(Y_con)+i)]<-as.factor(imp[,(ncol(Y_con)+i)]) 
       levels(imp[,(ncol(Y_con)+i)])<-previous_levels[[i]]
     }
+    levels(imp[,(ncol(Y)+ncol(X)+ncol(Z)+1)])<-previous_levels_clus
+    levels(clus)<-previous_levels_clus
     if (is.null(colnamycat)) colnamycat=paste("Ycat", 1:ncol(Y_cat), sep = "")
     if (is.null(colnamycon)) colnamycon=paste("Ycon", 1:ncol(Y_con), sep = "")
     if (is.null(colnamz)) colnamz=paste("Z", 1:ncol(Z), sep = "")

@@ -20,7 +20,7 @@ jomo1mix(Y_con, Y_cat, Y_numcat, X=matrix(1,nrow(Y_cat),1),
 A data frame, or matrix, with continuous responses of the joint imputation model. Rows correspond to different observations, while columns are different variables. Missing values are coded as NA. If no continuous outcomes are present in the model, jomo1cat should be used instead.
 }
   \item{Y_cat}{
-A data frame, or matrix, with categorical (or binary) responses of the joint imputation model. Rows correspond to different observations, while columns are different variables. Categories must be integer numbers from 1 to N. Missing values are coded as NA.
+A data frame, or matrix, with categorical (or binary) responses of the joint imputation model. Rows correspond to different observations, while columns are different variables. Missing values are coded as NA.
 }
   \item{Y_numcat}{
 A vector with the number of categories in each categorical (or binary) variable.

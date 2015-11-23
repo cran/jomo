@@ -16,7 +16,7 @@ jomo1cat(Y_cat, Y_numcat, X=matrix(1,nrow(Y_cat),1),
 %- maybe also 'usage' for other objects documented here.
 \arguments{
   \item{Y_cat}{
-A data frame, or matrix, with categorical (or binary) responses of the joint imputation model. Rows correspond to different observations, while columns are different variables. Categories must be integer numbers from 1 to N. Missing values are coded as NA.
+A data frame, or matrix, with categorical (or binary) responses of the joint imputation model. Rows correspond to different observations, while columns are different variables. Missing values are coded as NA.
 }
   \item{Y_numcat}{
 A vector with the number of categories in each categorical (or binary) variable.

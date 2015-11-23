@@ -29,7 +29,7 @@ A data frame, or matrix, for covariates associated to random effects in the join
 
 }
   \item{clus}{
-A data frame, or matrix, containing the cluster indicator for each observation. Cluster needs to be labeled with an integer number ranging from 0 to nclus-1.
+A data frame, or matrix, containing the cluster indicator for each observation. 
 }
   \item{betap}{
 Starting value for beta, the vector(s) of fixed effects. Rows index different covariates and columns index different outcomes. The default is a matrix of zeros.

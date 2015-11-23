@@ -19,7 +19,7 @@ covp=diag(1,ncol(betap)), Sp=diag(1,ncol(betap)), nburn=100, output=1, out.iter=
 A data frame, or matrix, with continuous responses of the joint imputation model. Rows correspond to different observations, while columns are different variables. Missing values are coded as NA. If no continuous outcomes are present in the model, jomo1cat should be used instead.
 }
   \item{Y_cat}{
-A data frame, or matrix, with categorical (or binary) responses of the joint imputation model. Rows correspond to different observations, while columns are different variables. Categories must be integer numbers from 1 to N. Missing values are coded as NA.
+A data frame, or matrix, with categorical (or binary) responses of the joint imputation model. Rows correspond to different observations, while columns are different variables. Missing values are coded as NA.
 }
   \item{Y_numcat}{
 A vector with the number of categories in each categorical (or binary) variable.

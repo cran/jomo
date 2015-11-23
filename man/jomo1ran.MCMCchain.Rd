@@ -25,7 +25,7 @@ A data frame, or matrix, with covariates of the joint imputation model. Rows cor
 A data frame, or matrix, for covariates associated to random effects in the joint imputation model. Rows correspond to different observations, while columns are different variables. Missing values are not allowed in these variables. In case we want an intercept, a column of 1 is needed. The default is a column of 1.
 }
   \item{clus}{
-A data frame, or matrix, containing the cluster indicator for each observation. Cluster needs to be labeled with an integer number ranging from 0 to nclus-1.
+A data frame, or matrix, containing the cluster indicator for each observation. 
 }
   \item{betap}{
 Starting value for beta, the vector(s) of fixed effects. Rows index different covariates and columns index different outcomes. For each n-category variable we define n-1 latent normals. The default is a matrix of zeros.

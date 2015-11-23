@@ -18,7 +18,7 @@ jomo1rancat( Y_cat, Y_numcat, X=matrix(1,nrow(Y_cat),1), Z=matrix(1,nrow(Y_cat),
 %- maybe also 'usage' for other objects documented here.
 \arguments{
    \item{Y_cat}{
-A data frame, or matrix, with categorical (or binary) responses of the joint imputation model. Rows correspond to different observations, while columns are different variables. Categories must be integer numbers from 1 to N. Missing values are coded as NA.
+A data frame, or matrix, with categorical (or binary) responses of the joint imputation model. Rows correspond to different observations, while columns are different variables. Missing values are coded as NA.
 }
   \item{Y_numcat}{
 A vector with the number of categories in each categorical (or binary) variable.
@@ -30,7 +30,7 @@ A data frame, or matrix, with covariates of the joint imputation model. Rows cor
 A data frame, or matrix, for covariates associated to random effects in the joint imputation model. Rows correspond to different observations, while columns are different variables. Missing values are not allowed in these variables. In case we want an intercept, a column of 1 is needed. The default is a column of 1.
 }
   \item{clus}{
-A data frame, or matrix, containing the cluster indicator for each observation. Cluster needs to be labeled with an integer number ranging from 0 to nclus-1.
+A data frame, or matrix, containing the cluster indicator for each observation. 
 }
   \item{betap}{
 Starting value for beta, the vector(s) of fixed effects. Rows index different covariates and columns index different outcomes. For each n-category variable we define n-1 latent normals. The default is a matrix of zeros.

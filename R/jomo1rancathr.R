@@ -1,5 +1,8 @@
 jomo1rancathr <-
   function(Y_cat, Y_numcat, X=matrix(1,nrow(Y_cat),1), Z=matrix(1,nrow(Y_cat),1), clus, betap=matrix(0,ncol(X),((sum(Y_numcat)-length(Y_numcat)))), up=matrix(0,nrow(unique(clus)),ncol(Z)*((sum(Y_numcat)-length(Y_numcat)))), covp=matrix(diag(1,ncol(betap)),ncol(betap)*nrow(unique(clus)),ncol(betap),2), covu=diag(1,ncol(up)), Sp=diag(1,ncol(betap)), Sup=diag(1,ncol(up)), nburn=100, nbetween=100, nimp=5,a=ncol(betap),meth="random", output=1, out.iter=10) {
+    clus<-factor(unlist(clus))
+    previous_levels_clus<-levels(clus)
+    levels(clus)<-0:(nlevels(clus)-1)
     previous_levels<-list()
     for (i in 1:ncol(Y_cat)) {
       Y_cat[,i]<-factor(Y_cat[,i])
@@ -35,8 +38,11 @@ jomo1rancathr <-
     colnamx<-colnames(X)
     colnamz<-colnames(Z)
     Y_cat<-data.matrix(Y_cat)
+    storage.mode(Y_cat) <- "numeric"    
     X<-data.matrix(X)
+    storage.mode(X) <- "numeric"    
     Z<-data.matrix(Z)
+    storage.mode(Z) <- "numeric"    
     clus<-data.matrix(clus)
     Y=cbind(Y_cat)
     Yi=cbind( matrix(0,nrow(Y_cat),(sum(Y_numcat)-length(Y_numcat))))
@@ -132,6 +138,8 @@ jomo1rancathr <-
       imp[,i]<-as.factor(imp[,i]) 
       levels(imp[,i])<-previous_levels[[i]]
     }
+    levels(imp[,(ncol(Y)+ncol(X)+ncol(Z)+1)])<-previous_levels_clus
+    levels(clus)<-previous_levels_clus
     if (is.null(colnamycat)) colnamycat=paste("Ycat", 1:ncol(Y_cat), sep = "")
     if (is.null(colnamz)) colnamz=paste("Z", 1:ncol(Z), sep = "")
     if (is.null(colnamx)) colnamx=paste("X", 1:ncol(X), sep = "")
