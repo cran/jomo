@@ -9,24 +9,27 @@ A tool to check convergence of the MCMC
 This function is similar to jomo1ranmixhr, but it returns the values of all the parameters in the model at each step of the MCMC instead of the imputations. It is useful to check the convergence of the MCMC sampler.
 }
 \usage{
-jomo1ranmixhr.MCMCchain(Y_con, Y_cat, Y_numcat, X=matrix(1,nrow(Y_cat),1), 
-Z=matrix(1,nrow(Y_cat),1), clus, 
-betap=matrix(0,ncol(X),(ncol(Y_con)+(sum(Y_numcat)-length(Y_numcat)))), 
-up=matrix(0,nrow(unique(clus)),ncol(Z)*(ncol(Y_con)+(sum(Y_numcat)-length(Y_numcat)))), 
-covp=matrix(diag(1,ncol(betap)),ncol(betap)*nrow(unique(clus)),ncol(betap),2), 
-covu=diag(1,ncol(up)), Sp=diag(1,ncol(betap)), Sup=diag(1,ncol(up)), 
-nburn=100,a=ncol(betap),meth="random", output=1, out.iter=10) 
+jomo1ranmixhr.MCMCchain(Y.con, Y.cat, Y.numcat, X=matrix(1,nrow(Y.cat),1), 
+Z=matrix(1,nrow(Y.cat),1), clus, 
+beta.start=matrix(0,ncol(X),(ncol(Y.con)+(sum(Y.numcat)-length(Y.numcat)))), 
+u.start=matrix(0,nrow(unique(clus)),
+          ncol(Z)*(ncol(Y.con)+(sum(Y.numcat)-length(Y.numcat)))), 
+l1cov.start=matrix(diag(1,ncol(beta.start)),
+          ncol(beta.start)*nrow(unique(clus)),ncol(beta.start),2), 
+l2cov.start=diag(1,ncol(u.start)), l1cov.prior=diag(1,ncol(beta.start)), 
+l2cov.prior=diag(1,ncol(u.start)), nburn=100,a=ncol(beta.start),
+meth="random", output=1, out.iter=10) 
 
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
-  \item{Y_con}{
+  \item{Y.con}{
 A data frame, or matrix, with continuous responses of the joint imputation model. Rows correspond to different observations, while columns are different variables. Missing values are coded as NA. If no continuous outcomes are present in the model, jomo1rancathr must be used instead.
 }
-  \item{Y_cat}{
+  \item{Y.cat}{
 A data frame, or matrix, with categorical (or binary) responses of the joint imputation model. Rows correspond to different observations, while columns are different variables. Missing values are coded as NA.
 }
-  \item{Y_numcat}{
+  \item{Y.numcat}{
 A vector with the number of categories in each categorical (or binary) variable.
 }
   \item{X}{
@@ -38,22 +41,22 @@ A data frame, or matrix, for covariates associated to random effects in the join
   \item{clus}{
 A data frame, or matrix, containing the cluster indicator for each observation.
 }
-  \item{betap}{
+  \item{beta.start}{
 Starting value for beta, the vector(s) of fixed effects. Rows index different covariates and columns index different outcomes. For each n-category variable we define n-1 latent normals. The default is a matrix of zeros.
 }
-  \item{up}{
+  \item{u.start}{
 A matrix where different rows are the starting values within each cluster for the random effects estimates u. The default is a matrix of zeros.
 }
-  \item{covp}{
+  \item{l1cov.start}{
 Starting value for the covariance matrices, pulled one above the other in column. Dimension of each square matrix is equal to the number of outcomes (continuous plus latent normals) in the imputation model. The default is the identity matrix for each cluster.
 }
-  \item{covu}{
+  \item{l2cov.start}{
 Starting value for the level 2 covariance matrix. Dimension of this square matrix is equal to the number of outcomes (continuous plus latent normals) in the imputation model times the number of random effects. The default is an identity matrix.
 }
-   \item{Sp}{
+   \item{l1cov.prior}{
 Scale matrix for the inverse-Wishart prior for the covariance matrices. The default is the identity matrix.
 }
-  \item{Sup}{
+  \item{l2cov.prior}{
 Scale matrix for the inverse-Wishart prior for the level 2 covariance matrix. The default is the identity matrix.
 }
    \item{nburn}{
@@ -92,26 +95,27 @@ attach(mldata)
 # nimp, nburn and nbetween are smaller than they should. This is
 #just because of CRAN policies on the examples.
 
-Y_con=data.frame(measure,age)
-Y_cat=data.frame(social)
-Y_numcat=matrix(4,1,1)
+Y.con=data.frame(measure,age)
+Y.cat=data.frame(social)
+Y.numcat=matrix(4,1,1)
 X=data.frame(rep(1,1000),sex)
 Z<-data.frame(rep(1,1000))
 clus<-data.frame(city)
-betap<-matrix(0,2,5)
-up<-matrix(0,10,5)
-covp<-matrix(diag(1,5),50,5,2)
-covu<-diag(1,5)
-Sp=diag(1,5);
-Sup=diag(1,5);
+beta.start<-matrix(0,2,5)
+u.start<-matrix(0,10,5)
+l1cov.start<-matrix(diag(1,5),50,5,2)
+l2cov.start<-diag(1,5)
+l1cov.prior=diag(1,5);
+l2cov.prior=diag(1,5);
 nburn=as.integer(80);
 
 a=6
 
 # And we are finally able to run the imputation:
 
-imp<-jomo1ranmixhr.MCMCchain(Y_con, Y_cat, Y_numcat, X,Z,clus,betap,up,covp, covu,Sp,Sup,
-        nburn, a)
+imp<-jomo1ranmixhr.MCMCchain(Y.con, Y.cat, Y.numcat, X,Z,clus,beta.start,u.start,
+    l1cov.start, l2cov.start,l1cov.prior,l2cov.prior,nburn, a)
+    
 #We can check the convergence of the first element of beta:
 
 plot(c(1:nburn),imp$collectbeta[1,1,1:nburn],type="l")

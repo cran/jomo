@@ -10,8 +10,8 @@ This function is similar to jomo1con, but it returns the values of all the param
 }
 \usage{
 jomo1con.MCMCchain(Y, X=matrix(1,nrow(Y),1), 
-betap=matrix(0,ncol(X),ncol(Y)), covp=diag(1,ncol(Y)), 
-Sp=diag(1,ncol(Y)), nburn=100, output=1, out.iter=10) 
+beta.start=matrix(0,ncol(X),ncol(Y)), l1cov.start=diag(1,ncol(Y)), 
+l1cov.prior=diag(1,ncol(Y)), nburn=100, output=1, out.iter=10) 
 
 }
 %- maybe also 'usage' for other objects documented here.
@@ -22,13 +22,13 @@ A data frame, or matrix, with responses of the joint imputation model. Rows corr
   \item{X}{
 A data frame, or matrix, with covariates of the joint imputation model. Rows correspond to different observations, while columns are different variables. Missing values are not allowed in these variables. In case we want an intercept, a column of 1 is needed. The default is a column of 1.
 }
-  \item{betap}{
+  \item{beta.start}{
 Starting value for beta, the vector(s) of fixed effects. Rows index different covariates and columns index different outcomes. The default is a matrix of zeros.
 }
-  \item{covp}{
+  \item{l1cov.start}{
 Starting value for the covariance matrix. Dimension of this square matrix is equal to the number of outcomes in the imputation model. The default is the identity matrix.
 }
-  \item{Sp}{
+  \item{l1cov.prior}{
 Scale matrix for the inverse-Wishart prior for the covariance matrix. The default is the identity matrix.
 }
   \item{nburn}{
@@ -57,14 +57,14 @@ attach(sldata)
 
 Y=data.frame(measure,age)
 X=data.frame(rep(1,300),sex)
-betap<-matrix(0,2,2)
-covp<-diag(1,2)
-Sp=diag(1,2);
+beta.start<-matrix(0,2,2)
+l1cov.start<-diag(1,2)
+l1cov.prior=diag(1,2);
 nburn=as.integer(200);
 
 # Then we run he function:
 
-imp<-jomo1con.MCMCchain(Y,X,betap,covp,Sp,nburn)
+imp<-jomo1con.MCMCchain(Y,X,beta.start,l1cov.start,l1cov.prior,nburn)
 
 #We can check the convergence of the first element of beta:
 

@@ -1,4 +1,4 @@
-jomo1rancon.MCMCchain<- function(Y, X=matrix(1,nrow(Y),1), Z=matrix(1,nrow(Y),1), clus, betap=matrix(0,ncol(X),ncol(Y)), up=matrix(0,nrow(unique(clus)),ncol(Z)*ncol(Y)), covp=diag(1,ncol(Y)), covu=diag(1,ncol(Y)*ncol(Z)), Sp=diag(1,ncol(Y)), Sup=diag(1,ncol(Y)*ncol(Z)), nburn=100, output=1, out.iter=10) {
+jomo1rancon.MCMCchain<- function(Y, X=matrix(1,nrow(Y),1), Z=matrix(1,nrow(Y),1), clus, beta.start=matrix(0,ncol(X),ncol(Y)), u.start=matrix(0,nrow(unique(clus)),ncol(Z)*ncol(Y)), l1cov.start=diag(1,ncol(Y)), l2cov.start=diag(1,ncol(Y)*ncol(Z)), l1cov.prior=diag(1,ncol(Y)), l2cov.prior=diag(1,ncol(Y)*ncol(Z)), nburn=100, output=1, out.iter=10) {
   clus<-factor(unlist(clus))
   previous_levels_clus<-levels(clus)
   levels(clus)<-0:(nlevels(clus)-1)
@@ -8,22 +8,22 @@ jomo1rancon.MCMCchain<- function(Y, X=matrix(1,nrow(Y),1), Z=matrix(1,nrow(Y),1)
   for (i in 1:ncol(Z)) {
     if (is.factor(Z[,i])) Z[,i]<-as.numeric(Z[,i])
   }
-  stopifnot(nrow(Y)==nrow(clus),nrow(Y)==nrow(X), nrow(betap)==ncol(X), ncol(betap)==ncol(Y),nrow(covp)==ncol(covp), nrow(covp)==ncol(Y), nrow(Sp)==ncol(Sp),nrow(Sp)==nrow(covp), nrow(Z)==nrow(Y), ncol(covu)==ncol(up), ncol(up)==ncol(Z)*ncol(Y))
-  betait=matrix(0,nrow(betap),ncol(betap))
-  for (i in 1:nrow(betap)) {
-    for (j in 1:ncol(betap)) betait[i,j]=betap[i,j]
+  stopifnot(nrow(Y)==nrow(clus),nrow(Y)==nrow(X), nrow(beta.start)==ncol(X), ncol(beta.start)==ncol(Y),nrow(l1cov.start)==ncol(l1cov.start), nrow(l1cov.start)==ncol(Y), nrow(l1cov.prior)==ncol(l1cov.prior),nrow(l1cov.prior)==nrow(l1cov.start), nrow(Z)==nrow(Y), ncol(l2cov.start)==ncol(u.start), ncol(u.start)==ncol(Z)*ncol(Y))
+  betait=matrix(0,nrow(beta.start),ncol(beta.start))
+  for (i in 1:nrow(beta.start)) {
+    for (j in 1:ncol(beta.start)) betait[i,j]=beta.start[i,j]
   }
-  covit=matrix(0,nrow(covp),ncol(covp))
-  for (i in 1:nrow(covp)) {
-    for (j in 1:ncol(covp)) covit[i,j]=covp[i,j]
+  covit=matrix(0,nrow(l1cov.start),ncol(l1cov.start))
+  for (i in 1:nrow(l1cov.start)) {
+    for (j in 1:ncol(l1cov.start)) covit[i,j]=l1cov.start[i,j]
   }   
-  uit=matrix(0,nrow(up),ncol(up))
-  for (i in 1:nrow(up)) {
-    for (j in 1:ncol(up)) uit[i,j]=up[i,j]
+  uit=matrix(0,nrow(u.start),ncol(u.start))
+  for (i in 1:nrow(u.start)) {
+    for (j in 1:ncol(u.start)) uit[i,j]=u.start[i,j]
   }
-  covuit=matrix(0,nrow(covu),ncol(covu))
-  for (i in 1:nrow(covu)) {
-    for (j in 1:ncol(covu)) covuit[i,j]=covu[i,j]
+  covuit=matrix(0,nrow(l2cov.start),ncol(l2cov.start))
+  for (i in 1:nrow(l2cov.start)) {
+    for (j in 1:ncol(l2cov.start)) covuit[i,j]=l2cov.start[i,j]
   }   
   nimp=1
   colnamy<-colnames(Y)
@@ -50,14 +50,14 @@ jomo1rancon.MCMCchain<- function(Y, X=matrix(1,nrow(Y),1), Z=matrix(1,nrow(Y),1)
   imp[(nrow(clus)+1):(2*nrow(clus)), (ncol(Y)+ncol(X)+ncol(Z)+1)]=clus
   imp[(nrow(X)+1):(2*nrow(X)), (ncol(Y)+ncol(X)+ncol(Z)+2)]=c(1:nrow(Y))
   imp[(nrow(X)+1):(2*nrow(X)), (ncol(Y)+ncol(X)+ncol(Z)+3)]=1
-  betapost<- array(0, dim=c(nrow(betap),ncol(betap),nburn))
-  omegapost<- array(0, dim=c(nrow(covp),ncol(covp),nburn))
-  upostall<-array(0, dim=c(nrow(up),ncol(up),nburn))
-  covupost<- array(0, dim=c(nrow(covu),ncol(covu),nburn))
+  betapost<- array(0, dim=c(nrow(beta.start),ncol(beta.start),nburn))
+  omegapost<- array(0, dim=c(nrow(l1cov.start),ncol(l1cov.start),nburn))
+  upostall<-array(0, dim=c(nrow(u.start),ncol(u.start),nburn))
+  covupost<- array(0, dim=c(nrow(l2cov.start),ncol(l2cov.start),nburn))
   meanobs<-colMeans(Y,na.rm=TRUE)
   for (i in 1:nrow(Y)) for (j in 1:ncol(Y)) if (is.na(Yimp[i,j])) Yimp[i,j]=meanobs[j]
   #for (i in 1:nrow(Y)) for (j in 1:ncol(Y)) if (is.na(Yimp[i,j])) Yimp[i,j]=rnorm(1,mean=meanobs[j], sd=0.01)
-  .Call("MCMCjomo1rancon", Y, Yimp, Yimp2, X, Z, clus, betait, uit, betapost, upostall, covit, omegapost, covuit, covupost, nburn, Sp, Sup,out.iter, PACKAGE = "jomo")
+  .Call("MCMCjomo1rancon", Y, Yimp, Yimp2, X, Z, clus, betait, uit, betapost, upostall, covit, omegapost, covuit, covupost, nburn, l1cov.prior, l2cov.prior,out.iter, PACKAGE = "jomo")
  
   imp[(nrow(Y)+1):(2*nrow(Y)),1:ncol(Y)]=Yimp2
   Yimp=Yimp2
@@ -78,6 +78,9 @@ jomo1rancon.MCMCchain<- function(Y, X=matrix(1,nrow(Y),1), Z=matrix(1,nrow(Y),1)
   imp<-data.frame(imp)
   levels(imp[,(ncol(Y)+ncol(X)+ncol(Z)+1)])<-previous_levels_clus
   levels(clus)<-previous_levels_clus
+  for (j in 1:(ncol(Y)+ncol(X)+ncol(Z))) {
+    imp[,j]=as.numeric(imp[,j])
+  }
   if (is.null(colnamy)) colnamy=paste("Y", 1:ncol(Y), sep = "")
   if (is.null(colnamz)) colnamz=paste("Z", 1:ncol(Z), sep = "")
   if (is.null(colnamx)) colnamx=paste("X", 1:ncol(X), sep = "")

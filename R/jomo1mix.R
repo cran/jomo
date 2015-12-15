@@ -1,42 +1,43 @@
 jomo1mix <-
-  function(Y_con, Y_cat, Y_numcat, X=matrix(1,nrow(Y_cat),1), betap=matrix(0,ncol(X),(ncol(Y_con)+(sum(Y_numcat)-length(Y_numcat)))), covp=diag(1,ncol(betap)), Sp=diag(1,ncol(betap)), nburn=100, nbetween=100, nimp=5, output=1, out.iter=10) {
+  function(Y.con, Y.cat, Y.numcat, X=matrix(1,nrow(Y.cat),1), beta.start=matrix(0,ncol(X),(ncol(Y.con)+(sum(Y.numcat)-length(Y.numcat)))), l1cov.start=diag(1,ncol(beta.start)), l1cov.prior=diag(1,ncol(beta.start)), nburn=100, nbetween=100, nimp=5, output=1, out.iter=10) {
     previous_levels<-list()
-    for (i in 1:ncol(Y_cat)) {
-      Y_cat[,i]<-factor(Y_cat[,i])
-      previous_levels[[i]]<-levels(Y_cat[,i])
-      levels(Y_cat[,i])<-1:nlevels(Y_cat[,i])
+    Y.cat<-data.frame(Y.cat)
+    for (i in 1:ncol(Y.cat)) {
+      Y.cat[,i]<-factor(Y.cat[,i])
+      previous_levels[[i]]<-levels(Y.cat[,i])
+      levels(Y.cat[,i])<-1:nlevels(Y.cat[,i])
     }
     for (i in 1:ncol(X)) {
       if (is.factor(X[,i])) X[,i]<-as.numeric(X[,i])
     }
-    stopifnot(nrow(Y_con)==nrow(X), nrow(betap)==ncol(X), ncol(betap)==(ncol(Y_con)+(sum(Y_numcat)-length(Y_numcat))),nrow(covp)==ncol(covp), nrow(covp)==ncol(betap), nrow(Sp)==ncol(Sp),nrow(Sp)==nrow(covp))
-    betait=matrix(0,nrow(betap),ncol(betap))
-    for (i in 1:nrow(betap)) {
-      for (j in 1:ncol(betap)) betait[i,j]=betap[i,j]
+    stopifnot(nrow(Y.con)==nrow(X), nrow(beta.start)==ncol(X), ncol(beta.start)==(ncol(Y.con)+(sum(Y.numcat)-length(Y.numcat))),nrow(l1cov.start)==ncol(l1cov.start), nrow(l1cov.start)==ncol(beta.start), nrow(l1cov.prior)==ncol(l1cov.prior),nrow(l1cov.prior)==nrow(l1cov.start))
+    betait=matrix(0,nrow(beta.start),ncol(beta.start))
+    for (i in 1:nrow(beta.start)) {
+      for (j in 1:ncol(beta.start)) betait[i,j]=beta.start[i,j]
     }
-    covit=matrix(0,nrow(covp),ncol(covp))
-    for (i in 1:nrow(covp)) {
-      for (j in 1:ncol(covp)) covit[i,j]=covp[i,j]
+    covit=matrix(0,nrow(l1cov.start),ncol(l1cov.start))
+    for (i in 1:nrow(l1cov.start)) {
+      for (j in 1:ncol(l1cov.start)) covit[i,j]=l1cov.start[i,j]
     }   
-    colnamycon<-colnames(Y_con)
-    colnamycat<-colnames(Y_cat)
+    colnamycon<-colnames(Y.con)
+    colnamycat<-colnames(Y.cat)
     colnamx<-colnames(X)
-    Y_con<-data.matrix(Y_con)
-    storage.mode(Y_con) <- "numeric"    
-    Y_cat<-data.matrix(Y_cat)
-    storage.mode(Y_cat) <- "numeric"    
+    Y.con<-data.matrix(Y.con)
+    storage.mode(Y.con) <- "numeric"    
+    Y.cat<-data.matrix(Y.cat)
+    storage.mode(Y.cat) <- "numeric"    
     X<-data.matrix(X)
     storage.mode(X) <- "numeric"    
-    Y=cbind(Y_con,Y_cat)
-    Yi=cbind(Y_con, matrix(0,nrow(Y_con),(sum(Y_numcat)-length(Y_numcat))))
+    Y=cbind(Y.con,Y.cat)
+    Yi=cbind(Y.con, matrix(0,nrow(Y.con),(sum(Y.numcat)-length(Y.numcat))))
     h=1
-    for (i in 1:length(Y_numcat)) {
+    for (i in 1:length(Y.numcat)) {
       for (j in 1:nrow(Y)) {
-        if (is.na(Y_cat[j,i])) {
-          Yi[j,(ncol(Y_con)+h):(ncol(Y_con)+h+Y_numcat[i]-2)]=NA
+        if (is.na(Y.cat[j,i])) {
+          Yi[j,(ncol(Y.con)+h):(ncol(Y.con)+h+Y.numcat[i]-2)]=NA
         }
       } 
-      h=h+Y_numcat[i]-1
+      h=h+Y.numcat[i]-1
     }
     if (output!=1) out.iter=nburn+nbetween
     imp=matrix(0,nrow(Y)*(nimp+1),ncol(Y)+ncol(X)+2)
@@ -48,32 +49,32 @@ jomo1mix <-
     imp[(nrow(X)+1):(2*nrow(X)),(ncol(Y)+1):(ncol(Y)+ncol(X))]=X
     imp[(nrow(X)+1):(2*nrow(X)), (ncol(Y)+ncol(X)+1)]=1
     imp[(nrow(X)+1):(2*nrow(X)), (ncol(Y)+ncol(X)+2)]=c(1:nrow(Y))
-    betapost<- array(0, dim=c(nrow(betap),ncol(betap),(nimp-1)))
-    bpost<-matrix(0,nrow(betap),ncol(betap))
-    omegapost<- array(0, dim=c(nrow(covp),ncol(covp),(nimp-1)))
-    opost<-matrix(0,nrow(covp),ncol(covp))
+    betapost<- array(0, dim=c(nrow(beta.start),ncol(beta.start),(nimp-1)))
+    bpost<-matrix(0,nrow(beta.start),ncol(beta.start))
+    omegapost<- array(0, dim=c(nrow(l1cov.start),ncol(l1cov.start),(nimp-1)))
+    opost<-matrix(0,nrow(l1cov.start),ncol(l1cov.start))
     meanobs<-colMeans(Yi,na.rm=TRUE)
     for (i in 1:nrow(Yi)) for (j in 1:ncol(Yi)) if (is.na(Yimp[i,j])) Yimp2[i,j]=meanobs[j]
-    .Call("jomo1mix", Y, Yimp, Yimp2, Y_cat, X,betait,bpost,covit,opost, nburn, Sp,Y_numcat, ncol(Y_con),out.iter, PACKAGE = "jomo")
+    .Call("jomo1mix", Y, Yimp, Yimp2, Y.cat, X,betait,bpost,covit,opost, nburn, l1cov.prior,Y.numcat, ncol(Y.con),out.iter, PACKAGE = "jomo")
    
     #betapost[,,1]=bpost
     #omegapost[,,1]=opost
-    bpost<-matrix(0,nrow(betap),ncol(betap))
-    opost<-matrix(0,nrow(covp),ncol(covp))
-    imp[(nrow(Y)+1):(2*nrow(Y)),1:ncol(Y_con)]=Yimp2[,1:ncol(Y_con)]
-    imp[(nrow(Y)+1):(2*nrow(Y)),(ncol(Y_con)+1):ncol(Y)]=Y_cat
+    bpost<-matrix(0,nrow(beta.start),ncol(beta.start))
+    opost<-matrix(0,nrow(l1cov.start),ncol(l1cov.start))
+    imp[(nrow(Y)+1):(2*nrow(Y)),1:ncol(Y.con)]=Yimp2[,1:ncol(Y.con)]
+    imp[(nrow(Y)+1):(2*nrow(Y)),(ncol(Y.con)+1):ncol(Y)]=Y.cat
     if (output==1) cat("First imputation registered.", "\n")
     for (i in 2:nimp) {
       imp[(i*nrow(X)+1):((i+1)*nrow(X)),(ncol(Y)+1):(ncol(Y)+ncol(X))]=X
       imp[(i*nrow(X)+1):((i+1)*nrow(X)), (ncol(Y)+ncol(X)+1)]=i
       imp[(i*nrow(X)+1):((i+1)*nrow(X)), (ncol(Y)+ncol(X)+2)]=c(1:nrow(Y))
-        .Call("jomo1mix", Y, Yimp, Yimp2, Y_cat, X,betait,bpost,covit, opost, nbetween, Sp, Y_numcat, ncol(Y_con),out.iter, PACKAGE = "jomo") 
+        .Call("jomo1mix", Y, Yimp, Yimp2, Y.cat, X,betait,bpost,covit, opost, nbetween, l1cov.prior, Y.numcat, ncol(Y.con),out.iter, PACKAGE = "jomo") 
       betapost[,,(i-1)]=bpost
       omegapost[,,(i-1)]=opost
-      bpost<-matrix(0,nrow(betap),ncol(betap))
-      opost<-matrix(0,nrow(covp),ncol(covp))
-      imp[(i*nrow(X)+1):((i+1)*nrow(X)),1:ncol(Y_con)]=Yimp2[,1:ncol(Y_con)]
-      imp[(i*nrow(X)+1):((i+1)*nrow(X)),(ncol(Y_con)+1):ncol(Y)]=Y_cat
+      bpost<-matrix(0,nrow(beta.start),ncol(beta.start))
+      opost<-matrix(0,nrow(l1cov.start),ncol(l1cov.start))
+      imp[(i*nrow(X)+1):((i+1)*nrow(X)),1:ncol(Y.con)]=Yimp2[,1:ncol(Y.con)]
+      imp[(i*nrow(X)+1):((i+1)*nrow(X)),(ncol(Y.con)+1):ncol(Y)]=Y.cat
       if (output==1) cat("Imputation number ", i, "registered", "\n")
     }
     betapostmean<-apply(betapost, c(1,2), mean)
@@ -85,12 +86,12 @@ jomo1mix <-
       print(omegapostmean)
     }
     imp<-data.frame(imp)
-    for (i in 1:ncol(Y_cat)) {
-      imp[,(ncol(Y_con)+i)]<-as.factor(imp[,(ncol(Y_con)+i)]) 
-      levels(imp[,(ncol(Y_con)+i)])<-previous_levels[[i]]
+    for (i in 1:ncol(Y.cat)) {
+      imp[,(ncol(Y.con)+i)]<-as.factor(imp[,(ncol(Y.con)+i)]) 
+      levels(imp[,(ncol(Y.con)+i)])<-previous_levels[[i]]
     }
-    if (is.null(colnamycat)) colnamycat=paste("Ycat", 1:ncol(Y_cat), sep = "")
-    if (is.null(colnamycon)) colnamycon=paste("Ycon", 1:ncol(Y_con), sep = "")
+    if (is.null(colnamycat)) colnamycat=paste("Ycat", 1:ncol(Y.cat), sep = "")
+    if (is.null(colnamycon)) colnamycon=paste("Ycon", 1:ncol(Y.con), sep = "")
     if (is.null(colnamx)) colnamx=paste("X", 1:ncol(X), sep = "")
     colnames(imp)<-c(colnamycon,colnamycat,colnamx,"Imputation","id")
     return(imp)

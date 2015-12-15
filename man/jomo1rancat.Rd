@@ -8,19 +8,22 @@ JM Imputation of clustered data with categorical variables
 Impute a clustered dataset with categorical variables as outcome. A joint multivariate model for partially observed data is assumed and imputations are generated through the use of a Gibbs sampler where the covariance matrix is updated with a Metropolis-Hastings step. Fully observed categorical covariates may be considered as covariates as well, but they have to be included as dummy variables.
 }
 \usage{
-jomo1rancat( Y_cat, Y_numcat, X=matrix(1,nrow(Y_cat),1), Z=matrix(1,nrow(Y_cat),1), 
-            clus, betap=matrix(0,ncol(X),((sum(Y_numcat)-length(Y_numcat)))), 
-            up=matrix(0,nrow(unique(clus)),ncol(Z)*((sum(Y_numcat)-length(Y_numcat)))), 
-            covp=diag(1,ncol(betap)), covu=diag(1,ncol(up)), Sp=diag(1,ncol(covp)), 
-            Sup=diag(1,ncol(covu)), nburn=100, nbetween=100, nimp=5,
-            output=1, out.iter=10)
+jomo1rancat( Y.cat, Y.numcat, X=matrix(1,nrow(Y.cat),1), 
+Z=matrix(1,nrow(Y.cat),1), clus, 
+beta.start=matrix(0,ncol(X),((sum(Y.numcat)-length(Y.numcat)))), 
+u.start=matrix(0,nrow(unique(clus)),
+      ncol(Z)*((sum(Y.numcat)-length(Y.numcat)))), 
+l1cov.start=diag(1,ncol(beta.start)), l2cov.start=diag(1,ncol(u.start)), 
+l1cov.prior=diag(1,ncol(l1cov.start)), 
+l2cov.prior=diag(1,ncol(l2cov.start)), nburn=100, nbetween=100, nimp=5,
+output=1, out.iter=10)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
-   \item{Y_cat}{
+   \item{Y.cat}{
 A data frame, or matrix, with categorical (or binary) responses of the joint imputation model. Rows correspond to different observations, while columns are different variables. Missing values are coded as NA.
 }
-  \item{Y_numcat}{
+  \item{Y.numcat}{
 A vector with the number of categories in each categorical (or binary) variable.
 }
   \item{X}{
@@ -32,22 +35,22 @@ A data frame, or matrix, for covariates associated to random effects in the join
   \item{clus}{
 A data frame, or matrix, containing the cluster indicator for each observation. 
 }
-  \item{betap}{
+  \item{beta.start}{
 Starting value for beta, the vector(s) of fixed effects. Rows index different covariates and columns index different outcomes. For each n-category variable we define n-1 latent normals. The default is a matrix of zeros.
 }
-  \item{up}{
+  \item{u.start}{
 A matrix where different rows are the starting values within each cluster for the random effects estimates u. The default is a matrix of zeros.
 }
-  \item{covp}{
+  \item{l1cov.start}{
 Starting value for the covariance matrix. Dimension of this square matrix is equal to the number of outcomes (continuous plus latent normals) in the imputation model. The default is the identity matrix.
 }
-  \item{covu}{
+  \item{l2cov.start}{
 Starting value for the level 2 covariance matrix. Dimension of this square matrix is equal to the number of outcomes (continuous plus latent normals) in the imputation model times the number of random effects. The default is an identity matrix.
 }
-  \item{Sp}{
+  \item{l1cov.prior}{
 Scale matrix for the inverse-Wishart prior for the covariance matrix. The default is the identity matrix.
 }
-  \item{Sup}{
+  \item{l2cov.prior}{
 Scale matrix for the inverse-Wishart prior for the level 2 covariance matrix. The default is the identity matrix.
 }
   \item{nburn}{
@@ -86,26 +89,27 @@ attach(mldata)
 # nimp, nburn and nbetween are smaller than they should. This is
 #just because of CRAN policies on the examples.
 
-Y_cat=data.frame(social)
-Y_numcat=matrix(4,1,1)
+Y.cat=data.frame(social)
+Y.numcat=matrix(4,1,1)
 X=data.frame(rep(1,1000),sex)
 Z<-data.frame(rep(1,1000))
 clus<-data.frame(city)
-betap<-matrix(0,2,3)
-up<-matrix(0,10,3)
-covp<-diag(1,3)
-covu<-diag(1,3)
-Sp=diag(1,3);
-Sup=diag(1,3);
+beta.start<-matrix(0,2,3)
+u.start<-matrix(0,10,3)
+l1cov.start<-diag(1,3)
+l2cov.start<-diag(1,3)
+l1cov.prior=diag(1,3);
+l2cov.prior=diag(1,3);
 nburn=as.integer(100);
 nbetween=as.integer(100);
 nimp=as.integer(4);
 
 #And finally we run the imputation function:
 
-imp<-jomo1rancat(Y_cat, Y_numcat, X,Z,clus,betap,up,covp, covu,Sp,Sup,
-                nburn,nbetween,nimp)
+imp<-jomo1rancat(Y.cat, Y.numcat, X,Z,clus,beta.start,u.start,l1cov.start, 
+               l2cov.start,l1cov.prior,l2cov.prior,nburn,nbetween,nimp)
 
-              
+ cat("Original value was missing (",imp[3,1],"), imputed value:", imp[1003,1])
+             
 
 }

@@ -1,23 +1,23 @@
 jomo1ran <-
-  function(Y, X=NULL, Z=NULL,clus, betap=NULL, up=NULL, covp=NULL, covu=NULL, Sp=NULL, Sup=NULL, nburn=500, nbetween=100, nimp=5, a=NULL, meth="common",output=1, out.iter=10) {
+  function(Y, X=NULL, Z=NULL,clus, beta.start=NULL, u.start=NULL, l1cov.start=NULL, l2cov.start=NULL, l1cov.prior=NULL, l2cov.prior=NULL, nburn=500, nbetween=100, nimp=5, a=NULL, meth="common",output=1, out.iter=10) {
     stopifnot(meth=="common"|meth=="fixed"|meth=="random")
     ncon=0
     ncat=0
-    Y_con=NULL
-    Y_cat=NULL
-    Y_numcat=NULL
+    Y.con=NULL
+    Y.cat=NULL
+    Y.numcat=NULL
     for (i in 1:ncol(Y)) {
       if (is.numeric(Y[,i])) {
         ncon=ncon+1
-        Y_con<-cbind(Y_con,Y[,i])
-        colnames(Y_con)[ncon]<-colnames(Y)[i]
+        Y.con<-cbind(Y.con,Y[,i])
+        colnames(Y.con)[ncon]<-colnames(Y)[i]
       }
       else {
         if (is.factor(Y[,i])) {
         ncat=ncat+1
-        Y_cat<-cbind(Y_cat,Y[,i])
-        colnames(Y_cat)[ncat]<-colnames(Y)[i]
-        Y_numcat<-cbind(Y_numcat,nlevels(Y[,i]))
+        Y.cat<-cbind(Y.cat,Y[,i])
+        colnames(Y.cat)[ncat]<-colnames(Y)[i]
+        Y.numcat<-cbind(Y.numcat,nlevels(Y[,i]))
         }
       }
     }
@@ -26,100 +26,100 @@ jomo1ran <-
     if (meth=="common") {
       if (ncat==0 & ncon>0) {
         cat("Found ", ncon, "continuous outcomes and no categorical. Using function jomoran1con.", "\n")
-        if (is.null(betap)) betap=matrix(0,ncol(X),ncol(Y))
-        if (is.null(covp)) covp=diag(1,ncol(Y))
-        if (is.null(up)) up=matrix(0,nrow(unique(clus)),ncol(Z)*ncol(Y))
-        if (is.null(covu)) covu=diag(1,ncol(Y)*ncol(Z))
-        if (is.null(Sp)) Sp=diag(1,ncol(Y))
-        if (is.null(Sup)) Sup=diag(1,ncol(Y)*ncol(Z))
-        imp<-jomo1rancon(Y_con, X, Z, clus, betap, up, covp, covu, Sp, Sup, nburn, nbetween, nimp, output, out.iter)
+        if (is.null(beta.start)) beta.start=matrix(0,ncol(X),ncol(Y))
+        if (is.null(l1cov.start)) l1cov.start=diag(1,ncol(Y))
+        if (is.null(u.start)) u.start=matrix(0,nrow(unique(clus)),ncol(Z)*ncol(Y))
+        if (is.null(l2cov.start)) l2cov.start=diag(1,ncol(Y)*ncol(Z))
+        if (is.null(l1cov.prior)) l1cov.prior=diag(1,ncol(Y))
+        if (is.null(l2cov.prior)) l2cov.prior=diag(1,ncol(Y)*ncol(Z))
+        imp<-jomo1rancon(Y.con, X, Z, clus, beta.start, u.start, l1cov.start, l2cov.start, l1cov.prior, l2cov.prior, nburn, nbetween, nimp, output, out.iter)
       }
       if (ncat>0 & ncon==0) {
         cat("Found ", ncat, "categorical outcomes and no continuous. Using function jomo1rancat.", "\n")
-        if (is.null(betap)) betap=matrix(0,ncol(X),((sum(Y_numcat)-length(Y_numcat))))
-        if (is.null(covp)) covp=diag(1,ncol(betap))
-        if (is.null(up)) up=matrix(0,nrow(unique(clus)),ncol(Z)*((sum(Y_numcat)-length(Y_numcat))))
-        if (is.null(covu)) covu=diag(1,ncol(up))
-        if (is.null(Sp)) Sp=diag(1,ncol(covp))
-        if (is.null(Sup)) Sup=diag(1,ncol(covu))
-        imp<-jomo1rancat(Y_cat,Y_numcat, X, Z, clus, betap, up, covp, covu, Sp, Sup, nburn, nbetween, nimp, output, out.iter)
+        if (is.null(beta.start)) beta.start=matrix(0,ncol(X),((sum(Y.numcat)-length(Y.numcat))))
+        if (is.null(l1cov.start)) l1cov.start=diag(1,ncol(beta.start))
+        if (is.null(u.start)) u.start=matrix(0,nrow(unique(clus)),ncol(Z)*((sum(Y.numcat)-length(Y.numcat))))
+        if (is.null(l2cov.start)) l2cov.start=diag(1,ncol(u.start))
+        if (is.null(l1cov.prior)) l1cov.prior=diag(1,ncol(l1cov.start))
+        if (is.null(l2cov.prior)) l2cov.prior=diag(1,ncol(l2cov.start))
+        imp<-jomo1rancat(Y.cat,Y.numcat, X, Z, clus, beta.start, u.start, l1cov.start, l2cov.start, l1cov.prior, l2cov.prior, nburn, nbetween, nimp, output, out.iter)
       }
       if (ncat>0 & ncon>0) {
         cat("Found ", ncon, "continuous outcomes and ", ncat, "categorical. Using function jomo1ranmix.", "\n")
-        if (is.null(betap)) betap=matrix(0,ncol(X),(ncol(Y_con)+(sum(Y_numcat)-length(Y_numcat))))
-        if (is.null(covp)) covp=diag(1,ncol(betap))
-        if (is.null(up)) up=matrix(0,nrow(unique(clus)),ncol(Z)*(ncol(Y_con)+(sum(Y_numcat)-length(Y_numcat))))
-        if (is.null(covu)) covu=diag(1,ncol(up))
-        if (is.null(Sp)) Sp=diag(1,ncol(covp))
-        if (is.null(Sup)) Sup=diag(1,ncol(covu))
-        imp<-jomo1ranmix(Y_con, Y_cat, Y_numcat, X, Z, clus, betap, up, covp, covu, Sp, Sup, nburn, nbetween, nimp, output, out.iter)
+        if (is.null(beta.start)) beta.start=matrix(0,ncol(X),(ncol(Y.con)+(sum(Y.numcat)-length(Y.numcat))))
+        if (is.null(l1cov.start)) l1cov.start=diag(1,ncol(beta.start))
+        if (is.null(u.start)) u.start=matrix(0,nrow(unique(clus)),ncol(Z)*(ncol(Y.con)+(sum(Y.numcat)-length(Y.numcat))))
+        if (is.null(l2cov.start)) l2cov.start=diag(1,ncol(u.start))
+        if (is.null(l1cov.prior)) l1cov.prior=diag(1,ncol(l1cov.start))
+        if (is.null(l2cov.prior)) l2cov.prior=diag(1,ncol(l2cov.start))
+        imp<-jomo1ranmix(Y.con, Y.cat, Y.numcat, X, Z, clus, beta.start, u.start, l1cov.start, l2cov.start, l1cov.prior, l2cov.prior, nburn, nbetween, nimp, output, out.iter)
       }
     }
     if (meth=="fixed") {
       if (ncat==0 & ncon>0) {
-        cat("Found ", ncon, "continuous outcomes and no categorical. Using function jomoran1conhr with fixed cluster-specific covariance matrices.", "\n")
-        if (is.null(betap)) betap=matrix(0,ncol(X),ncol(Y))
-        if (is.null(covp)) covp=matrix(diag(1,ncol(Y)),nrow(unique(clus))*ncol(Y),ncol(Y),2)
-        if (is.null(up)) up=matrix(0,nrow(unique(clus)),ncol(Z)*ncol(Y))
-        if (is.null(covu)) covu=diag(1,ncol(Y)*ncol(Z))
-        if (is.null(Sp)) Sp=diag(1,ncol(Y))
-        if (is.null(Sup)) Sup=diag(1,ncol(Y)*ncol(Z))
-        imp<-jomo1ranconhr(Y_con, X, Z, clus, betap, up, covp, covu, Sp, Sup, nburn, nbetween, nimp,a=15000,meth="fixed", output, out.iter)
+        cat("Found ", ncon, "continuous outcomes and no categorical. Using function jomoran1conhr with fixed cluster-l1cov.priorecific covariance matrices.", "\n")
+        if (is.null(beta.start)) beta.start=matrix(0,ncol(X),ncol(Y))
+        if (is.null(l1cov.start)) l1cov.start=matrix(diag(1,ncol(Y)),nrow(unique(clus))*ncol(Y),ncol(Y),2)
+        if (is.null(u.start)) u.start=matrix(0,nrow(unique(clus)),ncol(Z)*ncol(Y))
+        if (is.null(l2cov.start)) l2cov.start=diag(1,ncol(Y)*ncol(Z))
+        if (is.null(l1cov.prior)) l1cov.prior=diag(1,ncol(Y))
+        if (is.null(l2cov.prior)) l2cov.prior=diag(1,ncol(Y)*ncol(Z))
+        imp<-jomo1ranconhr(Y.con, X, Z, clus, beta.start, u.start, l1cov.start, l2cov.start, l1cov.prior, l2cov.prior, nburn, nbetween, nimp,a=15000,meth="fixed", output, out.iter)
       }
       if (ncat>0 & ncon==0) {
-        cat("Found ", ncat, "categorical outcomes and no continuous. Using function jomo1rancathr with fixed cluster-specific covariance matrices.", "\n")
-        if (is.null(betap)) betap=matrix(0,ncol(X),((sum(Y_numcat)-length(Y_numcat))))
-        if (is.null(covp)) covp=matrix(diag(1,ncol(betap)),ncol(betap)*nrow(unique(clus)),ncol(betap),2)
-        if (is.null(up)) up=matrix(0,nrow(unique(clus)),ncol(Z)*((sum(Y_numcat)-length(Y_numcat))))
-        if (is.null(covu)) covu=diag(1,ncol(up))
-        if (is.null(Sp)) Sp=diag(1,ncol(covp))
-        if (is.null(Sup)) Sup=diag(1,ncol(covu))
-        imp<-jomo1rancathr(Y_cat,Y_numcat, X, Z, clus, betap, up, covp, covu, Sp, Sup, nburn, nbetween, nimp,a=15000, meth="fixed", output, out.iter)
+        cat("Found ", ncat, "categorical outcomes and no continuous. Using function jomo1rancathr with fixed cluster-l1cov.priorecific covariance matrices.", "\n")
+        if (is.null(beta.start)) beta.start=matrix(0,ncol(X),((sum(Y.numcat)-length(Y.numcat))))
+        if (is.null(l1cov.start)) l1cov.start=matrix(diag(1,ncol(beta.start)),ncol(beta.start)*nrow(unique(clus)),ncol(beta.start),2)
+        if (is.null(u.start)) u.start=matrix(0,nrow(unique(clus)),ncol(Z)*((sum(Y.numcat)-length(Y.numcat))))
+        if (is.null(l2cov.start)) l2cov.start=diag(1,ncol(u.start))
+        if (is.null(l1cov.prior)) l1cov.prior=diag(1,ncol(l1cov.start))
+        if (is.null(l2cov.prior)) l2cov.prior=diag(1,ncol(l2cov.start))
+        imp<-jomo1rancathr(Y.cat,Y.numcat, X, Z, clus, beta.start, u.start, l1cov.start, l2cov.start, l1cov.prior, l2cov.prior, nburn, nbetween, nimp,a=15000, meth="fixed", output, out.iter)
       }
       if (ncat>0 & ncon>0) {
-        cat("Found ", ncon, "continuous outcomes and ", ncat, "categorical. Using function jomo1ranmixhr with fixed cluster-specific covariance matrices.", "\n")
-        if (is.null(betap)) betap=matrix(0,ncol(X),(ncol(Y_con)+(sum(Y_numcat)-length(Y_numcat))))
-        if (is.null(covp)) covp=covp=matrix(diag(1,ncol(betap)),ncol(betap)*nrow(unique(clus)),ncol(betap),2)
-        if (is.null(up)) up=matrix(0,nrow(unique(clus)),ncol(Z)*(ncol(Y_con)+(sum(Y_numcat)-length(Y_numcat))))
-        if (is.null(covu)) covu=diag(1,ncol(up))
-        if (is.null(Sp)) Sp=diag(1,ncol(covp))
-        if (is.null(Sup)) Sup=diag(1,ncol(covu))
-        imp<-jomo1ranmixhr(Y_con, Y_cat, Y_numcat, X, Z, clus, betap, up, covp, covu, Sp, Sup, nburn, nbetween, nimp,a=15000, meth="fixed", output, out.iter)
+        cat("Found ", ncon, "continuous outcomes and ", ncat, "categorical. Using function jomo1ranmixhr with fixed cluster-l1cov.priorecific covariance matrices.", "\n")
+        if (is.null(beta.start)) beta.start=matrix(0,ncol(X),(ncol(Y.con)+(sum(Y.numcat)-length(Y.numcat))))
+        if (is.null(l1cov.start)) l1cov.start=l1cov.start=matrix(diag(1,ncol(beta.start)),ncol(beta.start)*nrow(unique(clus)),ncol(beta.start),2)
+        if (is.null(u.start)) u.start=matrix(0,nrow(unique(clus)),ncol(Z)*(ncol(Y.con)+(sum(Y.numcat)-length(Y.numcat))))
+        if (is.null(l2cov.start)) l2cov.start=diag(1,ncol(u.start))
+        if (is.null(l1cov.prior)) l1cov.prior=diag(1,ncol(l1cov.start))
+        if (is.null(l2cov.prior)) l2cov.prior=diag(1,ncol(l2cov.start))
+        imp<-jomo1ranmixhr(Y.con, Y.cat, Y.numcat, X, Z, clus, beta.start, u.start, l1cov.start, l2cov.start, l1cov.prior, l2cov.prior, nburn, nbetween, nimp,a=15000, meth="fixed", output, out.iter)
       }
     }
     if (meth=="random") {
       if (ncat==0 & ncon>0) {
-        cat("Found ", ncon, "continuous outcomes and no categorical. Using function jomoran1conhr with random cluster-specific covariance matrices.", "\n")
-        if (is.null(betap)) betap=matrix(0,ncol(X),ncol(Y))
-        if (is.null(covp)) covp=matrix(diag(1,ncol(Y)),nrow(unique(clus))*ncol(Y),ncol(Y),2)
-        if (is.null(up)) up=matrix(0,nrow(unique(clus)),ncol(Z)*ncol(Y))
-        if (is.null(covu)) covu=diag(1,ncol(Y)*ncol(Z))
-        if (is.null(Sp)) Sp=diag(1,ncol(Y))
-        if (is.null(Sup)) Sup=diag(1,ncol(Y)*ncol(Z))
-        if (is.null(a)) a=ncol(covp)
-        imp<-jomo1ranconhr(Y_con, X, Z, clus, betap, up, covp, covu, Sp, Sup, nburn, nbetween, nimp,a=a,meth="random", output, out.iter)
+        cat("Found ", ncon, "continuous outcomes and no categorical. Using function jomoran1conhr with random cluster-l1cov.priorecific covariance matrices.", "\n")
+        if (is.null(beta.start)) beta.start=matrix(0,ncol(X),ncol(Y))
+        if (is.null(l1cov.start)) l1cov.start=matrix(diag(1,ncol(Y)),nrow(unique(clus))*ncol(Y),ncol(Y),2)
+        if (is.null(u.start)) u.start=matrix(0,nrow(unique(clus)),ncol(Z)*ncol(Y))
+        if (is.null(l2cov.start)) l2cov.start=diag(1,ncol(Y)*ncol(Z))
+        if (is.null(l1cov.prior)) l1cov.prior=diag(1,ncol(Y))
+        if (is.null(l2cov.prior)) l2cov.prior=diag(1,ncol(Y)*ncol(Z))
+        if (is.null(a)) a=ncol(l1cov.start)
+        imp<-jomo1ranconhr(Y.con, X, Z, clus, beta.start, u.start, l1cov.start, l2cov.start, l1cov.prior, l2cov.prior, nburn, nbetween, nimp,a=a,meth="random", output, out.iter)
       }
       if (ncat>0 & ncon==0) {
-        cat("Found ", ncat, "categorical outcomes and no continuous. Using function jomo1rancathr with random cluster-specific covariance matrices.", "\n")
-        if (is.null(betap)) betap=matrix(0,ncol(X),((sum(Y_numcat)-length(Y_numcat))))
-        if (is.null(covp)) covp=matrix(diag(1,ncol(betap)),ncol(betap)*nrow(unique(clus)),ncol(betap),2)
-        if (is.null(up)) up=matrix(0,nrow(unique(clus)),ncol(Z)*((sum(Y_numcat)-length(Y_numcat))))
-        if (is.null(covu)) covu=diag(1,ncol(up))
-        if (is.null(Sp)) Sp=diag(1,ncol(covp))
-        if (is.null(Sup)) Sup=diag(1,ncol(covu))
-        if (is.null(a)) a=ncol(covp)
-        imp<-jomo1rancathr(Y_cat,Y_numcat, X, Z, clus, betap, up, covp, covu, Sp, Sup, nburn, nbetween, nimp,a=a, meth="random", output, out.iter)
+        cat("Found ", ncat, "categorical outcomes and no continuous. Using function jomo1rancathr with random cluster-l1cov.priorecific covariance matrices.", "\n")
+        if (is.null(beta.start)) beta.start=matrix(0,ncol(X),((sum(Y.numcat)-length(Y.numcat))))
+        if (is.null(l1cov.start)) l1cov.start=matrix(diag(1,ncol(beta.start)),ncol(beta.start)*nrow(unique(clus)),ncol(beta.start),2)
+        if (is.null(u.start)) u.start=matrix(0,nrow(unique(clus)),ncol(Z)*((sum(Y.numcat)-length(Y.numcat))))
+        if (is.null(l2cov.start)) l2cov.start=diag(1,ncol(u.start))
+        if (is.null(l1cov.prior)) l1cov.prior=diag(1,ncol(l1cov.start))
+        if (is.null(l2cov.prior)) l2cov.prior=diag(1,ncol(l2cov.start))
+        if (is.null(a)) a=ncol(l1cov.start)
+        imp<-jomo1rancathr(Y.cat,Y.numcat, X, Z, clus, beta.start, u.start, l1cov.start, l2cov.start, l1cov.prior, l2cov.prior, nburn, nbetween, nimp,a=a, meth="random", output, out.iter)
       }
       if (ncat>0 & ncon>0) {
-        cat("Found ", ncon, "continuous outcomes and ", ncat, "categorical. Using function jomo1ranmixhr with random cluster-specific covariance matrices.", "\n")
-        if (is.null(betap)) betap=matrix(0,ncol(X),(ncol(Y_con)+(sum(Y_numcat)-length(Y_numcat))))
-        if (is.null(covp)) covp=covp=matrix(diag(1,ncol(betap)),ncol(betap)*nrow(unique(clus)),ncol(betap),2)
-        if (is.null(up)) up=matrix(0,nrow(unique(clus)),ncol(Z)*(ncol(Y_con)+(sum(Y_numcat)-length(Y_numcat))))
-        if (is.null(covu)) covu=diag(1,ncol(up))
-        if (is.null(Sp)) Sp=diag(1,ncol(covp))
-        if (is.null(Sup)) Sup=diag(1,ncol(covu))
-        if (is.null(a)) a=ncol(covp)
-        imp<-jomo1ranmixhr(Y_con, Y_cat, Y_numcat, X, Z, clus, betap, up, covp, covu, Sp, Sup, nburn, nbetween, nimp,a=a, meth="random", output, out.iter)
+        cat("Found ", ncon, "continuous outcomes and ", ncat, "categorical. Using function jomo1ranmixhr with random cluster-l1cov.priorecific covariance matrices.", "\n")
+        if (is.null(beta.start)) beta.start=matrix(0,ncol(X),(ncol(Y.con)+(sum(Y.numcat)-length(Y.numcat))))
+        if (is.null(l1cov.start)) l1cov.start=l1cov.start=matrix(diag(1,ncol(beta.start)),ncol(beta.start)*nrow(unique(clus)),ncol(beta.start),2)
+        if (is.null(u.start)) u.start=matrix(0,nrow(unique(clus)),ncol(Z)*(ncol(Y.con)+(sum(Y.numcat)-length(Y.numcat))))
+        if (is.null(l2cov.start)) l2cov.start=diag(1,ncol(u.start))
+        if (is.null(l1cov.prior)) l1cov.prior=diag(1,ncol(l1cov.start))
+        if (is.null(l2cov.prior)) l2cov.prior=diag(1,ncol(l2cov.start))
+        if (is.null(a)) a=ncol(l1cov.start)
+        imp<-jomo1ranmixhr(Y.con, Y.cat, Y.numcat, X, Z, clus, beta.start, u.start, l1cov.start, l2cov.start, l1cov.prior, l2cov.prior, nburn, nbetween, nimp,a=a, meth="random", output, out.iter)
       }
     }
     return(imp)

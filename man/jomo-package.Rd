@@ -12,8 +12,8 @@ Similarly to Schafer's package pan, jomo is a package for multilevel joint model
 \tabular{ll}{
 Package: \tab jomo\cr
 Type: \tab Package\cr
-Version: \tab 1.1-0\cr
-Date: \tab 2015-06-12\cr
+Version: \tab 1.3-0\cr
+Date: \tab 2015-12-14\cr
 License: \tab GPL-2\cr
 }
 

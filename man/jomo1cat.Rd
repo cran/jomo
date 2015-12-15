@@ -8,29 +8,30 @@ JM Imputation of single level data with categorical variables
 Impute a single level dataset with categorical variables as outcomes. A joint multivariate model for partially observed data is assumed and imputations are generated through the use of a Gibbs sampler where the covariance matrix is updated with a Metropolis-Hastings step. Fully observed categorical covariates can be included in the imputation model as covariates as well, but in that case dummy variables have to be created first.
 }
 \usage{
-jomo1cat(Y_cat, Y_numcat, X=matrix(1,nrow(Y_cat),1), 
-         betap=matrix(0,ncol(X),((sum(Y_numcat)-length(Y_numcat)))), 
-         covp=diag(1,ncol(betap)), Sp=diag(1,ncol(betap)), 
+jomo1cat(Y.cat, Y.numcat, X=matrix(1,nrow(Y.cat),1), 
+         beta.start=matrix(0,ncol(X),((sum(Y.numcat)-length(Y.numcat)))), 
+         l1cov.start=diag(1,ncol(beta.start)), 
+         l1cov.prior=diag(1,ncol(beta.start)), 
          nburn=100, nbetween=100, nimp=5,output=1, out.iter=10)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
-  \item{Y_cat}{
+  \item{Y.cat}{
 A data frame, or matrix, with categorical (or binary) responses of the joint imputation model. Rows correspond to different observations, while columns are different variables. Missing values are coded as NA.
 }
-  \item{Y_numcat}{
+  \item{Y.numcat}{
 A vector with the number of categories in each categorical (or binary) variable.
 }
   \item{X}{
 A data frame, or matrix, with covariates of the joint imputation model. Rows correspond to different observations, while columns are different variables. Missing values are not allowed in these variables. In case we want an intercept, a column of 1 is needed. The default is a column of 1.
 }
-  \item{betap}{
+  \item{beta.start}{
 Starting value for beta, the vector(s) of fixed effects. Rows index different covariates and columns index different outcomes. For each n-category variable we define n-1 latent normals. The default is a matrix of zeros.
 }
-  \item{covp}{
+  \item{l1cov.start}{
 Starting value for the covariance matrix. Dimension of this square matrix is equal to the number of outcomes (continuous plus latent normals) in the imputation model. The default is the identity matrix.
 }
-  \item{Sp}{
+  \item{l1cov.prior}{
 Scale matrix for the inverse-Wishart prior for the covariance matrix. The default is the identity matrix.
 }
   \item{nburn}{
@@ -70,19 +71,22 @@ attach(sldata)
 # nimp, nburn and nbetween are smaller than they should. This is
 #just because of CRAN policies on the examples.
 
-Y_cat=data.frame(social)
-Y_numcat=matrix(4,1,1)
+Y.cat=data.frame(social)
+Y.numcat=matrix(4,1,1)
 X=data.frame(rep(1,300),sex)
-betap<-matrix(0,2,3)
-covp<-diag(1,3)
-Sp=diag(1,3);
+beta.start<-matrix(0,2,3)
+l1cov.start<-diag(1,3)
+l1cov.prior=diag(1,3);
 nburn=as.integer(100);
 nbetween=as.integer(100);
 nimp=as.integer(5);
 
 # Finally we run the sampler:
 
-imp<-jomo1cat(Y_cat,Y_numcat,X,betap,covp,Sp,nburn,nbetween,nimp)
+imp<-jomo1cat(Y.cat,Y.numcat,X,beta.start,l1cov.start,l1cov.prior,nburn,nbetween,nimp)
 
+#See one of the imputed values:
+
+cat("Original value was missing (",imp[16,1],"), imputed value:", imp[316,1])
 
 }

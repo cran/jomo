@@ -10,9 +10,11 @@ This function is similar to jomo1rancon, but it returns the values of all the pa
 }
 \usage{
 jomo1rancon.MCMCchain(Y, X=matrix(1,nrow(Y),1), Z=matrix(1,nrow(Y),1), clus, 
-betap=matrix(0,ncol(X),ncol(Y)), up=matrix(0,nrow(unique(clus)),ncol(Z)*ncol(Y)), 
-covp=diag(1,ncol(Y)), covu=diag(1,ncol(Y)*ncol(Z)), Sp=diag(1,ncol(Y)), 
-Sup=diag(1,ncol(Y)*ncol(Z)), nburn=100, output=1, out.iter=10) 
+beta.start=matrix(0,ncol(X),ncol(Y)), 
+u.start=matrix(0,nrow(unique(clus)),ncol(Z)*ncol(Y)), 
+l1cov.start=diag(1,ncol(Y)), l2cov.start=diag(1,ncol(Y)*ncol(Z)), 
+l1cov.prior=diag(1,ncol(Y)), l2cov.prior=diag(1,ncol(Y)*ncol(Z)), 
+nburn=100, output=1, out.iter=10) 
 
 }
 %- maybe also 'usage' for other objects documented here.
@@ -31,22 +33,22 @@ A data frame, or matrix, for covariates associated to random effects in the join
   \item{clus}{
 A data frame, or matrix, containing the cluster indicator for each observation. 
 }
-  \item{betap}{
+  \item{beta.start}{
 Starting value for beta, the vector(s) of fixed effects. Rows index different covariates and columns index different outcomes. The default is a matrix of zeros.
 }
-  \item{up}{
+  \item{u.start}{
 A matrix where different rows are the starting values within each cluster for the random effects estimates u. The default is a matrix of zeros.
 }
-  \item{covp}{
+  \item{l1cov.start}{
 Starting value for the covariance matrix. Dimension of this square matrix is equal to the number of outcomes in the imputation model. The default is the identity matrix.
 }
-  \item{covu}{
+  \item{l2cov.start}{
 Starting value for the level 2 covariance matrix. Dimension of this square matrix is equal to the number of outcomes in the imputation model times the number of random effects. The default is an identity matrix.
 }
-  \item{Sp}{
+  \item{l1cov.prior}{
 Scale matrix for the inverse-Wishart prior for the covariance matrix. The default is the identity matrix.
 }
-  \item{Sup}{
+  \item{l2cov.prior}{
 Scale matrix for the inverse-Wishart prior for the level 2 covariance matrix. The default is the identity matrix.
 }
    \item{nburn}{
@@ -74,17 +76,18 @@ Y<-data.frame(measure,age)
 X<-data.frame(rep(1,1000),sex)
 Z<-data.frame(rep(1,1000))
 clus<-data.frame(city)
-betap<-matrix(0,2,2)
-up<-matrix(0,10,2)
-covp<-diag(1,2)
-covu<-diag(1,2)
-Sp=diag(1,2);
+beta.start<-matrix(0,2,2)
+u.start<-matrix(0,10,2)
+l1cov.start<-diag(1,2)
+l2cov.start<-diag(1,2)
+l1cov.prior=diag(1,2);
 nburn=as.integer(200);
 
-Sup=diag(1,5);
+l2cov.prior=diag(1,5);
 
 #And finally we run the imputation function:
-imp<-jomo1rancon.MCMCchain(Y,X,Z,clus,betap,up,covp, covu,Sp,Sup,nburn)
+imp<-jomo1rancon.MCMCchain(Y,X,Z,clus,beta.start,u.start,l1cov.start, 
+          l2cov.start,l1cov.prior,l2cov.prior,nburn)
 
 #We can check the convergence of the first element of beta:
 

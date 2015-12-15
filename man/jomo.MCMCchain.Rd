@@ -8,9 +8,10 @@
   This function is similar to the jomo function, but it returns the values of all the parameters in the model at each step of the MCMC instead of the imputations. It is useful to check the convergence of the MCMC sampler.
 }
 \usage{
-  jomo.MCMCchain(Y, X=NULL, Z=NULL,clus=NULL, betap=NULL, up=NULL, covp=NULL,
-                     covu=NULL, Sp=NULL, Sup=NULL, nburn=500, a=NULL, 
-                     meth="common", output=1, out.iter=10) 
+  jomo.MCMCchain(Y, X=NULL, Z=NULL,clus=NULL, beta.start=NULL, u.start=NULL,
+                     l1cov.start=NULL, l2cov.start=NULL, l1cov.prior=NULL, 
+                     l2cov.prior=NULL, nburn=500, a=NULL, meth="common", 
+                     output=1, out.iter=10) 
   
 }
 %- maybe also 'usage' for other objects documented here.
@@ -27,29 +28,29 @@
   \item{clus}{
     A data frame, or matrix, containing the cluster indicator for each observation. If missing, functions for single level imputation are automatically used.
   }
-  \item{betap}{
+  \item{beta.start}{
     Starting value for beta, the vector(s) of fixed effects. Rows index different covariates and columns index different outcomes. For each n-category variable we define n-1 latent normals. The default is a matrix of zeros.
   }
-  \item{up}{
+  \item{u.start}{
     A matrix where different rows are the starting values within each cluster for the random effects estimates u. The default is a matrix of zeros.
   }
-  \item{covp}{
+  \item{l1cov.start}{
     Starting value for the covariance matrix. Dimension of this square matrix is equal to the number of outcomes (continuous plus latent normals) in the imputation model. The default is the identity matrix.
   }
-  \item{covu}{
+  \item{l2cov.start}{
     Starting value for the level 2 covariance matrix. Dimension of this square matrix is equal to the number of outcomes (continuous plus latent normals) in the imputation model times the number of random effects. The default is an identity matrix.
   }
-  \item{Sp}{
+  \item{l1cov.prior}{
     Scale matrix for the inverse-Wishart prior for the covariance matrix. The default is the identity matrix.
   }
-  \item{Sup}{
+  \item{l2cov.prior}{
     Scale matrix for the inverse-Wishart prior for the level 2 covariance matrix. The default is the identity matrix.
   }
   \item{nburn}{
     Number of iterations. Default is 100.
   }
   \item{a}{
-    Starting value for the degrees of freedom of the inverse Wishart distribution from which all of the covariance matrices are drawn in case method="random" option in specified. Default is the minimum possible, i.e. the dimension of the covariance matrices.
+    Starting value for the degrees of freedom of the inverse Wishart distribution from which all of the covariance matrices are drawn in case method="random" option is specified. Default is the minimum possible, i.e. the dimension of the covariance matrices.
   }
   \item{meth}{
     Method used to deal with level 1 covariance matrix. When set to "common", a common matrix across clusters is used (functions jomo1rancon, jomo1rancat and jomo1ranmix). When set to "fixed", fixed study-specific matrices are considered (jomo1ranconhr, jomo1rancathr and jomo1ranmixhr with coption meth="fixed"). Finally, when set to "random", random study-specific matrices are considered (jomo1ranconhr, jomo1rancathr and jomo1ranmixhr with option meth="random")

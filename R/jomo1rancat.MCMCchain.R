@@ -1,13 +1,14 @@
 jomo1rancat.MCMCchain <-
-  function(Y_cat, Y_numcat, X=matrix(1,nrow(Y_cat),1), Z=matrix(1,nrow(Y_cat),1), clus, betap=matrix(0,ncol(X),((sum(Y_numcat)-length(Y_numcat)))), up=matrix(0,nrow(unique(clus)),ncol(Z)*((sum(Y_numcat)-length(Y_numcat)))), covp=diag(1,ncol(betap)), covu=diag(1,ncol(up)), Sp=diag(1,ncol(covp)), Sup=diag(1,ncol(covu)), nburn=100, output=1, out.iter=10) {
+  function(Y.cat, Y.numcat, X=matrix(1,nrow(Y.cat),1), Z=matrix(1,nrow(Y.cat),1), clus, beta.start=matrix(0,ncol(X),((sum(Y.numcat)-length(Y.numcat)))), u.start=matrix(0,nrow(unique(clus)),ncol(Z)*((sum(Y.numcat)-length(Y.numcat)))), l1cov.start=diag(1,ncol(beta.start)), l2cov.start=diag(1,ncol(u.start)), l1cov.prior=diag(1,ncol(l1cov.start)), l2cov.prior=diag(1,ncol(l2cov.start)), nburn=100, output=1, out.iter=10) {
     clus<-factor(unlist(clus))
     previous_levels_clus<-levels(clus)
     levels(clus)<-0:(nlevels(clus)-1)
     previous_levels<-list()
-    for (i in 1:ncol(Y_cat)) {
-      Y_cat[,i]<-factor(Y_cat[,i])
-      previous_levels[[i]]<-levels(Y_cat[,i])
-      levels(Y_cat[,i])<-1:nlevels(Y_cat[,i])
+    Y.cat<-data.frame(Y.cat)
+    for (i in 1:ncol(Y.cat)) {
+      Y.cat[,i]<-factor(Y.cat[,i])
+      previous_levels[[i]]<-levels(Y.cat[,i])
+      levels(Y.cat[,i])<-1:nlevels(Y.cat[,i])
     }
     for (i in 1:ncol(X)) {
       if (is.factor(X[,i])) X[,i]<-as.numeric(X[,i])
@@ -15,44 +16,44 @@ jomo1rancat.MCMCchain <-
     for (i in 1:ncol(Z)) {
       if (is.factor(Z[,i])) Z[,i]<-as.numeric(Z[,i])
     }
-    stopifnot( nrow(betap)==ncol(X), ncol(betap)==((sum(Y_numcat)-length(Y_numcat))),nrow(covp)==ncol(covp), nrow(covp)==ncol(betap), nrow(Sp)==ncol(Sp),nrow(Sp)==nrow(covp),nrow(Z)==nrow(Y_cat), ncol(covu)==ncol(up), ncol(up)==ncol(Z)*((sum(Y_numcat)-length(Y_numcat))))
-    betait=matrix(0,nrow(betap),ncol(betap))
-    for (i in 1:nrow(betap)) {
-      for (j in 1:ncol(betap)) betait[i,j]=betap[i,j]
+    stopifnot( nrow(beta.start)==ncol(X), ncol(beta.start)==((sum(Y.numcat)-length(Y.numcat))),nrow(l1cov.start)==ncol(l1cov.start), nrow(l1cov.start)==ncol(beta.start), nrow(l1cov.prior)==ncol(l1cov.prior),nrow(l1cov.prior)==nrow(l1cov.start),nrow(Z)==nrow(Y.cat), ncol(l2cov.start)==ncol(u.start), ncol(u.start)==ncol(Z)*((sum(Y.numcat)-length(Y.numcat))))
+    betait=matrix(0,nrow(beta.start),ncol(beta.start))
+    for (i in 1:nrow(beta.start)) {
+      for (j in 1:ncol(beta.start)) betait[i,j]=beta.start[i,j]
     }
-    covit=matrix(0,nrow(covp),ncol(covp))
-    for (i in 1:nrow(covp)) {
-      for (j in 1:ncol(covp)) covit[i,j]=covp[i,j]
+    covit=matrix(0,nrow(l1cov.start),ncol(l1cov.start))
+    for (i in 1:nrow(l1cov.start)) {
+      for (j in 1:ncol(l1cov.start)) covit[i,j]=l1cov.start[i,j]
     }   
-    uit=matrix(0,nrow(up),ncol(up))
-    for (i in 1:nrow(up)) {
-      for (j in 1:ncol(up)) uit[i,j]=up[i,j]
+    uit=matrix(0,nrow(u.start),ncol(u.start))
+    for (i in 1:nrow(u.start)) {
+      for (j in 1:ncol(u.start)) uit[i,j]=u.start[i,j]
     }
-    covuit=matrix(0,nrow(covu),ncol(covu))
-    for (i in 1:nrow(covu)) {
-      for (j in 1:ncol(covu)) covuit[i,j]=covu[i,j]
+    covuit=matrix(0,nrow(l2cov.start),ncol(l2cov.start))
+    for (i in 1:nrow(l2cov.start)) {
+      for (j in 1:ncol(l2cov.start)) covuit[i,j]=l2cov.start[i,j]
     }   
     nimp=1
-    colnamycat<-colnames(Y_cat)
+    colnamycat<-colnames(Y.cat)
     colnamx<-colnames(X)
     colnamz<-colnames(Z)
-    Y_cat<-data.matrix(Y_cat)
-    storage.mode(Y_cat) <- "numeric"    
+    Y.cat<-data.matrix(Y.cat)
+    storage.mode(Y.cat) <- "numeric"    
     X<-data.matrix(X)
     storage.mode(X) <- "numeric"    
     Z<-data.matrix(Z)
     storage.mode(Z) <- "numeric"    
     clus<-data.matrix(clus)
-    Y=cbind(Y_cat)
-    Yi=cbind(matrix(0,nrow(Y_cat),(sum(Y_numcat)-length(Y_numcat))))
+    Y=cbind(Y.cat)
+    Yi=cbind(matrix(0,nrow(Y.cat),(sum(Y.numcat)-length(Y.numcat))))
     h=1
-    for (i in 1:length(Y_numcat)) {
+    for (i in 1:length(Y.numcat)) {
       for (j in 1:nrow(Y)) {
-        if (is.na(Y_cat[j,i])) {
-          Yi[j,h:(h+Y_numcat[i]-2)]=NA
+        if (is.na(Y.cat[j,i])) {
+          Yi[j,h:(h+Y.numcat[i]-2)]=NA
         }
       } 
-      h=h+Y_numcat[i]-1
+      h=h+Y.numcat[i]-1
     }
     if (output!=1) out.iter=nburn+2
     imp=matrix(0,nrow(Y)*(nimp+1),ncol(Y)+ncol(X)+ncol(Z)+3)
@@ -68,15 +69,15 @@ jomo1rancat.MCMCchain <-
     imp[(nrow(clus)+1):(2*nrow(clus)), (ncol(Y)+ncol(X)+ncol(Z)+1)]=clus
     imp[(nrow(X)+1):(2*nrow(X)), (ncol(Y)+ncol(X)+ncol(Z)+2)]=c(1:nrow(Y))
     imp[(nrow(X)+1):(2*nrow(X)), (ncol(Y)+ncol(X)+ncol(Z)+3)]=1  
-    betapost<- array(0, dim=c(nrow(betap),ncol(betap),nburn))
-    omegapost<- array(0, dim=c(nrow(covp),ncol(covp),nburn))
-    upostall<-array(0, dim=c(nrow(up),ncol(up),nburn))
-    covupost<- array(0, dim=c(nrow(covu),ncol(covu),nburn))
+    betapost<- array(0, dim=c(nrow(beta.start),ncol(beta.start),nburn))
+    omegapost<- array(0, dim=c(nrow(l1cov.start),ncol(l1cov.start),nburn))
+    upostall<-array(0, dim=c(nrow(u.start),ncol(u.start),nburn))
+    covupost<- array(0, dim=c(nrow(l2cov.start),ncol(l2cov.start),nburn))
     meanobs<-colMeans(Yi,na.rm=TRUE)
     for (i in 1:nrow(Yi)) for (j in 1:ncol(Yi)) if (is.na(Yimp[i,j])) Yimp2[i,j]=meanobs[j]
-    .Call("MCMCjomo1ranmix", Y, Yimp, Yimp2, Y_cat, X, Z, clus,betait,uit,betapost,upostall,covit,omegapost, covuit, covupost, nburn, Sp,Sup,Y_numcat, 0,out.iter, PACKAGE = "jomo")
+    .Call("MCMCjomo1ranmix", Y, Yimp, Yimp2, Y.cat, X, Z, clus,betait,uit,betapost,upostall,covit,omegapost, covuit, covupost, nburn, l1cov.prior,l2cov.prior,Y.numcat, 0,out.iter, PACKAGE = "jomo")
     
-    imp[(nrow(Y)+1):(2*nrow(Y)),1:ncol(Y)]=Y_cat
+    imp[(nrow(Y)+1):(2*nrow(Y)),1:ncol(Y)]=Y.cat
     betapostmean<-apply(betapost, c(1,2), mean)    
     upostmean<-apply(upostall, c(1,2), mean)
     omegapostmean<-apply(omegapost, c(1,2), mean)
@@ -98,7 +99,10 @@ jomo1rancat.MCMCchain <-
     }
     levels(imp[,(ncol(Y)+ncol(X)+ncol(Z)+1)])<-previous_levels_clus
     levels(clus)<-previous_levels_clus
-    if (is.null(colnamycat)) colnamycat=paste("Ycat", 1:ncol(Y_cat), sep = "")
+    for (j in (ncol(Y.cat)+1):(ncol(Y.cat)+ncol(X)+ncol(Z))) {
+      imp[,j]=as.numeric(imp[,j])
+    }
+    if (is.null(colnamycat)) colnamycat=paste("Ycat", 1:ncol(Y.cat), sep = "")
     if (is.null(colnamz)) colnamz=paste("Z", 1:ncol(Z), sep = "")
     if (is.null(colnamx)) colnamx=paste("X", 1:ncol(X), sep = "")
     colnames(imp)<-c(colnamycat,colnamx,colnamz,"clus","id","Imputation")

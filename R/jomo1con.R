@@ -1,15 +1,15 @@
-jomo1con<- function(Y, X=matrix(1,nrow(Y),1), betap=matrix(0,ncol(X),ncol(Y)), covp=diag(1,ncol(Y)), Sp=diag(1,ncol(Y)), nburn=100, nbetween=100, nimp=5,output=1, out.iter=10) {
+jomo1con<- function(Y, X=matrix(1,nrow(Y),1), beta.start=matrix(0,ncol(X),ncol(Y)), l1cov.start=diag(1,ncol(Y)), l1cov.prior=diag(1,ncol(Y)), nburn=100, nbetween=100, nimp=5,output=1, out.iter=10) {
   for (i in 1:ncol(X)) {
     if (is.factor(X[,i])) X[,i]<-as.numeric(X[,i])
   }
-  stopifnot(nrow(Y)==nrow(X), nrow(betap)==ncol(X), ncol(betap)==ncol(Y),nrow(covp)==ncol(covp), nrow(covp)==ncol(Y), nrow(Sp)==ncol(Sp),nrow(Sp)==nrow(covp))
-  betait=matrix(0,nrow(betap),ncol(betap))
-  for (i in 1:nrow(betap)) {
-    for (j in 1:ncol(betap)) betait[i,j]=betap[i,j]
+  stopifnot(nrow(Y)==nrow(X), nrow(beta.start)==ncol(X), ncol(beta.start)==ncol(Y),nrow(l1cov.start)==ncol(l1cov.start), nrow(l1cov.start)==ncol(Y), nrow(l1cov.prior)==ncol(l1cov.prior),nrow(l1cov.prior)==nrow(l1cov.start))
+  betait=matrix(0,nrow(beta.start),ncol(beta.start))
+  for (i in 1:nrow(beta.start)) {
+    for (j in 1:ncol(beta.start)) betait[i,j]=beta.start[i,j]
   }
-  covit=matrix(0,nrow(covp),ncol(covp))
-  for (i in 1:nrow(covp)) {
-    for (j in 1:ncol(covp)) covit[i,j]=covp[i,j]
+  covit=matrix(0,nrow(l1cov.start),ncol(l1cov.start))
+  for (i in 1:nrow(l1cov.start)) {
+    for (j in 1:ncol(l1cov.start)) covit[i,j]=l1cov.start[i,j]
   }   
   colnamy<-colnames(Y)
   colnamx<-colnames(X)
@@ -27,17 +27,17 @@ jomo1con<- function(Y, X=matrix(1,nrow(Y),1), betap=matrix(0,ncol(X),ncol(Y)), c
   imp[(nrow(X)+1):(2*nrow(X)),(ncol(Y)+1):(ncol(Y)+ncol(X))]=X
   imp[(nrow(X)+1):(2*nrow(X)), (ncol(Y)+ncol(X)+1)]=1
   imp[(nrow(X)+1):(2*nrow(X)), (ncol(Y)+ncol(X)+2)]=c(1:nrow(Y))
-  betapost<- array(0, dim=c(nrow(betap),ncol(betap),(nimp-1)))
-  bpost<-matrix(0,nrow(betap),ncol(betap))
-  omegapost<- array(0, dim=c(nrow(covp),ncol(covp),(nimp-1)))
-  opost<-matrix(0,nrow(covp),ncol(covp))
+  betapost<- array(0, dim=c(nrow(beta.start),ncol(beta.start),(nimp-1)))
+  bpost<-matrix(0,nrow(beta.start),ncol(beta.start))
+  omegapost<- array(0, dim=c(nrow(l1cov.start),ncol(l1cov.start),(nimp-1)))
+  opost<-matrix(0,nrow(l1cov.start),ncol(l1cov.start))
   meanobs<-colMeans(Y,na.rm=TRUE)
   for (i in 1:nrow(Y)) for (j in 1:ncol(Y)) if (is.na(Yimp[i,j])) Yimp[i,j]=meanobs[j]
-  .Call("jomo1con", Y, Yimp, Yimp2, X,betait,bpost,covit, opost, nburn, Sp,out.iter, PACKAGE = "jomo")
+  .Call("jomo1con", Y, Yimp, Yimp2, X,betait,bpost,covit, opost, nburn, l1cov.prior,out.iter, PACKAGE = "jomo")
   #betapost[,,1]=bpost
   #omegapost[,,1]=opost
-  bpost<-matrix(0,nrow(betap),ncol(betap))
-  opost<-matrix(0,nrow(covp),ncol(covp))
+  bpost<-matrix(0,nrow(beta.start),ncol(beta.start))
+  opost<-matrix(0,nrow(l1cov.start),ncol(l1cov.start))
   imp[(nrow(Y)+1):(2*nrow(Y)),1:ncol(Y)]=Yimp2
   Yimp=Yimp2
   if (output==1) cat("First imputation registered.", "\n")
@@ -46,11 +46,11 @@ jomo1con<- function(Y, X=matrix(1,nrow(Y),1), betap=matrix(0,ncol(X),ncol(Y)), c
     imp[(i*nrow(X)+1):((i+1)*nrow(X)),(ncol(Y)+1):(ncol(Y)+ncol(X))]=X
     imp[(i*nrow(X)+1):((i+1)*nrow(X)), (ncol(Y)+ncol(X)+1)]=i
     imp[(i*nrow(X)+1):((i+1)*nrow(X)), (ncol(Y)+ncol(X)+2)]=c(1:nrow(Y))
-    .Call("jomo1con", Y, Yimp, Yimp2, X,betait,bpost,covit, opost, nbetween, Sp,out.iter, PACKAGE = "jomo")
+    .Call("jomo1con", Y, Yimp, Yimp2, X,betait,bpost,covit, opost, nbetween, l1cov.prior,out.iter, PACKAGE = "jomo")
     betapost[,,(i-1)]=bpost
     omegapost[,,(i-1)]=opost
-    bpost<-matrix(0,nrow(betap),ncol(betap))
-    opost<-matrix(0,nrow(covp),ncol(covp))
+    bpost<-matrix(0,nrow(beta.start),ncol(beta.start))
+    opost<-matrix(0,nrow(l1cov.start),ncol(l1cov.start))
     imp[(i*nrow(Y)+1):((i+1)*nrow(Y)),1:ncol(Y)]=Yimp2
     Yimp=Yimp2
     if (output==1) cat("Imputation number ", i, "registered", "\n")

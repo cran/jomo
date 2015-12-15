@@ -8,7 +8,7 @@ JM Imputation of single level data - A tool to check convergence of the MCMC
 This function is similar to jomo1, but it returns the values of all the parameters in the model at each step of the MCMC instead of the imputations. It is useful to check the convergence of the MCMC sampler.
 }
 \usage{
-jomo1.MCMCchain(Y, X=NULL, betap=NULL, covp=NULL, Sp=NULL,
+jomo1.MCMCchain(Y, X=NULL, beta.start=NULL, l1cov.start=NULL, l1cov.prior=NULL,
 nburn=500, output=1, out.iter=10)
 }
 
@@ -19,13 +19,13 @@ a data.frame where columns related to continuous variables are numeric and colum
  \item{X}{
 A data frame, or matrix, with covariates of the joint imputation model. Rows correspond to different observations, while columns are different variables. Missing values are not allowed in these variables. In case we want an intercept, a column of 1 is needed. The default is a column of 1.
 }
-  \item{betap}{
+  \item{beta.start}{
 Starting value for beta, the vector(s) of fixed effects. Rows index different covariates and columns index different outcomes. For each n-category variable we define n-1 latent normals. The default is a matrix of zeros.
 }
-  \item{covp}{
+  \item{l1cov.start}{
 Starting value for the covariance matrix. Dimension of this square matrix is equal to the number of outcomes (continuous plus latent normals) in the imputation model. The default is the identity matrix.
 }
-  \item{Sp}{
+  \item{l1cov.prior}{
 Scale matrix for the inverse-Wishart prior for the covariance matrix. The default is the identity matrix.
 }
   \item{nburn}{
