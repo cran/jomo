@@ -8,13 +8,21 @@ jomo1.MCMCchain <-
     for (i in 1:ncol(Y)) {
       if (is.numeric(Y[,i])) {
         ncon=ncon+1
-        Y.con<-cbind(Y.con,Y[,i])
+        if (is.null(Y.con)) {
+          Y.con<-data.frame(Y[,i])
+        } else {
+          Y.con<-data.frame(Y.con,Y[,i])
+        }
         colnames(Y.con)[ncon]<-colnames(Y)[i]
       }
       else {
         if (is.factor(Y[,i])) {
         ncat=ncat+1
-        Y.cat<-cbind(Y.cat,Y[,i])
+        if (is.null(Y.cat)) {
+          Y.cat<-data.frame(Y[,i])
+        } else {
+          Y.cat<-data.frame(Y.cat,Y[,i])
+        }
         colnames(Y.cat)[ncat]<-colnames(Y)[i]
         Y.numcat<-cbind(Y.numcat,nlevels(Y[,i]))
         }

@@ -1,8 +1,12 @@
 jomo1rancathr <-
-  function(Y.cat, Y.numcat, X=matrix(1,nrow(Y.cat),1), Z=matrix(1,nrow(Y.cat),1), clus, beta.start=matrix(0,ncol(X),((sum(Y.numcat)-length(Y.numcat)))), u.start=matrix(0,nrow(unique(clus)),ncol(Z)*((sum(Y.numcat)-length(Y.numcat)))), l1cov.start=matrix(diag(1,ncol(beta.start)),ncol(beta.start)*nrow(unique(clus)),ncol(beta.start),2), l2cov.start=diag(1,ncol(u.start)), l1cov.prior=diag(1,ncol(beta.start)), l2cov.prior=diag(1,ncol(u.start)), nburn=100, nbetween=100, nimp=5,a=ncol(beta.start),meth="random", output=1, out.iter=10) {
+  function(Y.cat, Y.numcat, X=matrix(1,nrow(Y.cat),1), Z=matrix(1,nrow(Y.cat),1), clus, beta.start=matrix(0,ncol(X),((sum(Y.numcat)-length(Y.numcat)))), u.start=NULL, l1cov.start=NULL, l2cov.start=NULL, l1cov.prior=diag(1,ncol(beta.start)), l2cov.prior=NULL, nburn=100, nbetween=100, nimp=5,a=ncol(beta.start),meth="random", output=1, out.iter=10) {
     clus<-factor(unlist(clus))
     previous_levels_clus<-levels(clus)
     levels(clus)<-0:(nlevels(clus)-1)
+    if (is.null(u.start)) u.start = matrix(0, nlevels(clus), ncol(Z) * ((sum(Y.numcat) - length(Y.numcat))))
+    if (is.null(l2cov.start)) l2cov.start = diag(1, ncol(u.start))
+    if (is.null(l2cov.prior)) l2cov.prior = diag(1, ncol(l2cov.start))
+    if (is.null(l1cov.start)) l1cov.start=matrix(diag(1,ncol(beta.start)),ncol(beta.start)*nlevels(clus),ncol(beta.start),2)
     previous_levels<-list()
     Y.cat<-data.frame(Y.cat)
     for (i in 1:ncol(Y.cat)) {
@@ -44,7 +48,7 @@ jomo1rancathr <-
     storage.mode(X) <- "numeric"    
     Z<-data.matrix(Z)
     storage.mode(Z) <- "numeric"    
-    clus<-data.matrix(clus)
+    clus <- matrix(as.integer(levels(clus))[clus], ncol=1)
     Y=cbind(Y.cat)
     Yi=cbind( matrix(0,nrow(Y.cat),(sum(Y.numcat)-length(Y.numcat))))
     h=1

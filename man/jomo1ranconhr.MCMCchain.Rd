@@ -11,11 +11,8 @@ This function is similar to jomo1ranconhr, but it returns the values of all the 
 \usage{
 jomo1ranconhr.MCMCchain(Y, X=matrix(1,nrow(Y),1), Z=matrix(1,nrow(Y),1), clus, 
 beta.start=matrix(0,ncol(X),ncol(Y)), 
-u.start=matrix(0,nrow(unique(clus)),ncol(Z)*ncol(Y)), 
-l1cov.start=matrix(diag(1,ncol(Y)),nrow(unique(clus))*ncol(Y),ncol(Y),2), 
-l2cov.start=diag(1,ncol(Y)*ncol(Z)), l1cov.prior=diag(1,ncol(Y)), 
-l2cov.prior=diag(1,ncol(Y)*ncol(Z)), nburn=100, a=ncol(Y),
-meth="random", output=1, out.iter=10) 
+u.start=NULL, l1cov.start=NULL, l2cov.start=NULL, l1cov.prior=diag(1,ncol(Y)), 
+l2cov.prior=NULL, nburn=100, a=ncol(Y),meth="random", output=1, out.iter=10) 
 
 }
 %- maybe also 'usage' for other objects documented here.

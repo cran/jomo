@@ -11,12 +11,10 @@ Impute a clustered dataset with categorical variables as outcome. A joint multiv
 jomo1rancathr( Y.cat, Y.numcat, X=matrix(1,nrow(Y.cat),1), 
 Z=matrix(1,nrow(Y.cat),1), clus,
 beta.start=matrix(0,ncol(X),((sum(Y.numcat)-length(Y.numcat)))), 
-u.start=matrix(0,nrow(unique(clus)),ncol(Z)*((sum(Y.numcat)-length(Y.numcat)))), 
-l1cov.start=matrix(diag(1,ncol(beta.start)),ncol(beta.start)*nrow(unique(clus)),
-    ncol(beta.start),2), 
-l2cov.start=diag(1,ncol(u.start)), l1cov.prior=diag(1,ncol(beta.start)), 
-l2cov.prior=diag(1,ncol(u.start)), nburn=100, nbetween=100, nimp=5,
-a=ncol(beta.start),meth="random", output=1, out.iter=10)
+u.start=NULL, l1cov.start=NULL, l2cov.start=NULL, 
+l1cov.prior=diag(1,ncol(beta.start)), l2cov.prior=NULL, 
+nburn=100, nbetween=100, nimp=5,a=ncol(beta.start),
+meth="random", output=1, out.iter=10)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{

@@ -1,8 +1,12 @@
 jomo1ranconhr <-
-  function(Y, X=matrix(1,nrow(Y),1), Z=matrix(1,nrow(Y),1), clus, beta.start=matrix(0,ncol(X),ncol(Y)), u.start=matrix(0,nrow(unique(clus)),ncol(Z)*ncol(Y)), l1cov.start=matrix(diag(1,ncol(Y)),nrow(unique(clus))*ncol(Y),ncol(Y),2), l2cov.start=diag(1,ncol(Y)*ncol(Z)), l1cov.prior=diag(1,ncol(Y)), l2cov.prior=diag(1,ncol(Y)*ncol(Z)), nburn=100, nbetween=100, nimp=5, a=ncol(Y),meth="random", output=1, out.iter=10) {
+  function(Y, X=matrix(1,nrow(Y),1), Z=matrix(1,nrow(Y),1), clus, beta.start=matrix(0,ncol(X),ncol(Y)), u.start=NULL, l1cov.start=NULL, l2cov.start=NULL, l1cov.prior=diag(1,ncol(Y)), l2cov.prior=NULL, nburn=100, nbetween=100, nimp=5, a=ncol(Y),meth="random", output=1, out.iter=10) {
     clus<-factor(unlist(clus))
     previous_levels_clus<-levels(clus)
     levels(clus)<-0:(nlevels(clus)-1)
+    if (is.null(u.start)) u.start = matrix(0, nlevels(clus), ncol(Z)*ncol(Y))
+    if (is.null(l2cov.start)) l2cov.start = diag(1, ncol(u.start))
+    if (is.null(l2cov.prior)) l2cov.prior = diag(1, ncol(l2cov.start))
+    if (is.null(l1cov.start)) l1cov.start=matrix(diag(1,ncol(beta.start)),ncol(beta.start)*nlevels(clus),ncol(beta.start),2)
     for (i in 1:ncol(X)) {
       if (is.factor(X[,i])) X[,i]<-as.numeric(X[,i])
     }
@@ -37,7 +41,7 @@ jomo1ranconhr <-
     storage.mode(X) <- "numeric"    
     Z<-data.matrix(Z)
     storage.mode(Z) <- "numeric"    
-    clus<-data.matrix(clus)
+    clus <- matrix(as.integer(levels(clus))[clus], ncol=1)
     if (output!=1) out.iter=nburn+nbetween
     imp=matrix(0,nrow(Y)*(nimp+1),ncol(Y)+ncol(X)+ncol(Z)+3)
     imp[1:nrow(Y),1:ncol(Y)]=Y

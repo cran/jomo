@@ -11,13 +11,9 @@ Impute a clustered dataset with mixed data types as outcome. A joint multivariat
 jomo1ranmixhr(Y.con, Y.cat, Y.numcat, X=matrix(1,nrow(Y.cat),1), 
 Z=matrix(1,nrow(Y.cat),1), clus,
 beta.start=matrix(0,ncol(X),(ncol(Y.con)+(sum(Y.numcat)-length(Y.numcat)))), 
-u.start=matrix(0,nrow(unique(clus)),
-       ncol(Z)*(ncol(Y.con)+(sum(Y.numcat)-length(Y.numcat)))), 
-l1cov.start=matrix(diag(1,ncol(beta.start)),
-       ncol(beta.start)*nrow(unique(clus)),ncol(beta.start),2),
-l2cov.start=diag(1,ncol(u.start)), l1cov.prior=diag(1,ncol(beta.start)), 
-l2cov.prior=diag(1,ncol(u.start)), nburn=100, nbetween=100, nimp=5,
-a=ncol(beta.start),meth="random", output=1, out.iter=10)
+u.start=NULL, l1cov.start=NULL,l2cov.start=NULL, 
+l1cov.prior=diag(1,ncol(beta.start)), l2cov.prior=NULL, nburn=100, 
+nbetween=100,nimp=5,a=ncol(beta.start),meth="random", output=1, out.iter=10)
 }
 
 \arguments{

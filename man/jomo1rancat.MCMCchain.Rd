@@ -12,11 +12,9 @@ This function is similar to jomo1rancat, but it returns the values of all the pa
 jomo1rancat.MCMCchain(Y.cat, Y.numcat, X=matrix(1,nrow(Y.cat),1), 
 Z=matrix(1,nrow(Y.cat),1),clus, 
 beta.start=matrix(0,ncol(X),((sum(Y.numcat)-length(Y.numcat)))), 
-u.start=matrix(0,nrow(unique(clus)),
-    ncol(Z)*((sum(Y.numcat)-length(Y.numcat)))), 
-l1cov.start=diag(1,ncol(beta.start)), l2cov.start=diag(1,ncol(u.start)), 
-l1cov.prior=diag(1,ncol(l1cov.start)), l2cov.prior=diag(1,ncol(l2cov.start)), 
-nburn=100, output=1, out.iter=10) 
+u.start=NULL, l1cov.start=diag(1,ncol(beta.start)), 
+l2cov.start=NULL, l1cov.prior=diag(1,ncol(l1cov.start)), 
+l2cov.prior=NULL, nburn=100, output=1, out.iter=10) 
 
 }
 %- maybe also 'usage' for other objects documented here.
