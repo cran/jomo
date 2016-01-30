@@ -8,12 +8,9 @@ JM Imputation of clustered data with continuous variables only with cluster-spec
 Impute a clustered dataset with continuous outcomes only. A joint multivariate model for partially observed data is assumed and imputations are generated through the use of a Gibbs sampler. A different covariance matrix is estimated within each cluster. Categorical covariates may be considered, but they have to be included with dummy variables.
 }
 \usage{
-jomo1ranconhr(Y, X=matrix(1,nrow(Y),1), Z=matrix(1,nrow(Y),1), clus, 
-      beta.start=matrix(0,ncol(X),ncol(Y)),
-      u.start=NULL,l1cov.start=NULL, l2cov.start=NULL, 
-      l1cov.prior=diag(1,ncol(Y)), l2cov.prior=NULL, 
-      nburn=100, nbetween=100, nimp=5, a=ncol(Y), 
-      meth="random", output=1, out.iter=10) 
+jomo1ranconhr(Y, X=NULL, Z=NULL, clus, beta.start=NULL, u.start=NULL,
+l1cov.start=NULL, l2cov.start=NULL, l1cov.prior=NULL, l2cov.prior=NULL, 
+nburn=100, nbetween=100, nimp=5, a=ncol(Y), meth="random", output=1, out.iter=10) 
 
 }
 %- maybe also 'usage' for other objects documented here.
@@ -86,8 +83,8 @@ Yucel R.M., (2011), Random-covariances and mixed-effects models for imputing mul
 
 #First of all we load and attach the data:
 
-data(mldata)
-attach(mldata)
+data(cldata)
+attach(cldata)
 
 #Then we define the inputs
 # nimp, nburn and nbetween are smaller than they should. This is

@@ -9,25 +9,25 @@ A wrapper function linking the 3 single level JM Imputation functions. The matri
 }
 \usage{
 jomo1 (Y, X=NULL, beta.start=NULL, l1cov.start=NULL, l1cov.prior=NULL, 
-      nburn=500, nbetween=100, nimp=5, output=1, out.iter=10)
+      nburn=100, nbetween=100, nimp=5, output=1, out.iter=10)
 }
 
 \arguments{
   \item{Y}{
-a data.frame where columns related to continuous variables are numeric and columns related to binary/categorical variables are factors. 
-}
+    A data.frame containing the outcomes of the imputation model, i.e. the partially observed level 1 variables. Columns related to continuous variables have to be numeric and columns related to binary/categorical variables have to be factors. 
+  }
  \item{X}{
-A data frame, or matrix, with covariates of the joint imputation model. Rows correspond to different observations, while columns are different variables. Missing values are not allowed in these variables. In case we want an intercept, a column of 1 is needed. The default is a column of 1.
-}
-  \item{beta.start}{
-Starting value for beta, the vector(s) of fixed effects. Rows index different covariates and columns index different outcomes. For each n-category variable we define n-1 latent normals. The default is a matrix of zeros.
-}
-  \item{l1cov.start}{
-Starting value for the covariance matrix. Dimension of this square matrix is equal to the number of outcomes (continuous plus latent normals) in the imputation model. The default is the identity matrix.
-}
-  \item{l1cov.prior}{
-Scale matrix for the inverse-Wishart prior for the covariance matrix. The default is the identity matrix.
-}
+    A data frame, or matrix, with covariates of the joint imputation model. Rows correspond to different observations, while columns are different variables. Missing values are not allowed in these variables. In case we want an intercept, a column of 1 is needed. The default is a column of 1.
+  }
+   \item{beta.start}{
+    Starting value for beta, the vector(s) of fixed effects. Rows index different covariates and columns index different outcomes. For each n-category variable we have a fixed effect parameter for each of the n-1 latent normals. The default is a matrix of zeros.
+  }
+ \item{l1cov.start}{
+    Starting value for the covariance matrix. Dimension of this square matrix is equal to the number of outcomes (continuous plus latent normals) in the imputation model. The default is the identity matrix.
+  }
+   \item{l1cov.prior}{
+    Scale matrix for the inverse-Wishart prior for the covariance matrix. The default is the identity matrix.
+  }
   \item{nburn}{
 Number of burn in iterations. Default is 100.
 }

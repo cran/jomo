@@ -8,15 +8,12 @@ JM Imputation of single level data with categorical variables
 Impute a single level dataset with categorical variables as outcomes. A joint multivariate model for partially observed data is assumed and imputations are generated through the use of a Gibbs sampler where the covariance matrix is updated with a Metropolis-Hastings step. Fully observed categorical covariates can be included in the imputation model as covariates as well, but in that case dummy variables have to be created first.
 }
 \usage{
-jomo1cat(Y.cat, Y.numcat, X=matrix(1,nrow(Y.cat),1), 
-         beta.start=matrix(0,ncol(X),((sum(Y.numcat)-length(Y.numcat)))), 
-         l1cov.start=diag(1,ncol(beta.start)), 
-         l1cov.prior=diag(1,ncol(beta.start)), 
-         nburn=100, nbetween=100, nimp=5,output=1, out.iter=10)
+jomo1cat(Y.cat, Y.numcat, X=NULL, beta.start=NULL, l1cov.start=NULL, 
+l1cov.prior=NULL, nburn=100, nbetween=100, nimp=5,output=1, out.iter=10)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
-  \item{Y.cat}{
+   \item{Y.cat}{
 A data frame, or matrix, with categorical (or binary) responses of the joint imputation model. Rows correspond to different observations, while columns are different variables. Missing values are coded as NA.
 }
   \item{Y.numcat}{
@@ -25,9 +22,9 @@ A vector with the number of categories in each categorical (or binary) variable.
   \item{X}{
 A data frame, or matrix, with covariates of the joint imputation model. Rows correspond to different observations, while columns are different variables. Missing values are not allowed in these variables. In case we want an intercept, a column of 1 is needed. The default is a column of 1.
 }
-  \item{beta.start}{
-Starting value for beta, the vector(s) of fixed effects. Rows index different covariates and columns index different outcomes. For each n-category variable we define n-1 latent normals. The default is a matrix of zeros.
-}
+   \item{beta.start}{
+    Starting value for beta, the vector(s) of fixed effects. Rows index different covariates and columns index different outcomes. For each n-category variable we have a fixed effect parameter for each of the n-1 latent normals. The default is a matrix of zeros.
+  }
   \item{l1cov.start}{
 Starting value for the covariance matrix. Dimension of this square matrix is equal to the number of outcomes (continuous plus latent normals) in the imputation model. The default is the identity matrix.
 }

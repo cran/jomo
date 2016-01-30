@@ -1,5 +1,10 @@
 jomo1ranmix.MCMCchain <-
-  function(Y.con, Y.cat, Y.numcat, X=matrix(1,nrow(Y.cat),1), Z=matrix(1,nrow(Y.cat),1), clus, beta.start=matrix(0,ncol(X),(ncol(Y.con)+(sum(Y.numcat)-length(Y.numcat)))), u.start=NULL, l1cov.start=diag(1,ncol(beta.start)), l2cov.start=NULL, l1cov.prior=diag(1,ncol(l1cov.start)), l2cov.prior=NULL, nburn=100, output=1, out.iter=10) {
+  function(Y.con, Y.cat, Y.numcat, X=NULL, Z=NULL, clus, beta.start=NULL, u.start=NULL, l1cov.start=NULL, l2cov.start=NULL, l1cov.prior=NULL, l2cov.prior=NULL, start.imp=NULL, nburn=100, output=1, out.iter=10) {
+    if (is.null(X)) X=matrix(1,nrow(Y.cat),1) 
+    if (is.null(Z)) Z=matrix(1,nrow(Y.cat),1)
+    if (is.null(beta.start)) beta.start=matrix(0,ncol(X),(ncol(Y.con)+(sum(Y.numcat)-length(Y.numcat))))
+    if (is.null(l1cov.start)) l1cov.start=diag(1,ncol(beta.start))
+    if (is.null(l1cov.prior)) l1cov.prior=diag(1,ncol(beta.start))
     clus<-factor(unlist(clus))
     previous_levels_clus<-levels(clus)
     levels(clus)<-0:(nlevels(clus)-1)
@@ -80,7 +85,18 @@ jomo1ranmix.MCMCchain <-
     upostall<-array(0, dim=c(nrow(u.start),ncol(u.start),nburn))
     covupost<- array(0, dim=c(nrow(l2cov.start),ncol(l2cov.start),nburn))
     meanobs<-colMeans(Yi,na.rm=TRUE)
-    for (i in 1:nrow(Yi)) for (j in 1:ncol(Yi)) if (is.na(Yimp[i,j])) Yimp2[i,j]=meanobs[j]
+    if (!is.null(start.imp)) {
+      start.imp<-as.matrix(start.imp)
+      if ((nrow(start.imp)!=nrow(Yimp2))||(ncol(Yimp2)!=ncol(start.imp))) {
+        cat("start.imp dimensions incorrect. Not using start.imp as starting value for the imputed dataset.\n")
+        start.imp=NULL
+      } else {
+        Yimp2<-start.imp
+      }
+    }
+    if (is.null(start.imp)) {
+      for (i in 1:nrow(Yi)) for (j in 1:ncol(Yi)) if (is.na(Yimp[i,j])) Yimp2[i,j]=meanobs[j]
+    } 
     .Call("MCMCjomo1ranmix", Y, Yimp, Yimp2, Y.cat, X, Z, clus,betait,uit,betapost,upostall,covit,omegapost, covuit, covupost, nburn, l1cov.prior,l2cov.prior,Y.numcat, ncol(Y.con),out.iter, PACKAGE = "jomo")
     imp[(nrow(Y)+1):(2*nrow(Y)),1:ncol(Y.con)]=Yimp2[,1:ncol(Y.con)]
     imp[(nrow(Y)+1):(2*nrow(Y)),(ncol(Y.con)+1):ncol(Y)]=Y.cat
@@ -103,7 +119,9 @@ jomo1ranmix.MCMCchain <-
       imp[,(ncol(Y.con)+i)]<-as.factor(imp[,(ncol(Y.con)+i)]) 
       levels(imp[,(ncol(Y.con)+i)])<-previous_levels[[i]]
     }
+    imp[,(ncol(Y)+ncol(X)+ncol(Z)+1)]<-factor(imp[,(ncol(Y)+ncol(X)+ncol(Z)+1)])
     levels(imp[,(ncol(Y)+ncol(X)+ncol(Z)+1)])<-previous_levels_clus
+    clus<-factor(clus)
     levels(clus)<-previous_levels_clus
     for (j in 1:(ncol(Y.con))) {
       imp[,j]=as.numeric(imp[,j])
@@ -116,5 +134,5 @@ jomo1ranmix.MCMCchain <-
     if (is.null(colnamz)) colnamz=paste("Z", 1:ncol(Z), sep = "")
     if (is.null(colnamx)) colnamx=paste("X", 1:ncol(X), sep = "")
     colnames(imp)<-c(colnamycon,colnamycat,colnamx,colnamz,"clus","id","Imputation")
-    return(list("finimp"=imp,"collectbeta"=betapost,"collectomega"=omegapost,"collectu"=upostall, "collectcovu"=covupost))
+    return(list("finimp"=imp,"collectbeta"=betapost,"collectomega"=omegapost,"collectu"=upostall, "collectcovu"=covupost, "finimp_latnorm" = Yimp2))
   }

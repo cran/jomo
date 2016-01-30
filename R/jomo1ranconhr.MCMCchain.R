@@ -1,5 +1,9 @@
 jomo1ranconhr.MCMCchain <-
-  function(Y, X=matrix(1,nrow(Y),1), Z=matrix(1,nrow(Y),1), clus, beta.start=matrix(0,ncol(X),ncol(Y)), u.start=NULL, l1cov.start=NULL, l2cov.start=NULL, l1cov.prior=diag(1,ncol(Y)), l2cov.prior=NULL, nburn=100, a=ncol(Y),meth="random", output=1, out.iter=10) {
+  function(Y, X=NULL, Z=NULL, clus, beta.start=NULL, u.start=NULL, l1cov.start=NULL, l2cov.start=NULL, l1cov.prior=NULL, l2cov.prior=NULL, start.imp=NULL, nburn=100, a=ncol(Y),meth="random", output=1, out.iter=10) {
+    if (is.null(X)) X=matrix(1,nrow(Y),1)
+    if (is.null(Z)) Z=matrix(1,nrow(Y),1)
+    if (is.null(beta.start)) beta.start=matrix(0,ncol(X),ncol(Y))
+    if (is.null(l1cov.prior)) l1cov.prior=diag(1,ncol(beta.start))
     clus<-factor(unlist(clus))
     previous_levels_clus<-levels(clus)
     levels(clus)<-0:(nlevels(clus)-1)
@@ -62,7 +66,18 @@ jomo1ranconhr.MCMCchain <-
     upostall<-array(0, dim=c(nrow(u.start),ncol(u.start),nburn))
     covupost<- array(0, dim=c(nrow(l2cov.start),ncol(l2cov.start),nburn))
     meanobs<-colMeans(Y,na.rm=TRUE)
-    for (i in 1:nrow(Y)) for (j in 1:ncol(Y)) if (is.na(Yimp[i,j])) Yimp[i,j]=meanobs[j]
+    if (!is.null(start.imp)) {
+      start.imp<-as.matrix(start.imp)
+      if ((nrow(start.imp)!=nrow(Yimp))||(ncol(Yimp)!=ncol(start.imp))) {
+        cat("start.imp dimensions incorrect. Not using start.imp as starting value for the imputed dataset.\n")
+        start.imp=NULL
+      } else {
+        Yimp<-start.imp
+      }
+    }
+    if (is.null(start.imp)) {
+      for (i in 1:nrow(Y)) for (j in 1:ncol(Y)) if (is.na(Yimp[i,j])) Yimp[i,j]=meanobs[j]
+    } 
     #for (i in 1:nrow(Y)) for (j in 1:ncol(Y)) if (is.na(Yimp[i,j])) Yimp[i,j]=rnorm(1,mean=meanobs[j], sd=0.01)
     if (meth=="fixed") {
       .Call("MCMCjomo1ranconhf", Y, Yimp, Yimp2, X, Z, clus, betait, uit, betapost, upostall, covit,omegapost, covuit,covupost, nburn, l1cov.prior, l2cov.prior,out.iter,  PACKAGE = "jomo") 
@@ -87,7 +102,9 @@ jomo1ranconhr.MCMCchain <-
       print(covupostmean)
     }
     imp<-data.frame(imp)
+    imp[,(ncol(Y)+ncol(X)+ncol(Z)+1)]<-factor(imp[,(ncol(Y)+ncol(X)+ncol(Z)+1)])
     levels(imp[,(ncol(Y)+ncol(X)+ncol(Z)+1)])<-previous_levels_clus
+    clus<-factor(clus)
     levels(clus)<-previous_levels_clus
     for (j in 1:(ncol(Y)+ncol(X)+ncol(Z))) {
       imp[,j]=as.numeric(imp[,j])

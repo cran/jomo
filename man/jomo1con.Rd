@@ -8,9 +8,8 @@ JM Imputation of single level data with continuous variables only
 Impute a single level dataset with continuous outcomes only. A joint multivariate model for partially observed data is assumed and imputations are generated through the use of a Gibbs sampler. Categorical covariates may be considered, but they have to be included with dummy variables.
 }
 \usage{
-jomo1con(Y, X=matrix(1,nrow(Y),1), beta.start=matrix(0,ncol(X),ncol(Y)), 
-l1cov.start=diag(1,ncol(Y)), l1cov.prior=diag(1,ncol(Y)), nburn=100, 
-nbetween=100, nimp=5, output=1, out.iter=10)
+jomo1con(Y, X=NULL, beta.start=NULL, l1cov.start=NULL, l1cov.prior=NULL, 
+nburn=100, nbetween=100, nimp=5, output=1, out.iter=10)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{

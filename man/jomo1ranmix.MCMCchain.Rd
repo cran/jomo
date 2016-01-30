@@ -9,12 +9,10 @@ A tool to check convergence of the MCMC
 This function is similar to jomo1ranmix, but it returns the values of all the parameters in the model at each step of the MCMC instead of the imputations. It is useful to check the convergence of the MCMC sampler.
 }
 \usage{
-jomo1ranmix.MCMCchain(Y.con, Y.cat, Y.numcat, X=matrix(1,nrow(Y.cat),1), 
-Z=matrix(1,nrow(Y.cat),1), clus, 
-beta.start=matrix(0,ncol(X),(ncol(Y.con)+(sum(Y.numcat)-length(Y.numcat)))), 
-u.start=NULL, l1cov.start=diag(1,ncol(beta.start)), l2cov.start=NULL, 
-l1cov.prior=diag(1,ncol(l1cov.start)), l2cov.prior=NULL, 
-nburn=100, output=1, out.iter=10) 
+jomo1ranmix.MCMCchain(Y.con, Y.cat, Y.numcat, X=NULL, Z=NULL, clus, 
+beta.start=NULL, u.start=NULL, l1cov.start=NULL, l2cov.start=NULL, 
+l1cov.prior=NULL, l2cov.prior=NULL, start.imp=NULL, nburn=100, 
+output=1, out.iter=10) 
 
 }
 %- maybe also 'usage' for other objects documented here.
@@ -55,6 +53,9 @@ Scale matrix for the inverse-Wishart prior for the covariance matrix. The defaul
   \item{l2cov.prior}{
 Scale matrix for the inverse-Wishart prior for the level 2 covariance matrix. The default is the identity matrix.
 }
+ \item{start.imp}{
+Starting value for the imputed dataset. n-level categorical variables are substituted by n-1 latent normals.
+}
   \item{nburn}{
 Number of burn in iterations. Default is 100.
 }
@@ -69,14 +70,14 @@ When set to K, every K iterations a message "Iteration number N*K completed" is 
 }
 
 \value{
-A list with five elements is returned: the final imputed dataset (finimp) and four 3-dimensional matrices, containing all the values for beta (collectbeta), the random effects (collectu) and the level 1 (collectomega) and level 2 covariance matrices (collectcovu).
+A list with six elements is returned: the final imputed dataset (finimp) and four 3-dimensional matrices, containing all the values for beta (collectbeta), the random effects (collectu) and the level 1 (collectomega) and level 2 covariance matrices (collectcovu). Finally, the final state of the imputed dataset with the latent normals in place of the categorical variables is stored in finimp_latnorm.
 }
 
 \examples{
 #First of all we load and attach the data:
 
-data(mldata)
-attach(mldata)
+data(cldata)
+attach(cldata)
 
 #Then we define the inputs:
 # nimp, nburn and nbetween are smaller than they should. This is
@@ -99,13 +100,13 @@ nburn=as.integer(100);
 #Then we can run the sampler:
 
 imp<-jomo1ranmix.MCMCchain(Y.con, Y.cat, Y.numcat, X,Z,clus,beta.start,u.start,
-             l1cov.start, l2cov.start,l1cov.prior,l2cov.prior,nburn)
+             l1cov.start, l2cov.start,l1cov.prior,l2cov.prior,nburn=nburn)
 
 #We can check the convergence of the first element of beta:
 
 plot(c(1:nburn),imp$collectbeta[1,1,1:nburn],type="l")
 
-#Or similarly we can check the convergence of any element of th elevel 2 covariance matrix:
+#Or similarly we can check the convergence of any element of the level 2 covariance matrix:
 
 plot(c(1:nburn),imp$collectcovu[1,2,1:nburn],type="l")
 }

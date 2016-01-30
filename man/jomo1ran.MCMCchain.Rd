@@ -2,7 +2,7 @@
 \alias{jomo1ran.MCMCchain}
 
 \title{
-JM Imputation of 2-level data - A tool to check convergence of the MCMC
+JM Imputation of clustered data - A tool to check convergence of the MCMC
 }
 \description{
 This function is similar to jomo1ran, but it returns the values of all the parameters in the model at each step of the MCMC instead of the imputations. It is useful to check the convergence of the MCMC sampler.
@@ -10,14 +10,14 @@ This function is similar to jomo1ran, but it returns the values of all the param
 \usage{
 jomo1ran.MCMCchain(Y, X=NULL, Z=NULL,clus, beta.start=NULL, u.start=NULL, 
 l1cov.start=NULL,l2cov.start=NULL, l1cov.prior=NULL, l2cov.prior=NULL, 
-nburn=500, a=NULL, meth="common", output=1, out.iter=10) 
+start.imp=NULL, nburn=100, a=NULL, meth="common", output=1, out.iter=10) 
 
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
-   \item{Y}{
-a data.frame where columns related to continuous variables are numeric and columns related to binary/categorical variables are factors. 
-}
+ \item{Y}{
+    A data.frame containing the outcomes of the imputation model, i.e. the partially observed level 1 variables. Columns related to continuous variables have to be numeric and columns related to binary/categorical variables have to be factors. 
+  }
   \item{X}{
 A data frame, or matrix, with covariates of the joint imputation model. Rows correspond to different observations, while columns are different variables. Missing values are not allowed in these variables. In case we want an intercept, a column of 1 is needed. The default is a column of 1.
 }
@@ -45,6 +45,10 @@ Scale matrix for the inverse-Wishart prior for the covariance matrix. The defaul
   \item{l2cov.prior}{
 Scale matrix for the inverse-Wishart prior for the level 2 covariance matrix. The default is the identity matrix.
 }
+ \item{start.imp}{
+Starting value for the imputed dataset. n-level categorical variables are substituted by n-1 latent normals.
+}
+
   \item{nburn}{
 Number of iterations. Default is 100.
 }
@@ -65,14 +69,14 @@ When set to K, every K iterations a message "Iteration number N*K completed" is 
 }
 
 \value{
-A list with five elements is returned: the final imputed dataset (finimp) and four 3-dimensional matrices, containing all the values for beta (collectbeta), the random effects (collectu) and the level 1 (collectomega) and level 2 covariance matrices (collectcovu).
+A list with six elements is returned: the final imputed dataset (finimp) and four 3-dimensional matrices, containing all the values for beta (collectbeta), the random effects (collectu) and the level 1 (collectomega) and level 2 covariance matrices (collectcovu). Finally, for cases where categorical variabels are present, the final state of the imputed dataset with the latent normals in place of the categorical variables is stored in finimp_latnorm.
 }
 
 \examples{
   #First of all we load and atach the data:
   
-data(mldata)
-attach(mldata)
+data(cldata)
+attach(cldata)
 
 #Then we define all the inputs:
 

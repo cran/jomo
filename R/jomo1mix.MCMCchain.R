@@ -1,5 +1,9 @@
 jomo1mix.MCMCchain <-
-  function(Y.con, Y.cat, Y.numcat, X=matrix(1,nrow(Y.cat),1), beta.start=matrix(0,ncol(X),(ncol(Y.con)+(sum(Y.numcat)-length(Y.numcat)))), l1cov.start=diag(1,ncol(beta.start)), l1cov.prior=diag(1,ncol(beta.start)), nburn=100, output=1, out.iter=10) {
+  function(Y.con, Y.cat, Y.numcat, X=NULL, beta.start=NULL, l1cov.start=NULL, l1cov.prior=NULL, start.imp=NULL, nburn=100, output=1, out.iter=10) {
+    if (is.null(X)) X=matrix(1,nrow(Y.cat),1)
+    if (is.null(beta.start)) beta.start=matrix(0,ncol(X),(ncol(Y.con)+(sum(Y.numcat)-length(Y.numcat))))
+    if (is.null(l1cov.start)) l1cov.start=diag(1,ncol(beta.start))
+    if (is.null(l1cov.prior)) l1cov.prior=diag(1,ncol(beta.start))
     previous_levels<-list()
     Y.cat<-data.frame(Y.cat)
     for (i in 1:ncol(Y.cat)) {
@@ -53,7 +57,18 @@ jomo1mix.MCMCchain <-
     betapost<- array(0, dim=c(nrow(beta.start),ncol(beta.start),nburn))
     omegapost<- array(0, dim=c(nrow(l1cov.start),ncol(l1cov.start),nburn))
     meanobs<-colMeans(Yi,na.rm=TRUE)
-    for (i in 1:nrow(Yi)) for (j in 1:ncol(Yi)) if (is.na(Yimp[i,j])) Yimp2[i,j]=meanobs[j]
+    if (!is.null(start.imp)) {
+      start.imp<-as.matrix(start.imp)
+      if ((nrow(start.imp)!=nrow(Yimp2))||(ncol(Yimp2)!=ncol(start.imp))) {
+        cat("start.imp dimensions incorrect. Not using start.imp as starting value for the imputed dataset.\n")
+        start.imp=NULL
+      } else {
+        Yimp2<-start.imp
+      }
+    }
+    if (is.null(start.imp)) {
+      for (i in 1:nrow(Yi)) for (j in 1:ncol(Yi)) if (is.na(Yimp[i,j])) Yimp2[i,j]=meanobs[j]
+    }   
     .Call("MCMCjomo1mix", Y, Yimp, Yimp2, Y.cat, X,betait,betapost,covit,omegapost, nburn, l1cov.prior,Y.numcat, ncol(Y.con),out.iter, PACKAGE = "jomo")
     imp[(nrow(Y)+1):(2*nrow(Y)),1:ncol(Y.con)]=Yimp2[,1:ncol(Y.con)]
     imp[(nrow(Y)+1):(2*nrow(Y)),(ncol(Y.con)+1):ncol(Y)]=Y.cat
@@ -74,5 +89,5 @@ jomo1mix.MCMCchain <-
     if (is.null(colnamycon)) colnamycon=paste("Ycon", 1:ncol(Y.con), sep = "")
     if (is.null(colnamx)) colnamx=paste("X", 1:ncol(X), sep = "")
     colnames(imp)<-c(colnamycon,colnamycat,colnamx,"Imputation","id")
-    return(list("finimp"=imp,"collectbeta"=betapost,"collectomega"=omegapost))
+    return(list("finimp"=imp,"collectbeta"=betapost,"collectomega"=omegapost, "finimp_latnorm" = Yimp2))
   }

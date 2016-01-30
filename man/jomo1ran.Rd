@@ -2,22 +2,22 @@
 \alias{jomo1ran}
 
 \title{
-JM Imputation of 2-level data
+JM Imputation of clustered data
 }
 \description{
 A wrapper function linking the six 2-level JM Imputation functions. The matrix of responses Y, must be a data.frame where continuous variables are numeric and binary/categorical variables are factors.}
 \usage{
 jomo1ran(Y, X=NULL, Z=NULL,clus, 
       beta.start=NULL, u.start=NULL, l1cov.start=NULL, l2cov.start=NULL, 
-      l1cov.prior=NULL, l2cov.prior=NULL, nburn=500, nbetween=100, nimp=5, 
+      l1cov.prior=NULL, l2cov.prior=NULL, nburn=100, nbetween=100, nimp=5, 
       a=NULL, meth="common", output=1, out.iter=10) 
 
 }
 
 \arguments{
-   \item{Y}{
-a data.frame where columns related to continuous variables are numeric and columns related to binary/categorical variables are factors. 
-}
+  \item{Y}{
+    A data.frame containing the outcomes of the imputation model, i.e. the partially observed level 1 variables. Columns related to continuous variables have to be numeric and columns related to binary/categorical variables have to be factors. 
+  }
   \item{X}{
 A data frame, or matrix, with covariates of the joint imputation model. Rows correspond to different observations, while columns are different variables. Missing values are not allowed in these variables. In case we want an intercept, a column of 1 is needed. The default is a column of 1.
 }
@@ -82,8 +82,8 @@ Carpenter J.R., Kenward M.G., (2013), Multiple Imputation and its Application. C
 \examples{
   #First of all we load and atach the data:
   
-data(mldata)
-attach(mldata)
+data(cldata)
+attach(cldata)
 
 #Then we define all the inputs:
 

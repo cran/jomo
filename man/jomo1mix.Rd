@@ -8,10 +8,8 @@ JM Imputation of single level data with mixed variable types
 Impute a single level dataset with mixed data types as outcome. A joint multivariate model for partially observed data is assumed and imputations are generated through the use of a Gibbs sampler where the covariance matrix is updated  with a Metropolis-Hastings step. Fully observed categorical variables may be considered as covariates as well, but they have to be included as dummy variables.
 }
 \usage{
-jomo1mix(Y.con, Y.cat, Y.numcat, X=matrix(1,nrow(Y.cat),1), 
-beta.start=matrix(0,ncol(X),(ncol(Y.con)+(sum(Y.numcat)-length(Y.numcat)))), 
-l1cov.start=diag(1,ncol(beta.start)), l1cov.prior=diag(1,ncol(beta.start)), 
-nburn=100, nbetween=100, nimp=5, output=1,out.iter=10)
+jomo1mix(Y.con, Y.cat, Y.numcat, X=NULL, beta.start=NULL, l1cov.start=NULL, 
+l1cov.prior=NULL, nburn=100, nbetween=100, nimp=5, output=1,out.iter=10)
  
 }
 %- maybe also 'usage' for other objects documented here.

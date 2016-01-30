@@ -9,11 +9,9 @@ A tool to check convergence of the MCMC
 This function is similar to jomo1rancon, but it returns the values of all the parameters in the model at each step of the MCMC instead of the imputations. It is useful to check the convergence of the MCMC sampler.
 }
 \usage{
-jomo1rancon.MCMCchain(Y, X=matrix(1,nrow(Y),1), Z=matrix(1,nrow(Y),1), clus, 
-beta.start=matrix(0,ncol(X),ncol(Y)), 
-u.start=NULL, l1cov.start=diag(1,ncol(Y)), l2cov.start=NULL, 
-l1cov.prior=diag(1,ncol(Y)), l2cov.prior=NULL, 
-nburn=100, output=1, out.iter=10) 
+jomo1rancon.MCMCchain(Y, X=NULL, Z=NULL, clus, beta.start=NULL, 
+u.start=NULL, l1cov.start=NULL, l2cov.start=NULL, l1cov.prior=NULL, 
+l2cov.prior=NULL, start.imp=NULL, nburn=100, output=1, out.iter=10) 
 
 }
 %- maybe also 'usage' for other objects documented here.
@@ -50,6 +48,9 @@ Scale matrix for the inverse-Wishart prior for the covariance matrix. The defaul
   \item{l2cov.prior}{
 Scale matrix for the inverse-Wishart prior for the level 2 covariance matrix. The default is the identity matrix.
 }
+ \item{start.imp}{
+Starting value for the imputed dataset. 
+}
    \item{nburn}{
 Number of iterations. Default is 100.
 }
@@ -67,8 +68,8 @@ A list with five elements is returned: the final imputed dataset (finimp) and fo
 
 \examples{
 #First of all we load and attach the data:
-data(mldata)
-attach(mldata)
+data(cldata)
+attach(cldata)
 
 #Then we define all the inputs:
 Y<-data.frame(measure,age)
@@ -86,7 +87,7 @@ l2cov.prior=diag(1,5);
 
 #And finally we run the imputation function:
 imp<-jomo1rancon.MCMCchain(Y,X,Z,clus,beta.start,u.start,l1cov.start, 
-          l2cov.start,l1cov.prior,l2cov.prior,nburn)
+          l2cov.start,l1cov.prior,l2cov.prior,nburn=nburn)
 
 #We can check the convergence of the first element of beta:
 

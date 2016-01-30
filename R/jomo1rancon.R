@@ -1,4 +1,13 @@
-jomo1rancon<- function(Y, X=matrix(1,nrow(Y),1), Z=matrix(1,nrow(Y),1), clus, beta.start=matrix(0,ncol(X),ncol(Y)), u.start=NULL, l1cov.start=diag(1,ncol(Y)), l2cov.start=NULL, l1cov.prior=diag(1,ncol(Y)), l2cov.prior=NULL, nburn=100, nbetween=100, nimp=5, output=1, out.iter=10) {
+jomo1rancon<- function(Y, X=NULL, Z=NULL, clus, beta.start=NULL, u.start=NULL, l1cov.start=NULL, l2cov.start=NULL, l1cov.prior=NULL, l2cov.prior=NULL, nburn=100, nbetween=100, nimp=5, output=1, out.iter=10) {
+  if (nimp<2) {
+    nimp=2
+    cat("Minimum number of imputations:2. For single imputation using function jomo1rancon.MCMCchain\n")
+  }
+  if (is.null(X)) X=matrix(1,nrow(Y),1)
+  if (is.null(Z)) Z=matrix(1,nrow(Y),1)
+  if (is.null(beta.start)) beta.start=matrix(0,ncol(X),ncol(Y))
+  if (is.null(l1cov.start)) l1cov.start=diag(1,ncol(beta.start))
+  if (is.null(l1cov.prior)) l1cov.prior=diag(1,ncol(beta.start))
   clus<-factor(unlist(clus))
   previous_levels_clus<-levels(clus)
   levels(clus)<-0:(nlevels(clus)-1)
@@ -110,7 +119,9 @@ jomo1rancon<- function(Y, X=matrix(1,nrow(Y),1), Z=matrix(1,nrow(Y),1), clus, be
     print(covupostmean)
   }
   imp<-data.frame(imp)
+  imp[,(ncol(Y)+ncol(X)+ncol(Z)+1)]<-factor(imp[,(ncol(Y)+ncol(X)+ncol(Z)+1)])
   levels(imp[,(ncol(Y)+ncol(X)+ncol(Z)+1)])<-previous_levels_clus
+  clus<-factor(clus)
   levels(clus)<-previous_levels_clus
   for (j in 1:(ncol(Y)+ncol(X)+ncol(Z))) {
     imp[,j]=as.numeric(imp[,j])

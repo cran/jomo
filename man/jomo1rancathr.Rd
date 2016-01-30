@@ -8,12 +8,9 @@ JM Imputation of clustered data with categorical variables with cluster-specific
 Impute a clustered dataset with categorical variables as outcome. A joint multivariate model for partially observed data is assumed and imputations are generated through the use of a Gibbs sampler where a different covariance matrix is sampled within each cluster. Fully observed categorical covariates may be considered as covariates as well, but they have to be included as dummy variables.
 }
 \usage{
-jomo1rancathr( Y.cat, Y.numcat, X=matrix(1,nrow(Y.cat),1), 
-Z=matrix(1,nrow(Y.cat),1), clus,
-beta.start=matrix(0,ncol(X),((sum(Y.numcat)-length(Y.numcat)))), 
-u.start=NULL, l1cov.start=NULL, l2cov.start=NULL, 
-l1cov.prior=diag(1,ncol(beta.start)), l2cov.prior=NULL, 
-nburn=100, nbetween=100, nimp=5,a=ncol(beta.start),
+jomo1rancathr( Y.cat, Y.numcat, X=NULL, Z=NULL, clus, beta.start=NULL, 
+u.start=NULL, l1cov.start=NULL, l2cov.start=NULL, l1cov.prior=NULL, 
+l2cov.prior=NULL, nburn=100, nbetween=100, nimp=5, a=NULL,
 meth="random", output=1, out.iter=10)
 }
 %- maybe also 'usage' for other objects documented here.
@@ -94,8 +91,8 @@ Yucel R.M., (2011), Random-covariances and mixed-effects models for imputing mul
 
 #First of all we load and attach the data:
 
-data(mldata)
-attach(mldata)
+data(cldata)
+attach(cldata)
 
 #Then we define the inputs
 # nimp, nburn and nbetween are smaller than they should. This is

@@ -1,5 +1,5 @@
 jomo1.MCMCchain <-
-  function(Y, X=NULL, beta.start=NULL, l1cov.start=NULL, l1cov.prior=NULL, nburn=500, output=1, out.iter=10) {
+  function(Y, X=NULL, beta.start=NULL, l1cov.start=NULL, l1cov.prior=NULL,start.imp=NULL, nburn=100, output=1, out.iter=10) {
     ncon=0
     ncat=0
     Y.con=NULL
@@ -31,24 +31,15 @@ jomo1.MCMCchain <-
     if (is.null(X)) X=matrix(1,nrow(Y),1)
     if (ncat==0 & ncon>0) {
       cat("Found ", ncon, "continuous outcomes and no categorical. Using function jomo1con.", "\n")
-      if (is.null(beta.start)) beta.start=matrix(0,ncol(X),(ncol(Y.con)))
-      if (is.null(l1cov.start)) l1cov.start=diag(1,ncol(beta.start))
-      if (is.null(l1cov.prior)) l1cov.prior=diag(1,ncol(beta.start))
-      imp<-jomo1con.MCMCchain(Y.con, X, beta.start, l1cov.start, l1cov.prior, nburn, output,out.iter)
+      imp<-jomo1con.MCMCchain(Y=Y.con, X=X, beta.start=beta.start, l1cov.start=l1cov.start, l1cov.prior=l1cov.prior, start.imp=start.imp,nburn=nburn, output=output,out.iter=out.iter)
     }
     if (ncat>0 & ncon==0) {
       cat("Found ", ncat, "categorical outcomes and no continuous. Using function jomo1cat.", "\n")
-      if (is.null(beta.start)) beta.start=matrix(0,ncol(X),(sum(Y.numcat)-length(Y.numcat)))
-      if (is.null(l1cov.start)) l1cov.start=diag(1,ncol(beta.start))
-      if (is.null(l1cov.prior)) l1cov.prior=diag(1,ncol(beta.start))
-      imp<-jomo1cat.MCMCchain(Y.cat,Y.numcat,X, beta.start, l1cov.start, l1cov.prior, nburn, output,out.iter)
+      imp<-jomo1cat.MCMCchain(Y.cat=Y.cat,Y.numcat=Y.numcat, X=X, beta.start=beta.start, l1cov.start=l1cov.start, l1cov.prior=l1cov.prior, start.imp=start.imp,nburn=nburn, output=output,out.iter=out.iter)
     }
     if (ncat>0 & ncon>0) {
       cat("Found ", ncon, "continuous outcomes and ", ncat, "categorical. Using function jomo1mix.", "\n")
-      if (is.null(beta.start)) beta.start=matrix(0,ncol(X),(ncol(Y.con)+(sum(Y.numcat)-length(Y.numcat))))
-      if (is.null(l1cov.start)) l1cov.start=diag(1,ncol(beta.start))
-      if (is.null(l1cov.prior)) l1cov.prior=diag(1,ncol(beta.start))
-      imp<-jomo1mix.MCMCchain(Y.con,Y.cat,Y.numcat,X, beta.start, l1cov.start, l1cov.prior, nburn, output,out.iter)
+      imp<-jomo1mix.MCMCchain(Y.con=Y.con,Y.cat=Y.cat,Y.numcat=Y.numcat, X=X, beta.start=beta.start, l1cov.start=l1cov.start, l1cov.prior=l1cov.prior, start.imp=start.imp,nburn=nburn, output=output,out.iter=out.iter)
     }
     return(imp)
   }

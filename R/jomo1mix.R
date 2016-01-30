@@ -1,5 +1,13 @@
 jomo1mix <-
-  function(Y.con, Y.cat, Y.numcat, X=matrix(1,nrow(Y.cat),1), beta.start=matrix(0,ncol(X),(ncol(Y.con)+(sum(Y.numcat)-length(Y.numcat)))), l1cov.start=diag(1,ncol(beta.start)), l1cov.prior=diag(1,ncol(beta.start)), nburn=100, nbetween=100, nimp=5, output=1, out.iter=10) {
+  function(Y.con, Y.cat, Y.numcat, X=NULL, beta.start=NULL, l1cov.start=NULL, l1cov.prior=NULL, nburn=100, nbetween=100, nimp=5, output=1, out.iter=10) {
+    if (nimp<2) {
+      nimp=2
+      cat("Minimum number of imputations:2. For single imputation using function jomo1mix.MCMCchain\n")
+    }
+    if (is.null(X)) X=matrix(1,nrow(Y.cat),1)
+    if (is.null(beta.start)) beta.start=matrix(0,ncol(X),(ncol(Y.con)+(sum(Y.numcat)-length(Y.numcat))))
+    if (is.null(l1cov.start)) l1cov.start=diag(1,ncol(beta.start))
+    if (is.null(l1cov.prior)) l1cov.prior=diag(1,ncol(beta.start))
     previous_levels<-list()
     Y.cat<-data.frame(Y.cat)
     for (i in 1:ncol(Y.cat)) {

@@ -8,19 +8,26 @@
   This function is similar to the jomo function, but it returns the values of all the parameters in the model at each step of the MCMC instead of the imputations. It is useful to check the convergence of the MCMC sampler.
 }
 \usage{
-  jomo.MCMCchain(Y, X=NULL, Z=NULL,clus=NULL, beta.start=NULL, u.start=NULL,
-                     l1cov.start=NULL, l2cov.start=NULL, l1cov.prior=NULL, 
-                     l2cov.prior=NULL, nburn=500, a=NULL, meth="common", 
-                     output=1, out.iter=10) 
+  jomo.MCMCchain(Y, Y2=NULL, X=NULL, X2=NULL, Z=NULL, clus=NULL, 
+                 beta.start=NULL, l2.beta.start=NULL, u.start=NULL,
+                 l1cov.start=NULL, l2cov.start=NULL, l1cov.prior=NULL, 
+                l2cov.prior=NULL, start.imp=NULL, l2.start.imp=NULL, 
+                nburn=100, a=NULL, meth="common",output=1, out.iter=10) 
   
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
   \item{Y}{
-    a data.frame where columns related to continuous variables are numeric and columns related to binary/categorical variables are factors. 
+    A data.frame containing the outcomes of the imputation model, i.e. the partially observed level 1 variables. Columns related to continuous variables have to be numeric and columns related to binary/categorical variables have to be factors. 
+  }
+   \item{Y2}{
+    A data.frame containing the level-2 outcomes of the imputation model, i.e. the partially observed level-2 variables. Columns related to continuous variables have to be numeric and columns related to binary/categorical variables have to be factors. 
   }
   \item{X}{
     A data frame, or matrix, with covariates of the joint imputation model. Rows correspond to different observations, while columns are different variables. Missing values are not allowed in these variables. In case we want an intercept, a column of 1 is needed. The default is a column of 1.
+  }
+  \item{X2}{
+    A data frame, or matrix, with level-2 covariates of the joint imputation model. Rows correspond to different level-1 observations, while columns are different variables. Missing values are not allowed in these variables. In case we want an intercept, a column of 1 is needed. The default is a column of 1.
   }
   \item{Z}{
     A data frame, or matrix, for covariates associated to random effects in the joint imputation model. Rows correspond to different observations, while columns are different variables. Missing values are not allowed in these variables. In case we want an intercept, a column of 1 is needed. The default is a column of 1.
@@ -29,7 +36,10 @@
     A data frame, or matrix, containing the cluster indicator for each observation. If missing, functions for single level imputation are automatically used.
   }
   \item{beta.start}{
-    Starting value for beta, the vector(s) of fixed effects. Rows index different covariates and columns index different outcomes. For each n-category variable we define n-1 latent normals. The default is a matrix of zeros.
+    Starting value for beta, the vector(s) of level-1 fixed effects. Rows index different covariates and columns index different outcomes. For each n-category variable we have a fixed effect parameter for each of the n-1 latent normals. The default is a matrix of zeros.
+  }
+  \item{l2.beta.start}{
+    Starting value for beta2, the vector(s) of level-2 fixed effects. Rows index different covariates and columns index different level-2 outcomes. For each n-category variable we have a fixed effect parameter for each of the n-1 latent normals. The default is a matrix of zeros.
   }
   \item{u.start}{
     A matrix where different rows are the starting values within each cluster for the random effects estimates u. The default is a matrix of zeros.
@@ -38,13 +48,19 @@
     Starting value for the covariance matrix. Dimension of this square matrix is equal to the number of outcomes (continuous plus latent normals) in the imputation model. The default is the identity matrix.
   }
   \item{l2cov.start}{
-    Starting value for the level 2 covariance matrix. Dimension of this square matrix is equal to the number of outcomes (continuous plus latent normals) in the imputation model times the number of random effects. The default is an identity matrix.
+    Starting value for the level 2 covariance matrix. Dimension of this square matrix is equal to the number of outcomes (continuous plus latent normals) in the imputation model times the number of random effects plus the number of level-2 outcomes. The default is an identity matrix.
   }
   \item{l1cov.prior}{
     Scale matrix for the inverse-Wishart prior for the covariance matrix. The default is the identity matrix.
   }
   \item{l2cov.prior}{
     Scale matrix for the inverse-Wishart prior for the level 2 covariance matrix. The default is the identity matrix.
+  }
+   \item{start.imp}{
+Starting value for the imputed dataset. n-level categorical variables are substituted by n-1 latent normals.
+  }
+   \item{l2.start.imp}{
+Starting value for the level-2 imputed variables. n-level categorical variables are substituted by n-1 latent normals.
   }
   \item{nburn}{
     Number of iterations. Default is 100.
@@ -66,14 +82,14 @@
 }
 
 \value{
-  A list with five elements is returned: the final imputed dataset (finimp) and four 3-dimensional matrices, containing all the values for beta (collectbeta), the random effects (collectu) and the level 1 (collectomega) and level 2 covariance matrices (collectcovu). If functions for single level imputation are used, no cllectu or collectcovu are present.
+  A list is returned; this contains the final imputed dataset (finimp) and several 3-dimensional matrices, containing all the values drawn for each parameter at each iteration: these are, potentially, fixed effect parameters beta (collectbeta), random effects (collectu), level 1 (collectomega) and level 2 covariance matrices (collectcovu) and level-2 fixed effect parameters. If there are some categorical outcomes, a further output is included in the list, finimp_latnorm, containing the final state of the imputed dataset with the latent normal variables.
 }
 
 \examples{
-  #First of all we load and atach the data:
+  #First of all we load and attach the data:
   
-  data(mldata)
-  attach(mldata)
+  data(cldata)
+  attach(cldata)
   
   #Then we define all the inputs:
   
