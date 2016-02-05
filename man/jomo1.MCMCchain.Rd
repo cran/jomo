@@ -45,7 +45,7 @@ When set to K, every K iterations a message "Iteration number N*K completed" is 
 }
 
 \value{
-A list with three elements is returned: the final imputed dataset (finimp) and three 3-dimensional matrices, containing all the values for beta (collectbeta) and omega (collectomega). If there are some categorical outcomes, a further output is included in the list, finimp_latnorm, containing the final state of the imputed dataset with the latent normal variables.
+A list with three elements is returned: the final imputed dataset (finimp) and three 3-dimensional matrices, containing all the values for beta (collectbeta) and omega (collectomega). If there are some categorical outcomes, a further output is included in the list, finimp.latnorm, containing the final state of the imputed dataset with the latent normal variables.
 }
 
 \examples{

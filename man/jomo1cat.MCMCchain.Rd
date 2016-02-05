@@ -49,7 +49,7 @@ When set to K, every K iterations a message "Iteration number N*K completed" is 
 }
 
 \value{
-A list with four elements is returned: the final imputed dataset (finimp) and three 3-dimensional matrices, containing all the values drawn at each iteration for fixed effect parameters beta (collectbeta) and covariance matrix omega (collectomega). Finally, in finimp_latnorm, it is stored the final state of the imputed dataset with the latent normals in place of the categorical variables.
+A list with four elements is returned: the final imputed dataset (finimp) and three 3-dimensional matrices, containing all the values drawn at each iteration for fixed effect parameters beta (collectbeta) and covariance matrix omega (collectomega). Finally, in finimp.latnorm, it is stored the final state of the imputed dataset with the latent normals in place of the categorical variables.
 
 }
 

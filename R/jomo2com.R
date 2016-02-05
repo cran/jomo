@@ -71,9 +71,9 @@ jomo2com <-
     }
     stopifnot(nrow(beta.start)==ncol(X), ncol(beta.start)==(ncolYcon+max(0,(sum(Y.numcat)-length(Y.numcat)))))
     stopifnot(nrow(l2.beta.start)==ncol(X2), ncol(l2.beta.start)==(ncolY2con+max(0,(sum(Y2.numcat)-length(Y2.numcat)))))
-    stopifnot(ncol(u.start)==ncol(Z)*(ncolYcon+max(0,(sum(Y.numcat)-length(Y.numcat))))+ncol(X2)*(ncolY2con+max(0,(sum(Y2.numcat)-length(Y2.numcat)))))
+    stopifnot(ncol(u.start)==ncol(Z)*(ncolYcon+max(0,(sum(Y.numcat)-length(Y.numcat))))+(ncolY2con+max(0,(sum(Y2.numcat)-length(Y2.numcat)))))
     stopifnot(nrow(l1cov.start)==ncol(l1cov.start), nrow(l1cov.start)==ncol(beta.start))
-    stopifnot(nrow(l1cov.prior)==ncol(l1cov.prior),nrow(l1cov.prior)==nrow(l1cov.start),ncol(l2cov.start)==ncol(u.start), ncol(u.start)==ncol(Z)*(ncolYcon+max(0,(sum(Y.numcat)-length(Y.numcat))))+ncol(X2)*(ncolY2con+max(0,(sum(Y2.numcat)-length(Y2.numcat)))))
+    stopifnot(nrow(l1cov.prior)==ncol(l1cov.prior),nrow(l1cov.prior)==nrow(l1cov.start))
     stopifnot(ncol(l2cov.start)==ncol(u.start), nrow(l2cov.prior)==nrow(l2cov.start), nrow(l2cov.prior)==ncol(l2cov.prior))
     betait=matrix(0,nrow(beta.start),ncol(beta.start))
     for (i in 1:nrow(beta.start)) {

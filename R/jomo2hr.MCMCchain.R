@@ -69,10 +69,9 @@ jomo2hr.MCMCchain <-
     stopifnot((meth=="fixed"|meth=="random"))
     stopifnot(nrow(beta.start)==ncol(X), ncol(beta.start)==(ncolYcon+max(0,(sum(Y.numcat)-length(Y.numcat)))))
     stopifnot(nrow(l2.beta.start)==ncol(X2), ncol(l2.beta.start)==(ncolY2con+max(0,(sum(Y2.numcat)-length(Y2.numcat)))))
-    stopifnot(ncol(u.start)==ncol(Z)*(ncolYcon+max(0,(sum(Y.numcat)-length(Y.numcat))))+ncol(X2)*(ncolY2con+max(0,(sum(Y2.numcat)-length(Y2.numcat)))))
+    stopifnot(ncol(u.start)==ncol(Z)*(ncolYcon+max(0,(sum(Y.numcat)-length(Y.numcat))))+(ncolY2con+max(0,(sum(Y2.numcat)-length(Y2.numcat)))))
     stopifnot(nrow(l1cov.start)==nrow(u.start)*ncol(l1cov.start), ncol(l1cov.start)==ncol(beta.start))
     stopifnot(nrow(l1cov.prior)==ncol(l1cov.prior),nrow(l1cov.start)==nrow(u.start)*nrow(l1cov.prior))
-    stopifnot(ncol(u.start)==ncol(Z)*(ncolYcon+max(0,(sum(Y.numcat)-length(Y.numcat))))+ncol(X2)*(ncolY2con+max(0,(sum(Y2.numcat)-length(Y2.numcat)))))
     stopifnot(ncol(l2cov.start)==ncol(u.start), ncol(l2cov.start)==ncol(l2cov.prior), ncol(l2cov.prior)==nrow(l2cov.prior))
     betait=matrix(0,nrow(beta.start),ncol(beta.start))
     for (i in 1:nrow(beta.start)) {
@@ -312,5 +311,5 @@ jomo2hr.MCMCchain <-
     if (is.null(colnamx)) colnamx=paste("X", 1:ncol(X), sep = "")
     if (is.null(colnamx2)) colnamx2=paste("X2", 1:ncol(X2), sep = ".")
     colnames(imp)<-c(colnamycon,colnamycat,colnamy2con,colnamy2cat,colnamx,colnamx2,colnamz,"clus","id","Imputation")
-    return(list("finimp"=imp,"collectbeta"=betapost,"collect.l2.beta"=beta2post,"collectomega"=omegapost,"collectu"=upostall, "collectcovu"=covupost, "finimp_latnorm" = Yimp2, "l2.finimp_latnorm" = Y2imp2))
+    return(list("finimp"=imp,"collectbeta"=betapost,"collect.l2.beta"=beta2post,"collectomega"=omegapost,"collectu"=upostall, "collectcovu"=covupost, "finimp.latnorm" = Yimp2, "l2.finimp.latnorm" = Y2imp2))
   }

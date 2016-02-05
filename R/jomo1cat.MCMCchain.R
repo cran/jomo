@@ -84,5 +84,5 @@ jomo1cat.MCMCchain <-
     if (is.null(colnamycat)) colnamycat=paste("Y", 1:ncol(Y.cat), sep = "")
     if (is.null(colnamx)) colnamx=paste("X", 1:ncol(X), sep = "")
     colnames(imp)<-c(colnamycat,colnamx,"Imputation","id")
-    return(list("finimp"=imp,"collectbeta"=betapost,"collectomega"=omegapost, "finimp_latnorm" = Yimp2))
+    return(list("finimp"=imp,"collectbeta"=betapost,"collectomega"=omegapost, "finimp.latnorm" = Yimp2))
   }

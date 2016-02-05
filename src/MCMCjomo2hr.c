@@ -17,6 +17,7 @@ double *betaX, *Yobs, *Ymiss, *mumiss, *omegadrawmiss, *betamiss, *betaobs, *ome
 double *sumzy, *incrzz, *incrzy, *mu, *mu2, *newbeta, *newomega, *sumzi, *yi, *invomega3, *help4, *help5, *help6, *missing, *fixomega,*resid, sdom, meanom, detom,logLH, newlogLH;
 double maxx,maxim,maxim2, *sumxy, *sumxi, *uj, *xi, *ziu, *incrxx, *incrxy, *newu, *mu3,*mu4, *help7, *help8, *help9, *invomega4, *newomega2,a, *clusnum, *covu1, *covu2, *covu12;
 double *cumclus, *allinvomega,gamma,eta,dx,u_new,precision, *invgamma, *invA, *Gammapr, *Gammastar,u_m,con,con2,deriv2,u_prop, lambda, aj,*missing2, *X2red, *Y2red, *fixomega2;
+double *Y2impred;
 
 /* Protecting R objects from garbage collection and saving matrices dimensions*/ 
 
@@ -126,6 +127,7 @@ newomega2 = ( double * ) R_alloc ( Ju*Ju , sizeof ( double ) );
 betaX=( double * ) R_alloc ( JYm, sizeof ( double ) );
 imp=( double * ) R_alloc ( IY * JY,sizeof ( double ) );
 imp2=( double * ) R_alloc ( Iu * JY2,sizeof ( double ) );
+Y2impred=( double * ) R_alloc ( Iu * JY2,sizeof ( double ) );
 Y2red=( double * ) R_alloc ( Iu * JY2,sizeof ( double ) );
 X2red=( double * ) R_alloc ( Iu * JX2,sizeof ( double ) );
 resid=( double * ) R_alloc ( IY * JY,sizeof ( double ) );
@@ -191,7 +193,10 @@ for (i=0;i<Iu;i++) {
 	j=0;
 	while (indic==0) {
 		if (INTEGER(clus)[j]==i) {
-			for (k=0;k<JY2;k++) imp2[i+Iu*k]=REAL(Y2imp2)[j+k*IY2];
+			for (k=0;k<JY2;k++) {
+					imp2[i+Iu*k]=REAL(Y2imp2)[j+k*IY2];
+					Y2impred[i+Iu*k]=REAL(Y2imp)[j+k*IY2];
+				}
 			for (k=0;k<(ncon2+ncat2);k++) Y2red[i+Iu*k]=REAL(Y2)[j+k*IY2];
 			for (k=0;k<JX2;k++) X2red[i+Iu*k]=REAL(X2)[j+k*IX2];
 			indic++;
@@ -202,7 +207,7 @@ for (i=0;i<Iu;i++) {
 for (j=0; j<Iu; j++) {
 	missing2[j]=0;
 	for (k=0;k<JY2;k++) {
-		if (ISNAN(imp2[j+k*Iu])) {
+		if (ISNAN(Y2impred[j+k*Iu])) {
 			missing2[j]++;
 		}
 	}
@@ -970,7 +975,7 @@ for (j=0; j<IY; j++) {
 		nmiss=missing2[j];
 		if (nmiss>0) {
 			for (k=0;k<JY2;k++) {
-				if (ISNAN(Y2red[j+k*Iu])) {
+				if (ISNAN(Y2impred[j+k*Iu])) {
 					betamiss[countm]=betaX[k];
 					countm++;
 				}
@@ -980,16 +985,16 @@ for (j=0; j<IY; j++) {
 					counto++;
 				}
 				for (t=0;t<JY2;t++) {
-					if (ISNAN(Y2red[j+k*Iu])&ISNAN(Y2red[j+t*Iu])) {
-						omegamm[countmm]=REAL(covu)[(JY*JZ+k)+(JY*JZ+t*Ju)];
+					if (ISNAN(Y2impred[j+k*Iu])&ISNAN(Y2impred[j+t*Iu])) {
+						omegamm[countmm]=REAL(covu)[(JY*JZ+k)+(JY*JZ+t)*Ju];
 						countmm++;
 					}
-					else if (ISNAN(Y2red[j+t*Iu])) {
-						omegamo[countmo]=REAL(covu)[(JY*JZ+k)+(JY*JZ+t*Ju)];
+					else if (ISNAN(Y2impred[j+t*Iu])) {
+						omegamo[countmo]=REAL(covu)[(JY*JZ+k)+(JY*JZ+t)*Ju];
 						countmo++;	
 					}
-					else if (!ISNAN(Y2red[j+k*Iu])&!ISNAN(Y2red[j+t*Iu])){
-						omegaoo[countoo]=REAL(covu)[(JY*JZ+k)+(JY*JZ+t*Ju)];
+					else if (!ISNAN(Y2impred[j+k*Iu])&!ISNAN(Y2impred[j+t*Iu])){
+						omegaoo[countoo]=REAL(covu)[(JY*JZ+k)+(JY*JZ+t)*Ju];
 						countoo++;	
 					}
 				}
@@ -1009,7 +1014,7 @@ for (j=0; j<IY; j++) {
 			r8vec_multinormal_sample(nmiss,mumiss,help9,Ymiss,help6,0);
 			countm=0;
 			for (k=0;k<JY2;k++) {
-				if (ISNAN(Y2red[j+k*Iu])) {
+				if (ISNAN(Y2impred[j+k*Iu])) {
 					imp2[j+k*Iu]=Ymiss[countm];
 					countm++;	
 				}	
