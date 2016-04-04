@@ -270,7 +270,7 @@ jomo2com <-
       print(beta2postmean)
       cat("The posterior mean of the random effects estimates is:\n")
       print(upostmean)
-      cat("The posterior mean of the level 1 covariance matrices is:\n")
+      cat("The posterior mean of the level 1 covariance matrix is:\n")
       print(omegapostmean)
       cat("The posterior mean of the level 2 covariance matrix is:\n")
       print(covupostmean)

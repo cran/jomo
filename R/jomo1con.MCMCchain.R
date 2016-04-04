@@ -62,5 +62,9 @@ jomo1con.MCMCchain<- function(Y, X=NULL, beta.start=NULL, l1cov.start=NULL, l1co
   if (is.null(colnamy)) colnamy=paste("Y", 1:ncol(Y), sep = "")
   if (is.null(colnamx)) colnamx=paste("X", 1:ncol(X), sep = "")
   colnames(imp)<-c(colnamy,colnamx,"Imputation","id")
+  dimnames(betapost)[1] <- list(colnamx)
+  dimnames(betapost)[2] <- list(colnamy)
+  dimnames(omegapost)[1] <- list(colnamy)
+  dimnames(omegapost)[2] <- list(colnamy)
   return(list("finimp"=imp,"collectbeta"=betapost,"collectomega"=omegapost))
 }

@@ -311,5 +311,55 @@ jomo2hr.MCMCchain <-
     if (is.null(colnamx)) colnamx=paste("X", 1:ncol(X), sep = "")
     if (is.null(colnamx2)) colnamx2=paste("X2", 1:ncol(X2), sep = ".")
     colnames(imp)<-c(colnamycon,colnamycat,colnamy2con,colnamy2cat,colnamx,colnamx2,colnamz,"clus","id","Imputation")
+    if (isnullcat==0) {
+      cnycatcomp<-rep(NA,(sum(Y.numcat)-length(Y.numcat)))
+      count=0
+      for ( j in 1:ncol(Y.cat)) {
+        for (k in 1:(Y.numcat[j]-1)) {
+          cnycatcomp[count+k]<-paste(colnamycat[j],k,sep=".")
+        }
+        count=count+Y.numcat[j]-1
+      }
+      if (!is.null(Y.con)) {
+        cnamycomp<-c(colnamycon,cnycatcomp)
+      } else {
+        cnamycomp<-c(cnycatcomp)
+      }
+      
+    } else {
+      cnamycomp<-c(colnamycon)
+    }
+    if (isnullcat2==0) {
+      cny2catcomp<-rep(NA,(sum(Y2.numcat)-length(Y2.numcat)))
+      count=0
+      for ( j in 1:ncol(Y2.cat)) {
+        for (k in 1:(Y2.numcat[j]-1)) {
+          cny2catcomp[count+k]<-paste(colnamy2cat[j],k,sep=".")
+        }
+        count=count+Y2.numcat[j]-1
+      }
+      if (!is.null(Y2.con)) {
+        cnamy2comp<-c(colnamy2con,cny2catcomp)
+      } else {
+        cnamy2comp<-c(cny2catcomp)
+      }
+      
+    } else {
+      cnamy2comp<-c(colnamy2con)
+    }
+    dimnames(betapost)[1] <- list(colnamx)
+    dimnames(betapost)[2] <- list(cnamycomp)
+    dimnames(beta2post)[1] <- list(colnamx2)
+    dimnames(beta2post)[2] <- list(cnamy2comp)
+    dimnames(omegapost)[1] <- list(paste(cnamycomp,rep(levels(clus),each=ncol(Yimp2)), sep="."))
+    dimnames(omegapost)[2] <- list(cnamycomp)
+    colnamcovu<-paste(cnamycomp,rep(colnamz,each=ncol(omegapost)),sep="*")
+    colnamcovu<-c(colnamcovu,cnamy2comp)
+    dimnames(covupost)[1] <- list(colnamcovu)
+    dimnames(covupost)[2] <- list(colnamcovu)
+    dimnames(upostall)[1]<-list(levels(clus))
+    dimnames(upostall)[2]<-list(colnamcovu)
+    dimnames(Yimp2)[2] <- list(cnamycomp)
+    dimnames(Y2imp2)[2] <- list(cnamy2comp)
     return(list("finimp"=imp,"collectbeta"=betapost,"collect.l2.beta"=beta2post,"collectomega"=omegapost,"collectu"=upostall, "collectcovu"=covupost, "finimp.latnorm" = Yimp2, "l2.finimp.latnorm" = Y2imp2))
   }

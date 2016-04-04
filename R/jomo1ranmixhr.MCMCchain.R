@@ -144,5 +144,24 @@ jomo1ranmixhr.MCMCchain <-
     if (is.null(colnamz)) colnamz=paste("Z", 1:ncol(Z), sep = "")
     if (is.null(colnamx)) colnamx=paste("X", 1:ncol(X), sep = "")  
     colnames(imp)<-c(colnamycon,colnamycat,colnamx,colnamz,"clus","id","Imputation")
+    cnycatcomp<-rep(NA,(sum(Y.numcat)-length(Y.numcat)))
+    count=0
+    for ( j in 1:ncol(Y.cat)) {
+      for (k in 1:(Y.numcat[j]-1)) {
+        cnycatcomp[count+k]<-paste(colnamycat[j],k,sep=".")
+      }
+      count=count+Y.numcat[j]-1
+    }
+    cnamycomp<-c(colnamycon,cnycatcomp)
+    dimnames(betapost)[1] <- list(colnamx)
+    dimnames(betapost)[2] <- list(cnamycomp)
+    dimnames(omegapost)[1] <- list(paste(cnamycomp,rep(levels(clus),each=ncol(Yimp2)), sep="."))
+    dimnames(omegapost)[2] <- list(cnamycomp)
+    colnamcovu<-paste(cnamycomp,rep(colnamz,each=ncol(omegapost)),sep="*")
+    dimnames(covupost)[1] <- list(colnamcovu)
+    dimnames(covupost)[2] <- list(colnamcovu)
+    dimnames(upostall)[1]<-list(levels(clus))
+    dimnames(upostall)[2]<-list(colnamcovu)
+    dimnames(Yimp2)[2] <- list(cnamycomp)
     return(list("finimp"=imp,"collectbeta"=betapost,"collectomega"=omegapost,"collectu"=upostall, "collectcovu"=covupost, "finimp.latnorm" = Yimp2))
   }

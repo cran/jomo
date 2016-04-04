@@ -471,8 +471,8 @@ for (i=0;i<ns;i++) {
 		a=u_new;
 
 	}
-	if (a<JY) a=JY;
-	if (isnan(a)) a=JY;
+	if (a<JY+2) a=JY+2;
+	if (isnan(a)) a=JY+2;
 	u_new=a;	
 	
 	//Updating matrices

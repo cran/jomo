@@ -32,14 +32,17 @@ jomo1.MCMCchain <-
     if (ncat==0 & ncon>0) {
       cat("Found ", ncon, "continuous outcomes and no categorical. Using function jomo1con.", "\n")
       imp<-jomo1con.MCMCchain(Y=Y.con, X=X, beta.start=beta.start, l1cov.start=l1cov.start, l1cov.prior=l1cov.prior, start.imp=start.imp,nburn=nburn, output=output,out.iter=out.iter)
+      attr(imp, "function") = "jomo1con.MCMCchain"
     }
     if (ncat>0 & ncon==0) {
       cat("Found ", ncat, "categorical outcomes and no continuous. Using function jomo1cat.", "\n")
       imp<-jomo1cat.MCMCchain(Y.cat=Y.cat,Y.numcat=Y.numcat, X=X, beta.start=beta.start, l1cov.start=l1cov.start, l1cov.prior=l1cov.prior, start.imp=start.imp,nburn=nburn, output=output,out.iter=out.iter)
+      attr(imp, "function") = "jomo1cat.MCMCchain"
     }
     if (ncat>0 & ncon>0) {
       cat("Found ", ncon, "continuous outcomes and ", ncat, "categorical. Using function jomo1mix.", "\n")
       imp<-jomo1mix.MCMCchain(Y.con=Y.con,Y.cat=Y.cat,Y.numcat=Y.numcat, X=X, beta.start=beta.start, l1cov.start=l1cov.start, l1cov.prior=l1cov.prior, start.imp=start.imp,nburn=nburn, output=output,out.iter=out.iter)
+      attr(imp, "function") = "jomo1mix.MCMCchain"
     }
     return(imp)
   }

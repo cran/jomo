@@ -89,5 +89,19 @@ jomo1mix.MCMCchain <-
     if (is.null(colnamycon)) colnamycon=paste("Ycon", 1:ncol(Y.con), sep = "")
     if (is.null(colnamx)) colnamx=paste("X", 1:ncol(X), sep = "")
     colnames(imp)<-c(colnamycon,colnamycat,colnamx,"Imputation","id")
+    cnycatcomp<-rep(NA,(sum(Y.numcat)-length(Y.numcat)))
+    count=0
+    for ( j in 1:ncol(Y.cat)) {
+      for (k in 1:(Y.numcat[j]-1)) {
+        cnycatcomp[count+k]<-paste(colnamycat[j],k,sep=".")
+      }
+      count=count+Y.numcat[j]-1
+    }
+    cnamycomp<-c(colnamycon,cnycatcomp)
+    dimnames(betapost)[1] <- list(colnamx)
+    dimnames(betapost)[2] <- list(cnamycomp)
+    dimnames(omegapost)[1] <- list(cnamycomp)
+    dimnames(omegapost)[2] <- list(cnamycomp)
+    dimnames(Yimp2)[2] <- list(cnamycomp)
     return(list("finimp"=imp,"collectbeta"=betapost,"collectomega"=omegapost, "finimp.latnorm" = Yimp2))
   }

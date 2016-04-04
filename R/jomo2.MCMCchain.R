@@ -62,14 +62,17 @@ jomo2.MCMCchain <-
     if (meth=="common") {
       cat("Found ", ncon, "level 1 continuous and ", ncat, "level 1 categorical outcomes, ",ncon2," level 2 continuous and ",ncat2," level 2 categorical outcomes. Using function jomo2com, assuming common covariance matrix across clusters", "\n")
       imp<-jomo2com.MCMCchain(Y.con=Y.con, Y.cat=Y.cat, Y.numcat=Y.numcat, Y2.con=Y2.con, Y2.cat=Y2.cat, Y2.numcat=Y2.numcat, X=X, X2=X2, Z=Z, clus=clus, beta.start=beta.start, l2.beta.start=l2.beta.start, u.start=u.start, l1cov.start=l1cov.start, l2cov.start=l2cov.start, l1cov.prior=l1cov.prior, l2cov.prior=l2cov.prior, start.imp=start.imp, l2.start.imp=l2.start.imp,  nburn=nburn, output=output, out.iter=out.iter)
+      attr(imp, "function") = "jomo2com.MCMCchain"
     }
     if (meth=="fixed") {
       cat("Found ", ncon, "level 1 continuous and ", ncat, "level 1 categorical outcomes, ",ncon2," level 2 continuous and ",ncat2," level 2 categorical outcomes. Using function jomo2hr with fixed cluster-specific covariance matrices.", "\n")
       imp<-jomo2hr.MCMCchain(Y.con=Y.con, Y.cat=Y.cat, Y.numcat=Y.numcat, Y2.con=Y2.con, Y2.cat=Y2.cat, Y2.numcat=Y2.numcat, X=X, X2=X2, Z=Z, clus=clus, beta.start=beta.start, l2.beta.start=l2.beta.start, u.start=u.start, l1cov.start=l1cov.start, l2cov.start=l2cov.start, l1cov.prior=l1cov.prior, l2cov.prior=l2cov.prior, start.imp=start.imp, l2.start.imp=l2.start.imp, nburn=nburn, a=a, meth="fixed", output=output, out.iter=out.iter)
+      attr(imp, "function") = "jomo2hr.MCMCchain.fixed"
     }
     if (meth=="random") {
       cat("Found ", ncon, "level 1 continuous and ", ncat, "level 1 categorical outcomes, ",ncon2," level 2 continuous and ",ncat2," level 2 categorical outcomes. Using function jomo2hr with random cluster-specific covariance matrices.", "\n")
       imp<-jomo2hr.MCMCchain(Y.con=Y.con, Y.cat=Y.cat, Y.numcat=Y.numcat, Y2.con=Y2.con, Y2.cat=Y2.cat, Y2.numcat=Y2.numcat, X=X, X2=X2, Z=Z, clus=clus, beta.start=beta.start, l2.beta.start=l2.beta.start, u.start=u.start, l1cov.start=l1cov.start, l2cov.start=l2cov.start, l1cov.prior=l1cov.prior, l2cov.prior=l2cov.prior, start.imp=start.imp, l2.start.imp=l2.start.imp, nburn=nburn, a=a, meth="random", output=output, out.iter=out.iter)
+      attr(imp, "function") = "jomo2hr.MCMCchain.random"
     }
     return(imp)
   }
