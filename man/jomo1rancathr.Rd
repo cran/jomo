@@ -10,7 +10,7 @@ Impute a clustered dataset with categorical variables as outcome. A joint multiv
 \usage{
 jomo1rancathr( Y.cat, Y.numcat, X=NULL, Z=NULL, clus, beta.start=NULL, 
 u.start=NULL, l1cov.start=NULL, l2cov.start=NULL, l1cov.prior=NULL, 
-l2cov.prior=NULL, nburn=100, nbetween=100, nimp=5, a=NULL,
+l2cov.prior=NULL, nburn=1000, nbetween=1000, nimp=5, a=NULL,
 meth="random", output=1, out.iter=10)
 }
 %- maybe also 'usage' for other objects documented here.
@@ -49,10 +49,10 @@ Scale matrix for the inverse-Wishart prior for the covariance matrices. The defa
 Scale matrix for the inverse-Wishart prior for the level 2 covariance matrix. The default is the identity matrix.
 }
    \item{nburn}{
-Number of burn in iterations. Default is 100.
+Number of burn in iterations. Default is 1000.
 }
   \item{nbetween}{
-Number of iterations between two successive imputations. Default is 100.
+Number of iterations between two successive imputations. Default is 1000.
 }
   \item{nimp}{
 Number of Imputations. Default is 5.

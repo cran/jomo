@@ -1,5 +1,5 @@
 jomo.MCMCchain <-
-  function(Y, Y2=NULL, X=NULL, X2=NULL, Z=NULL,clus=NULL, beta.start=NULL,l2.beta.start=NULL, u.start=NULL, l1cov.start=NULL, l2cov.start=NULL, l1cov.prior=NULL, l2cov.prior=NULL, start.imp=NULL, l2.start.imp=NULL, nburn=100,  a=NULL, meth="common",output=1, out.iter=10) {
+  function(Y, Y2=NULL, X=NULL, X2=NULL, Z=NULL,clus=NULL, beta.start=NULL,l2.beta.start=NULL, u.start=NULL, l1cov.start=NULL, l2cov.start=NULL, l1cov.prior=NULL, l2cov.prior=NULL, start.imp=NULL, l2.start.imp=NULL, nburn=1000,  a=NULL, meth="common",output=1, out.iter=10) {
     if (is.null(Y2)) {
       if (is.null(clus)) {
         cat("No clustering, using functions for single level imputation.\n")

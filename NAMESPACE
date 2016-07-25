@@ -1,2 +1,4 @@
 exportPattern(".")
 useDynLib(jomo)
+importFrom("stats", "rnorm")
+

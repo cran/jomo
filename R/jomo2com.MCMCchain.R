@@ -1,5 +1,5 @@
 jomo2com.MCMCchain <-
-  function(Y.con=NULL, Y.cat=NULL, Y.numcat=NULL, Y2.con=NULL, Y2.cat=NULL, Y2.numcat=NULL,  X=NULL, X2=NULL, Z=NULL, clus, beta.start=NULL, l2.beta.start=NULL, u.start=NULL, l1cov.start=NULL, l2cov.start=NULL, l1cov.prior=NULL, l2cov.prior=NULL, start.imp=NULL, l2.start.imp=NULL, nburn=100, output=1, out.iter=10) {
+  function(Y.con=NULL, Y.cat=NULL, Y.numcat=NULL, Y2.con=NULL, Y2.cat=NULL, Y2.numcat=NULL,  X=NULL, X2=NULL, Z=NULL, clus, beta.start=NULL, l2.beta.start=NULL, u.start=NULL, l1cov.start=NULL, l2cov.start=NULL, l1cov.prior=NULL, l2cov.prior=NULL, start.imp=NULL, l2.start.imp=NULL, nburn=1000, output=1, out.iter=10) {
     if (is.null(X)) X=matrix(1,max(nrow(Y.cat),nrow(Y.con)),1)
     if (is.null(X2)) X2=matrix(1,max(nrow(Y2.cat),nrow(Y2.con)),1)
     if (is.null(Z)) Z=matrix(1,nrow(X),1)

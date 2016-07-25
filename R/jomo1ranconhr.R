@@ -1,5 +1,5 @@
 jomo1ranconhr <-
-  function(Y, X=NULL, Z=NULL, clus, beta.start=NULL, u.start=NULL, l1cov.start=NULL, l2cov.start=NULL, l1cov.prior=NULL, l2cov.prior=NULL, nburn=100, nbetween=100, nimp=5, a=ncol(Y),meth="random", output=1, out.iter=10) {
+  function(Y, X=NULL, Z=NULL, clus, beta.start=NULL, u.start=NULL, l1cov.start=NULL, l2cov.start=NULL, l1cov.prior=NULL, l2cov.prior=NULL, nburn=1000, nbetween=1000, nimp=5, a=(ncol(Y)+5.5),meth="random", output=1, out.iter=10) {
     if (nimp<2) {
       nimp=2
       cat("Minimum number of imputations:2. For single imputation using function jomo1ranconhr.MCMCchain\n")
@@ -73,7 +73,7 @@ jomo1ranconhr <-
     covupost<- array(0, dim=c(nrow(l2cov.start),ncol(l2cov.start),(nimp-1)))
     cpost<-matrix(0,nrow(l2cov.start),ncol(l2cov.start))
     meanobs<-colMeans(Y,na.rm=TRUE)
-    for (i in 1:nrow(Y)) for (j in 1:ncol(Y)) if (is.na(Yimp[i,j])) Yimp[i,j]=meanobs[j]
+    for (i in 1:nrow(Y)) for (j in 1:ncol(Y)) if (is.na(Yimp[i,j])) Yimp[i,j]=rnorm(1,meanobs[j],1)
     #for (i in 1:nrow(Y)) for (j in 1:ncol(Y)) if (is.na(Yimp[i,j])) Yimp[i,j]=rnorm(1,mean=meanobs[j], sd=0.01)
     if (meth=="fixed") {
       .Call("jomo1ranconhf", Y, Yimp, Yimp2, X, Z, clus, betait, uit, bpost, upost, covit,opost, covuit,cpost, nburn, l1cov.prior, l2cov.prior,out.iter, PACKAGE = "jomo") 

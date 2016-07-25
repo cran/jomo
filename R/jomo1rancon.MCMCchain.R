@@ -1,4 +1,4 @@
-jomo1rancon.MCMCchain<- function(Y, X=NULL, Z=NULL, clus, beta.start=NULL, u.start=NULL, l1cov.start=NULL, l2cov.start=NULL, l1cov.prior=NULL, l2cov.prior=NULL, start.imp=NULL, nburn=100, output=1, out.iter=10) {
+jomo1rancon.MCMCchain<- function(Y, X=NULL, Z=NULL, clus, beta.start=NULL, u.start=NULL, l1cov.start=NULL, l2cov.start=NULL, l1cov.prior=NULL, l2cov.prior=NULL, start.imp=NULL, nburn=1000, output=1, out.iter=10) {
   if (is.null(X)) X=matrix(1,nrow(Y),1)
   if (is.null(Z)) Z=matrix(1,nrow(Y),1)
   if (is.null(beta.start)) beta.start=matrix(0,ncol(X),ncol(Y))
@@ -73,7 +73,7 @@ jomo1rancon.MCMCchain<- function(Y, X=NULL, Z=NULL, clus, beta.start=NULL, u.sta
     }
   }
   if (is.null(start.imp)) {
-    for (i in 1:nrow(Y)) for (j in 1:ncol(Y)) if (is.na(Yimp[i,j])) Yimp[i,j]=meanobs[j]
+    for (i in 1:nrow(Y)) for (j in 1:ncol(Y)) if (is.na(Yimp[i,j])) Yimp[i,j]=rnorm(1,meanobs[j],1)
   } 
   #for (i in 1:nrow(Y)) for (j in 1:ncol(Y)) if (is.na(Yimp[i,j])) Yimp[i,j]=rnorm(1,mean=meanobs[j], sd=0.01)
   .Call("MCMCjomo1rancon", Y, Yimp, Yimp2, X, Z, clus, betait, uit, betapost, upostall, covit, omegapost, covuit, covupost, nburn, l1cov.prior, l2cov.prior,out.iter, PACKAGE = "jomo")

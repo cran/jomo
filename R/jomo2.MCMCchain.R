@@ -1,5 +1,5 @@
 jomo2.MCMCchain <-
-  function(Y, Y2, X=NULL, X2=NULL, Z=NULL,clus, beta.start=NULL,l2.beta.start=NULL, u.start=NULL, l1cov.start=NULL, l2cov.start=NULL, l1cov.prior=NULL, l2cov.prior=NULL, start.imp=NULL, l2.start.imp=NULL, nburn=100, a=NULL, meth="common",output=1, out.iter=10) {
+  function(Y, Y2, X=NULL, X2=NULL, Z=NULL,clus, beta.start=NULL,l2.beta.start=NULL, u.start=NULL, l1cov.start=NULL, l2cov.start=NULL, l1cov.prior=NULL, l2cov.prior=NULL, start.imp=NULL, l2.start.imp=NULL, nburn=1000, a=NULL, meth="common",output=1, out.iter=10) {
     stopifnot(meth=="common"|meth=="fixed"|meth=="random")
     ncon=0
     ncat=0

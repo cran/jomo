@@ -11,7 +11,7 @@ This function is similar to jomo1rancathr, but it returns the values of all the 
 \usage{
 jomo1rancathr.MCMCchain(Y.cat, Y.numcat, X=NULL, Z=NULL, clus, beta.start=NULL, 
 u.start=NULL, l1cov.start=NULL, l2cov.start=NULL, l1cov.prior=NULL, 
-l2cov.prior=NULL, start.imp=NULL, nburn=100, a=NULL, meth="random", 
+l2cov.prior=NULL, start.imp=NULL, nburn=1000, a=NULL, meth="random", 
 output=1, out.iter=10) 
 
 }
@@ -54,7 +54,7 @@ Scale matrix for the inverse-Wishart prior for the level 2 covariance matrix. Th
 Starting value for the imputed dataset. n-level categorical variables are substituted by n-1 latent normals.
 }
    \item{nburn}{
-Number of burn in iterations. Default is 100.
+Number of burn in iterations. Default is 1000.
 }
 
   \item{a}{

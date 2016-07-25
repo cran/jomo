@@ -11,7 +11,7 @@ Impute a 2-level dataset with mixed data types as outcome. A joint multivariate 
 jomo2com(Y.con=NULL, Y.cat=NULL, Y.numcat=NULL, Y2.con=NULL, Y2.cat=NULL,
 Y2.numcat=NULL,X=NULL, X2=NULL, Z=NULL, clus, beta.start=NULL, l2.beta.start=NULL, 
 u.start=NULL, l1cov.start=NULL, l2cov.start=NULL, l1cov.prior=NULL, 
-l2cov.prior=NULL, nburn=100, nbetween=100, nimp=5, output=1, out.iter=10) 
+l2cov.prior=NULL, nburn=1000, nbetween=1000, nimp=5, output=1, out.iter=10) 
 
 }
 %- maybe also 'usage' for other objects documented here.
@@ -68,10 +68,10 @@ Scale matrix for the inverse-Wishart prior for the covariance matrix. The defaul
 Scale matrix for the inverse-Wishart prior for the level 2 covariance matrix. The default is the identity matrix.
 }
   \item{nburn}{
-Number of burn in iterations. Default is 100.
+Number of burn in iterations. Default is 1000.
 }
   \item{nbetween}{
-Number of iterations between two successive imputations. Default is 100.
+Number of iterations between two successive imputations. Default is 1000.
 }
   \item{nimp}{
 Number of Imputations. Default is 5.

@@ -12,7 +12,7 @@ This function is similar to jomo2com, but it returns the values of all the param
 jomo2com.MCMCchain(Y.con=NULL, Y.cat=NULL, Y.numcat=NULL, Y2.con=NULL, 
 Y2.cat=NULL, Y2.numcat=NULL, X=NULL, X2=NULL, Z=NULL, clus, beta.start=NULL,
 l2.beta.start=NULL, u.start=NULL, l1cov.start=NULL, l2cov.start=NULL, 
-l1cov.prior=NULL, l2cov.prior=NULL, start.imp=NULL, l2.start.imp=NULL, nburn=100, 
+l1cov.prior=NULL, l2cov.prior=NULL, start.imp=NULL, l2.start.imp=NULL, nburn=1000, 
 output=1, out.iter=10) 
 
 }
@@ -76,7 +76,7 @@ Starting value for the imputed dataset. n-level categorical variables are substi
 Starting value for the level-2 imputed variables. n-level categorical variables are substituted by n-1 latent normals.
   }
   \item{nburn}{
-Number of burn in iterations. Default is 100.
+Number of burn in iterations. Default is 1000.
 }
 
  \item{output}{

@@ -1,10 +1,10 @@
 jomo1ranmixhr.MCMCchain <-
-  function(Y.con, Y.cat, Y.numcat, X=NULL, Z=NULL, clus, beta.start=NULL, u.start=NULL, l1cov.start=NULL, l2cov.start=NULL, l1cov.prior=NULL, l2cov.prior=NULL, start.imp=NULL, nburn=100,a=NULL,meth="random", output=1, out.iter=10) {
+  function(Y.con, Y.cat, Y.numcat, X=NULL, Z=NULL, clus, beta.start=NULL, u.start=NULL, l1cov.start=NULL, l2cov.start=NULL, l1cov.prior=NULL, l2cov.prior=NULL, start.imp=NULL, nburn=1000,a=NULL,meth="random", output=1, out.iter=10) {
     if (is.null(X)) X=matrix(1,nrow(Y.cat),1) 
     if (is.null(Z)) Z=matrix(1,nrow(Y.cat),1)
     if (is.null(beta.start)) beta.start=matrix(0,ncol(X),(ncol(Y.con)+(sum(Y.numcat)-length(Y.numcat))))
     if (is.null(l1cov.prior)) l1cov.prior=diag(1,ncol(beta.start))
-    if (is.null(a)) a=ncol(beta.start)
+    if (is.null(a)) a=ncol(beta.start)+5.5
     clus<-factor(unlist(clus))
     previous_levels_clus<-levels(clus)
     levels(clus)<-0:(nlevels(clus)-1)
@@ -98,7 +98,7 @@ jomo1ranmixhr.MCMCchain <-
       }
     }
     if (is.null(start.imp)) {
-      for (i in 1:nrow(Yi)) for (j in 1:ncol(Yi)) if (is.na(Yimp[i,j])) Yimp2[i,j]=meanobs[j]
+      for (i in 1:nrow(Yi)) for (j in 1:ncol(Yi)) if (is.na(Yimp[i,j])) Yimp2[i,j]=rnorm(1,meanobs[j],1)
     } 
     if (meth=="fixed") {
       .Call("MCMCjomo1ranmixhf", Y, Yimp, Yimp2, Y.cat, X, Z, clus,betait,uit,betapost,upostall,covit,omegapost, covuit,covupost,nburn, l1cov.prior,l2cov.prior,Y.numcat, ncol(Y.con),ait,out.iter,PACKAGE = "jomo")

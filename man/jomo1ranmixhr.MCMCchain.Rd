@@ -12,7 +12,7 @@ This function is similar to jomo1ranmixhr, but it returns the values of all the 
 jomo1ranmixhr.MCMCchain(Y.con, Y.cat, Y.numcat, X=NULL, Z=NULL, clus, 
 beta.start=NULL, u.start=NULL, l1cov.start=NULL, l2cov.start=NULL, 
 l1cov.prior=NULL, l2cov.prior=NULL, start.imp=NULL,
-nburn=100, a=NULL,meth="random", output=1, out.iter=10) 
+nburn=1000, a=NULL,meth="random", output=1, out.iter=10) 
 
 }
 %- maybe also 'usage' for other objects documented here.
@@ -58,7 +58,7 @@ Starting value for the imputed dataset. n-level categorical variables are substi
 }
 
    \item{nburn}{
-Number of iterations. Default is 100.
+Number of iterations. Default is 1000.
 }
 
   \item{a}{

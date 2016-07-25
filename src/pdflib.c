@@ -1882,7 +1882,7 @@ double g=0;
 
 
 
-for ( j2 = 0; j2 < p; j2++ )
+for ( j2 = 1; j2 < (p+1); j2++ )
   {
     
 	g = g+(lgamma(a + (1-(double)j2)/2));
@@ -1973,13 +1973,11 @@ double d1,d2,res;
 
 
 r8mat_pofac(dim,X,help,18);
-d1=
-r8mat_podet ( dim, help )
+d1=r8mat_podet ( dim, help )
 
 ;
 r8mat_pofac(dim,invA,help,19);
-d2=
-r8mat_podet ( dim, help )
+d2=r8mat_podet ( dim, help )
 
 ;
 res=(-df*dim/2)*log(2)-(df/2)*log(1/d2)-log_mul_gamma(dim,df/2)+((df-dim-1)/2)*log(d1);
@@ -1993,7 +1991,7 @@ return res;
 /******************************************************************************/
 
 
-double log_f_u ( double eta, double a, int dim, int nclus, double allinvomega[], double omega[], double invA[], double help[], double help2[])
+double log_f_u ( double eta, double u, int dim, int nclus, double allinvomega[], double omega[], double invgamma[], double help[], double help2[])
 
 
 
@@ -2002,7 +2000,7 @@ double log_f_u ( double eta, double a, int dim, int nclus, double allinvomega[],
 
 {
   
-double res;
+double d1,d2,res=0,gamma,a;
 int i7;
   
 int j4;
@@ -2010,13 +2008,37 @@ int j4;
 
 int t1;
 
+a=exp(u)-dim;
+gamma=dim+1;
+r8mat_pofac(dim,help,help2,18);
+d1=r8mat_podet ( dim, help2 );
 res=log(r8_chi_pdf(eta, a));
+//Rprintf("eta=%f a=%f res=%f\n",eta,a,res);
+
+res=res-nclus*log_mul_gamma(dim,a/2);
+//Rprintf("res2=%f mulg=%f\n",res,log_mul_gamma(dim,a/2));
+
 for (i7=0;i7<nclus;i7++) {
 	for (j4=0;j4<dim;j4++) {
-		for (t1=0;t1<dim;t1++) omega[j4+t1*dim]=allinvomega[(i7*dim+j4)+t1*(dim*nclus)];
+		for (t1=0;t1<dim;t1++) {
+			omega[j4+t1*dim]=allinvomega[(i7*dim+j4)+t1*(dim*nclus)];
+		}
 	}
-	res=res+wishart_dens(a,dim,omega,invA,help,help2);
+	r8mat_pofac(dim,omega,help2,18);
+    d2=r8mat_podet ( dim, help2 );
+	res=res-(a+dim+1)*log(1/d2)/2;
 }
+//Rprintf("res3%f\n",res);
+
+res=res-(a*nclus+gamma)*log(d1)/2;
+//Rprintf("res4=%f d1=%f\n",res,d1);
+
+res=res+log_mul_gamma(dim,(a*nclus+gamma)/2);
+//Rprintf("res5=%f\n",res);
+
+res=res+u;
+//Rprintf("res6=%f\n",res);
+
 return res;
 
 
@@ -2026,7 +2048,7 @@ return res;
 /******************************************************************************/
 
 
-double derive_log_f_u ( double dx, double eta, double u, int dim, int nclus, double allomega[], double omega[], double invA[], double help[], double help2[])
+double derive_log_f_u ( double dx, double eta, double u, int dim, int nclus, double allinvomega[], double omega[], double invgamma[], double help[], double help2[])
 
 
 
@@ -2037,7 +2059,7 @@ double derive_log_f_u ( double dx, double eta, double u, int dim, int nclus, dou
   
 
 double res;
-res=(log_f_u(eta, (u+dx), dim, nclus, allomega, omega,  invA,  help,  help2)-log_f_u(eta, (u-dx), dim, nclus, allomega, omega,  invA,  help,  help2))/(2*dx);
+res=(log_f_u(eta, (u+dx), dim, nclus, allinvomega, omega,  invgamma,  help,  help2)-log_f_u(eta, (u-dx), dim, nclus, allinvomega, omega,  invgamma,  help,  help2))/(2*dx);
 return res;
 
 }
@@ -2046,7 +2068,7 @@ return res;
 /******************************************************************************/
 
 
-double derive2_log_f_u ( double dx, double eta, double u, int dim, int nclus, double allomega[], double omega[], double invA[], double help[], double help2[])
+double derive2_log_f_u ( double dx, double eta, double u, int dim, int nclus, double allinvomega[], double omega[], double invgamma[], double help[], double help2[])
 
 
 
@@ -2057,7 +2079,7 @@ double derive2_log_f_u ( double dx, double eta, double u, int dim, int nclus, do
   
 
 double res;
-res=(log_f_u(eta, (u+dx), dim, nclus, allomega, omega,  invA,  help,  help2)-2*log_f_u(eta, u, dim, nclus, allomega, omega,  invA,  help,  help2)+log_f_u(eta, (u-dx), dim, nclus, allomega, omega,  invA,  help,  help2))/(dx*dx);
+res=(log_f_u(eta, (u+dx), dim, nclus, allinvomega, omega,  invgamma,  help,  help2)-2*log_f_u(eta, u, dim, nclus, allinvomega, omega,  invgamma,  help,  help2)+log_f_u(eta, (u-dx), dim, nclus, allinvomega, omega,  invgamma,  help,  help2))/(dx*dx);
 return res;
 
 }
@@ -2066,7 +2088,7 @@ return res;
 /******************************************************************************/
 
 
-double derive2_f_u ( double dx, double eta, double u, int dim, int nclus, double allomega[], double omega[], double invA[], double help[], double help2[], double K)
+double derive2_f_u ( double dx, double eta, double u, int dim, int nclus, double allinvomega[], double omega[], double invgamma[], double help[], double help2[], double K)
 
 
 
@@ -2077,7 +2099,7 @@ double derive2_f_u ( double dx, double eta, double u, int dim, int nclus, double
   
 
 double res;
-res=(exp(K+log_f_u(eta, (u+dx), dim, nclus, allomega, omega,  invA,  help,  help2))-2*exp(K+log_f_u(eta, u, dim, nclus, allomega, omega,  invA,  help,  help2))+exp(K+log_f_u(eta, (u-dx), dim, nclus, allomega, omega,  invA,  help,  help2)))/(dx*dx);
+res=(exp(K+log_f_u(eta, (u+dx), dim, nclus, allinvomega, omega,  invgamma,  help,  help2))-2*exp(K+log_f_u(eta, u, dim, nclus, allinvomega, omega,  invgamma,  help,  help2))+exp(K+log_f_u(eta, (u-dx), dim, nclus, allinvomega, omega,  invgamma,  help,  help2)))/(dx*dx);
 return res;
 
 }
@@ -2085,7 +2107,7 @@ return res;
 
 /******************************************************************************/
 
-double newton_raphson ( double x, double precision, double dx, double eta, int dim, int nclus, double allomega[], double omega[], double invA[], double help[], double help2[])
+double newton_raphson ( double x, double precision, double dx, double eta, int dim, int nclus, double allinvomega[], double omega[], double invgamma[], double help[], double help2[])
 
 
 
@@ -2102,8 +2124,8 @@ int flag=0;
 
 for (i8=0;i8<NMAX;i8++) {
 	if (flag==0) {
-		d1=derive_log_f_u(dx, eta, x, dim, nclus, allomega, omega,  invA,  help,  help2);
-		d2=derive2_log_f_u(dx,eta, x, dim, nclus, allomega, omega,  invA,  help,  help2);
+		d1=derive_log_f_u(dx, eta, x, dim, nclus, allinvomega, omega,  invgamma,  help,  help2);
+		d2=derive2_log_f_u(dx,eta, x, dim, nclus, allinvomega, omega,  invgamma,  help,  help2);
 		res=x-(d1/d2);
 		if (fabs((res-x)/res)<precision) flag=1;
 		x=res;

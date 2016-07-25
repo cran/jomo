@@ -11,7 +11,7 @@ This function is similar to jomo1rancon, but it returns the values of all the pa
 \usage{
 jomo1rancon.MCMCchain(Y, X=NULL, Z=NULL, clus, beta.start=NULL, 
 u.start=NULL, l1cov.start=NULL, l2cov.start=NULL, l1cov.prior=NULL, 
-l2cov.prior=NULL, start.imp=NULL, nburn=100, output=1, out.iter=10) 
+l2cov.prior=NULL, start.imp=NULL, nburn=1000, output=1, out.iter=10) 
 
 }
 %- maybe also 'usage' for other objects documented here.
@@ -52,7 +52,7 @@ Scale matrix for the inverse-Wishart prior for the level 2 covariance matrix. Th
 Starting value for the imputed dataset. 
 }
    \item{nburn}{
-Number of iterations. Default is 100.
+Number of iterations. Default is 1000.
 }
  \item{output}{
 When set to any value different from 1 (default), no output is shown on screen at the end of the process.

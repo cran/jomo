@@ -11,7 +11,7 @@ This function is similar to jomo1ranmix, but it returns the values of all the pa
 \usage{
 jomo1ranmix.MCMCchain(Y.con, Y.cat, Y.numcat, X=NULL, Z=NULL, clus, 
 beta.start=NULL, u.start=NULL, l1cov.start=NULL, l2cov.start=NULL, 
-l1cov.prior=NULL, l2cov.prior=NULL, start.imp=NULL, nburn=100, 
+l1cov.prior=NULL, l2cov.prior=NULL, start.imp=NULL, nburn=1000, 
 output=1, out.iter=10) 
 
 }
@@ -57,7 +57,7 @@ Scale matrix for the inverse-Wishart prior for the level 2 covariance matrix. Th
 Starting value for the imputed dataset. n-level categorical variables are substituted by n-1 latent normals.
 }
   \item{nburn}{
-Number of burn in iterations. Default is 100.
+Number of burn in iterations. Default is 1000.
 }
 
  \item{output}{

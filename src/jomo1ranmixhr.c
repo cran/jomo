@@ -129,7 +129,7 @@ Gammastar= (double * )  R_alloc ( JY * JY , sizeof(double) );
 
 /* Some initializations */
 
-gamma=JY;
+gamma=JY+1;
 //a=JY+1;
 eta=JY;
 dx=0.001;
@@ -437,32 +437,22 @@ for (i=0;i<ns;i++) {
 	r8mat_poinv(JY, help7, Gammastar);
 	for (jj=1;jj<JY;jj++) for (tt=0;tt<jj;tt++) Gammastar[jj+JY*tt]=Gammastar[tt+JY*jj];
 
-	wishart_sample(JY,(nj*a+gamma),Gammastar,invA,help, omegaoo,omegaom,omegamm,0);
+	wishart_sample(JY,(nj*a+gamma),Gammastar,invA,help2, omegaoo,omegaom,omegamm,0);
 
-		u_m=newton_raphson(u_new,precision, dx,eta,JY,nj,allinvomega,invomega,invA,help,help2);
-	if (u_m!=-9999) {
-		con=-log_f_u(eta, u_m, JY, nj, allinvomega, invomega,  invA,  help,  help2);
-		deriv2=derive2_f_u(dx,eta, u_m, JY, nj, allinvomega, invomega,  invA,  help,  help2,con);
-		lambda=sqrt(-5/(4*deriv2));
-		u_prop=lambda*t_sample(4,0)+u_m;
-		con2=exp(log_f_u(eta, u_prop, JY, nj, allinvomega, invomega, invA,help,help2)-log_f_u(eta, u_new, JY, nj, allinvomega, invomega, invA,help,help2))*h_u(u_new,u_m,lambda)/h_u(u_prop,u_m,lambda);
-		if ((( double ) unif_rand ( ) )<r8_min(1,con2)) u_new=u_prop;
-		a=u_new;
-	}
-	if (u_m==-9999) {
-		u_m=a;
-		con=-log_f_u(eta, u_m, JY, nj, allinvomega, invomega,  invA,  help,  help2);
-		deriv2=derive2_log_f_u(dx,eta, u_m, JY, nj, allinvomega, invomega,  invA,  help,  help2);
-		lambda=sqrt(-5/(4*deriv2));
-		u_prop=lambda*t_sample(4,0)+u_m;
-		con2=exp(log_f_u(eta, u_prop, JY, nj, allinvomega, invomega, invA,help,help2)-log_f_u(eta, u_new, JY, nj, allinvomega, invomega, invA,help,help2))*h_u(u_new,u_m,lambda)/h_u(u_prop,u_m,lambda);
-		if ((( double ) unif_rand ( ) )<r8_min(1,con2)) u_new=u_prop;
-		a=u_new;
+		//Updating degrees of freedom of inverse Wishart
 
-	}
-	if (a<JY+2) a=JY+2;
-	if (isnan(a)) a=JY+2;
-	u_new=a;	
+	u_new=log(a+JY);	
+	u_m=newton_raphson(u_new,precision, dx,eta,JY,nj,allinvomega,invomega,invgamma,help,help2);		
+	if (u_m==(-9999)) u_m=u_new;
+	deriv2=derive2_log_f_u(dx,eta, u_m, JY, nj, allinvomega, invomega,  invA,  help,  help2);
+	lambda=sqrt(-5/(4*deriv2));
+	u_prop=lambda*t_sample(4,0)+u_m;								
+	con2=exp(log_f_u(eta, u_prop, JY, nj, allinvomega, invomega, invA,help,help2)-log_f_u(eta, u_new, JY, nj, allinvomega, invomega, invA,help,help2))*h_u(u_new,u_m,lambda)/h_u(u_prop,u_m,lambda);
+	if ((( double ) unif_rand ( ) )<r8_min(1,con2)) u_new=u_prop;
+	if (isnan(exp(u_new)-JY)) u_new=log(a+JY);
+	if ((exp(u_new)-JY)<JY) u_new=log(a+JY);
+	a=exp(u_new)-JY;	
+	//Rprintf("a=%f\n",a);	
 	
 	//Updating matrices
 	

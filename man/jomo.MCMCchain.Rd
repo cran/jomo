@@ -12,7 +12,7 @@
                  beta.start=NULL, l2.beta.start=NULL, u.start=NULL,
                  l1cov.start=NULL, l2cov.start=NULL, l1cov.prior=NULL, 
                 l2cov.prior=NULL, start.imp=NULL, l2.start.imp=NULL, 
-                nburn=100, a=NULL, meth="common",output=1, out.iter=10) 
+                nburn=1000, a=NULL, meth="common",output=1, out.iter=10) 
   
 }
 %- maybe also 'usage' for other objects documented here.
@@ -63,7 +63,7 @@ Starting value for the imputed dataset. n-level categorical variables are substi
 Starting value for the level-2 imputed variables. n-level categorical variables are substituted by n-1 latent normals.
   }
   \item{nburn}{
-    Number of iterations. Default is 100.
+    Number of iterations. Default is 1000.
   }
   \item{a}{
     Starting value for the degrees of freedom of the inverse Wishart distribution from which all of the covariance matrices are drawn in case method="random" option is specified. Default is the minimum possible, i.e. the dimension of the covariance matrices.

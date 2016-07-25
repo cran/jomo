@@ -1,5 +1,5 @@
 jomo2hr <-
-  function(Y.con=NULL, Y.cat=NULL, Y.numcat=NULL,Y2.con=NULL, Y2.cat=NULL, Y2.numcat=NULL, X=NULL, X2=NULL, Z=NULL, clus, beta.start=NULL, l2.beta.start=NULL, u.start=NULL, l1cov.start=NULL, l2cov.start=NULL, l1cov.prior=NULL, l2cov.prior=NULL, nburn=100, nbetween=100, nimp=5, a=NULL, meth="random", output=1, out.iter=10) {
+  function(Y.con=NULL, Y.cat=NULL, Y.numcat=NULL,Y2.con=NULL, Y2.cat=NULL, Y2.numcat=NULL, X=NULL, X2=NULL, Z=NULL, clus, beta.start=NULL, l2.beta.start=NULL, u.start=NULL, l1cov.start=NULL, l2cov.start=NULL, l1cov.prior=NULL, l2cov.prior=NULL, nburn=1000, nbetween=1000, nimp=5, a=NULL, meth="random", output=1, out.iter=10) {
     if (nimp<2) {
       nimp=2
       cat("Minimum number of imputations:2. For single imputation using function jomo2hr.MCMCchain\n")
