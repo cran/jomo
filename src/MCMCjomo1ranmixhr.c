@@ -9,7 +9,7 @@
 #include<Rinternals.h>
 #include<Rmath.h>
 
-SEXP MCMCjomo1ranmixhr(SEXP Y, SEXP Yimp, SEXP Yimp2, SEXP Yimpcat, SEXP X, SEXP Z, SEXP clus, SEXP beta, SEXP u, SEXP betapost, SEXP upost, SEXP omega,SEXP omegapost, SEXP covu, SEXP covupost, SEXP nstep, SEXP Sp, SEXP Sup, SEXP Y_numcat, SEXP num_con, SEXP a_start, SEXP flagrng){
+SEXP MCMCjomo1ranmixhr(SEXP Y, SEXP Yimp, SEXP Yimp2, SEXP Yimpcat, SEXP X, SEXP Z, SEXP clus, SEXP beta, SEXP u, SEXP betapost, SEXP upost, SEXP omega,SEXP omegapost, SEXP covu, SEXP covupost, SEXP nstep, SEXP Sp, SEXP Sup, SEXP Y_numcat, SEXP num_con, SEXP a_start, SEXP a_prior, SEXP flagrng){
 int indic=0,i,j,k, IY,JY, IX, JX, Io, Jo, Ib, Jb, ns, nmiss=0,t, countm=0, counto=0, countmm=0, countmo=0,countoo=0, jj, tt, kk, ncon,ncat, pos,flag=0,nmaxx,h;
 int Iu, Ju, IZ, JZ, nj,c, fl,currncat;
 SEXP RdimY, RdimX, Rdimo, Rdimb, RdimZ, Rdimu;
@@ -65,6 +65,7 @@ fl=INTEGER(flagrng)[0];
 ncat=length(Y_numcat);
 a_start=PROTECT(coerceVector(a_start,REALSXP));
 a=REAL(a_start)[0];
+a_prior=PROTECT(coerceVector(a_prior,REALSXP));
 nj=Iu;
 
 /*Allocating memory for C objects in R*/
@@ -131,7 +132,7 @@ Gammastar= (double * )  R_alloc ( JY * JY , sizeof(double) );
 
 gamma=JY+1;
 //a=JY+1;
-eta=JY;
+eta=REAL(a_prior)[0];
 dx=0.001;
 u_new=log(a+JY);
 precision=0.001;
@@ -641,6 +642,6 @@ for(i=0;i<IY;i++)  {
 }
 REAL(a_start)[0]=a;
 PutRNGstate();
-UNPROTECT(28);
+UNPROTECT(29);
 return R_NilValue;
 }

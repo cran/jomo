@@ -10,13 +10,13 @@ A wrapper function linking the six 2-level JM Imputation functions. The matrix o
 jomo1ran(Y, X=NULL, Z=NULL,clus, 
       beta.start=NULL, u.start=NULL, l1cov.start=NULL, l2cov.start=NULL, 
       l1cov.prior=NULL, l2cov.prior=NULL, nburn=1000, nbetween=1000, nimp=5, 
-      a=NULL, meth="common", output=1, out.iter=10) 
+      a=NULL, a.prior=NULL, meth="common", output=1, out.iter=10) 
 
 }
 
 \arguments{
   \item{Y}{
-    A data.frame containing the outcomes of the imputation model, i.e. the partially observed level 1 variables. Columns related to continuous variables have to be numeric and columns related to binary/categorical variables have to be factors. 
+    A data.frame containing the outcomes of the imputation model. Columns related to continuous variables have to be numeric and columns related to binary/categorical variables have to be factors. 
   }
   \item{X}{
 A data frame, or matrix, with covariates of the joint imputation model. Rows correspond to different observations, while columns are different variables. Missing values are not allowed in these variables. In case we want an intercept, a column of 1 is needed. The default is a column of 1.
@@ -54,8 +54,11 @@ Number of iterations between two successive imputations. Default is 1000.
   \item{nimp}{
 Number of Imputations. Default is 5.
 }
-\item{a}{
-Starting value for the degrees of freedom of the inverse Wishart distribution from which all of the covariance matrices are drawn in case method="random" option in specified. Default is the minimum possible, i.e. the dimension of the covariance matrices.
+  \item{a}{
+Starting value for the degrees of freedom of the inverse Wishart distribution of the cluster-specific covariance matrices. Default is 50+D, with D being the dimension of the covariance matrices. This is used only when option meth is set to "random".
+}
+  \item{a.prior}{
+Hyperparameter (Degrees of freedom) of the chi square prior distribution for the degrees of freedom of the inverse Wishart distribution for the cluster-specific covariance matrices. Default is the starting value for a.
 }
 
 \item{meth}{

@@ -9,7 +9,7 @@
 #include<Rinternals.h>
 #include<Rmath.h>
 
-SEXP MCMCjomo1ranconhr(SEXP Y, SEXP Yimp, SEXP Yimp2, SEXP X, SEXP Z, SEXP clus, SEXP beta, SEXP u, SEXP betapost, SEXP upost, SEXP omega, SEXP omegapost, SEXP covu, SEXP covupost, SEXP nstep, SEXP Sp, SEXP Sup, SEXP a_start, SEXP flagrng){
+SEXP MCMCjomo1ranconhr(SEXP Y, SEXP Yimp, SEXP Yimp2, SEXP X, SEXP Z, SEXP clus, SEXP beta, SEXP u, SEXP betapost, SEXP upost, SEXP omega, SEXP omegapost, SEXP covu, SEXP covupost, SEXP nstep, SEXP Sp, SEXP Sup, SEXP a_start, SEXP a_prior, SEXP flagrng){
 int i,j,k, IY,JY, IX, JX, Io, Jo, Ib, Jb, IZ, JZ, Iu, Ju, ns,nj, nmiss=0,t, countm=0, counto=0, countmm=0, countmo=0, countoo=0,countt=0, jj, tt, c,flag=0, fl;
 SEXP RdimY, RdimX, Rdimo, Rdimb, RdimZ, Rdimu;
 double *betaX, *Yobs, *Ymiss, *mumiss, *omegadrawmiss, *betamiss, *betaobs, *omegaoo, *omegaom, *omegamo, *omegamm, *invomega, *help, *imp, *zi, *sumxi, *yi, *xi, *help5;
@@ -58,6 +58,7 @@ flagrng=PROTECT(coerceVector(flagrng,INTSXP));
 fl=INTEGER(flagrng)[0];
 a_start=PROTECT(coerceVector(a_start,REALSXP));
 a=REAL(a_start)[0];
+a_prior=PROTECT(coerceVector(a_prior,REALSXP));
 nj=Iu;
 /*Allocating memory for C objects in R*/
 
@@ -119,7 +120,7 @@ allinvomega = ( double * )  R_alloc ( nj* JY * JY , sizeof(double));
 /* Some initializations */
 gamma=JY+1;
 //a=JY+1;
-eta=JY;
+eta=REAL(a_prior)[0];
 dx=0.001;
 u_new=log(a+JY);
 precision=0.001;
@@ -440,6 +441,6 @@ for(i=0;i<IY;i++)  {
 
 REAL(a_start)[0]=a;
 PutRNGstate();
-UNPROTECT(25);
+UNPROTECT(26);
 return R_NilValue;
 }

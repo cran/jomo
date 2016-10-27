@@ -5,7 +5,7 @@
 A simulated clustered dataset 
 }
 \description{
-A simulated dataset to test functions for imputation of clustered data, i.e. jomo1rancon, jomo1rancat, jomo1ranmix, jomo1ranconhr,jomo1rancathr and jomoran1mixhr. 
+A simulated dataset to test functions for imputation of clustered data. 
 }
 \usage{data(cldata)}
 \format{

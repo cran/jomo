@@ -1,5 +1,5 @@
 jomo1ranmixhr <-
-function(Y.con, Y.cat, Y.numcat, X=NULL, Z=NULL, clus, beta.start=NULL, u.start=NULL, l1cov.start=NULL, l2cov.start=NULL, l1cov.prior=NULL, l2cov.prior=NULL, nburn=1000, nbetween=1000, nimp=5, a=NULL, meth="random", output=1, out.iter=10) {
+function(Y.con, Y.cat, Y.numcat, X=NULL, Z=NULL, clus, beta.start=NULL, u.start=NULL, l1cov.start=NULL, l2cov.start=NULL, l1cov.prior=NULL, l2cov.prior=NULL, nburn=1000, nbetween=1000, nimp=5, a=NULL, a.prior=NULL, meth="random", output=1, out.iter=10) {
   if (nimp<2) {
     nimp=2
     cat("Minimum number of imputations:2. For single imputation using function jomo1ranmixhr.MCMCchain\n")
@@ -8,7 +8,8 @@ function(Y.con, Y.cat, Y.numcat, X=NULL, Z=NULL, clus, beta.start=NULL, u.start=
   if (is.null(Z)) Z=matrix(1,nrow(Y.cat),1)
   if (is.null(beta.start)) beta.start=matrix(0,ncol(X),(ncol(Y.con)+(sum(Y.numcat)-length(Y.numcat))))
   if (is.null(l1cov.prior)) l1cov.prior=diag(1,ncol(beta.start))
-  if (is.null(a)) a=ncol(beta.start)+5.5
+  if (is.null(a)) a=ncol(beta.start)+50
+  if (is.null(a.prior)) a.prior=ncol(beta.start)
   clus<-factor(unlist(clus))
   previous_levels_clus<-levels(clus)
   levels(clus)<-0:(nlevels(clus)-1)
@@ -100,7 +101,7 @@ function(Y.con, Y.cat, Y.numcat, X=NULL, Z=NULL, clus, beta.start=NULL, u.start=
     .Call("jomo1ranmixhf", Y, Yimp, Yimp2, Y.cat, X, Z, clus,betait,uit,bpost,upost,covit,opost, covuit,cpost,nburn, l1cov.prior,l2cov.prior,Y.numcat, ncol(Y.con),ait,out.iter, PACKAGE = "jomo")
   }
   if (meth=="random") {
-    .Call("jomo1ranmixhr", Y, Yimp, Yimp2, Y.cat, X, Z, clus,betait,uit,bpost,upost,covit,opost, covuit,cpost,nburn, l1cov.prior,l2cov.prior,Y.numcat, ncol(Y.con),ait,out.iter, PACKAGE = "jomo")
+    .Call("jomo1ranmixhr", Y, Yimp, Yimp2, Y.cat, X, Z, clus,betait,uit,bpost,upost,covit,opost, covuit,cpost,nburn, l1cov.prior,l2cov.prior,Y.numcat, ncol(Y.con),ait, a.prior, out.iter, PACKAGE = "jomo")
   }
   #betapost[,,1]=bpost
   #upostall[,,1]=upost
@@ -124,7 +125,7 @@ function(Y.con, Y.cat, Y.numcat, X=NULL, Z=NULL, clus, beta.start=NULL, u.start=
       .Call("jomo1ranmixhf", Y, Yimp, Yimp2, Y.cat, X, Z, clus,betait,uit,bpost,upost,covit,opost, covuit,cpost,nbetween, l1cov.prior,l2cov.prior,Y.numcat, ncol(Y.con),ait,out.iter, PACKAGE = "jomo")
     }
     if (meth=="random") {
-      .Call("jomo1ranmixhr", Y, Yimp, Yimp2, Y.cat, X, Z, clus,betait,uit,bpost,upost,covit,opost, covuit,cpost,nbetween, l1cov.prior,l2cov.prior,Y.numcat, ncol(Y.con),ait,out.iter, PACKAGE = "jomo")
+      .Call("jomo1ranmixhr", Y, Yimp, Yimp2, Y.cat, X, Z, clus,betait,uit,bpost,upost,covit,opost, covuit,cpost,nbetween, l1cov.prior,l2cov.prior,Y.numcat, ncol(Y.con),ait,a.prior,out.iter, PACKAGE = "jomo")
     }
     betapost[,,(i-1)]=bpost
     upostall[,,(i-1)]=upost

@@ -10,7 +10,8 @@ Impute a clustered dataset with continuous outcomes only. A joint multivariate m
 \usage{
 jomo1ranconhr(Y, X=NULL, Z=NULL, clus, beta.start=NULL, u.start=NULL,
 l1cov.start=NULL, l2cov.start=NULL, l1cov.prior=NULL, l2cov.prior=NULL, 
-nburn=1000, nbetween=1000, nimp=5, a=(ncol(Y)+5.5), meth="random", output=1, out.iter=10) 
+nburn=1000, nbetween=1000, nimp=5, a=(ncol(Y)+50),a.prior=NULL, 
+meth="random", output=1, out.iter=10) 
 
 }
 %- maybe also 'usage' for other objects documented here.
@@ -34,7 +35,7 @@ Starting value for beta, the vector(s) of fixed effects. Rows index different co
 A matrix where different rows are the starting values within each cluster for the random effects estimates u. The default is a matrix of zeros.
 }
   \item{l1cov.start}{
-Starting value for the covariance matrices, pulled one above the other in column. Dimension of each square matrix is equal to the number of outcomes in the imputation model. The default is the identity matrix for each cluster.
+Starting value for the covariance matrices, stacked one above the other. Dimension of each square matrix is equal to the number of outcomes in the imputation model. The default is the identity matrix for each cluster.
 }
   \item{l2cov.start}{
 Starting value for the level 2 covariance matrix. Dimension of this square matrix is equal to the number of outcomes in the imputation model times the number of random effects. The default is an identity matrix.
@@ -55,8 +56,12 @@ Number of iterations between two successive imputations. Default is 1000.
 Number of Imputations. Default is 5.
 }
   \item{a}{
-Starting value for the degrees of freedom of the inverse Wishart distribution from which all of the covariance matrices are drawn in case method="random" option in specified. Default is the minimum possible, i.e. the dimension of the covariance matrices.
+Starting value for the degrees of freedom of the inverse Wishart distribution of the cluster-specific covariance matrices. Default is 50+D, with D being the dimension of the covariance matrices.
 }
+  \item{a.prior}{
+Hyperparameter (Degrees of freedom) of the chi square prior distribution for the degrees of freedom of the inverse Wishart distribution for the cluster-specific covariance matrices. Default is D, with D being the dimension of the covariance matrices..
+}
+
 \item{meth}{
 This can be set to "Fixed" or "Random". In the first case the function will consider fixed study-specific covariance matrices, in the second, random study-specific distributed according to an inverse-Wishart distribution.
 }

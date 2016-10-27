@@ -12,10 +12,10 @@
                  beta.start=NULL, l2.beta.start=NULL, u.start=NULL,
                  l1cov.start=NULL, l2cov.start=NULL, l1cov.prior=NULL, 
                 l2cov.prior=NULL, start.imp=NULL, l2.start.imp=NULL, 
-                nburn=1000, a=NULL, meth="common",output=1, out.iter=10) 
+    nburn=1000, a=NULL, a.prior=NULL, meth="common",output=1, out.iter=10) 
   
 }
-%- maybe also 'usage' for other objects documented here.
+
 \arguments{
   \item{Y}{
     A data.frame containing the outcomes of the imputation model, i.e. the partially observed level 1 variables. Columns related to continuous variables have to be numeric and columns related to binary/categorical variables have to be factors. 
@@ -45,7 +45,7 @@
     A matrix where different rows are the starting values within each cluster for the random effects estimates u. The default is a matrix of zeros.
   }
   \item{l1cov.start}{
-    Starting value for the covariance matrix. Dimension of this square matrix is equal to the number of outcomes (continuous plus latent normals) in the imputation model. The default is the identity matrix.
+    Starting value for the covariance matrix. Dimension of this square matrix is equal to the number of outcomes (continuous plus latent normals) in the imputation model. The default is the identity matrix. Functions for imputation with random cluster-specific covariance matrices are an exception, because we need to pass the starting values for all of the matrices stacked one above the other. 
   }
   \item{l2cov.start}{
     Starting value for the level 2 covariance matrix. Dimension of this square matrix is equal to the number of outcomes (continuous plus latent normals) in the imputation model times the number of random effects plus the number of level-2 outcomes. The default is an identity matrix.
@@ -66,8 +66,11 @@ Starting value for the level-2 imputed variables. n-level categorical variables 
     Number of iterations. Default is 1000.
   }
   \item{a}{
-    Starting value for the degrees of freedom of the inverse Wishart distribution from which all of the covariance matrices are drawn in case method="random" option is specified. Default is the minimum possible, i.e. the dimension of the covariance matrices.
-  }
+Starting value for the degrees of freedom of the inverse Wishart distribution of the cluster-specific covariance matrices. Default is 50+D, with D being the dimension of the covariance matrices. This is used only with clustered data and when option meth is set to "random".
+}
+  \item{a.prior}{
+Hyperparameter (Degrees of freedom) of the chi square prior distribution for the degrees of freedom of the inverse Wishart distribution for the cluster-specific covariance matrices. Default is D, with D being the dimension of the covariance matrices.
+}
   \item{meth}{
     Method used to deal with level 1 covariance matrix. When set to "common", a common matrix across clusters is used (functions jomo1rancon, jomo1rancat and jomo1ranmix). When set to "fixed", fixed study-specific matrices are considered (jomo1ranconhr, jomo1rancathr and jomo1ranmixhr with coption meth="fixed"). Finally, when set to "random", random study-specific matrices are considered (jomo1ranconhr, jomo1rancathr and jomo1ranmixhr with option meth="random")
   }

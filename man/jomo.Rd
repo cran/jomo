@@ -10,16 +10,16 @@
  jomo(Y, Y2=NULL, X=NULL, X2=NULL, Z=NULL, clus=NULL, beta.start=NULL, 
       l2.beta.start=NULL, u.start=NULL, l1cov.start=NULL, l2cov.start=NULL, 
       l1cov.prior=NULL, l2cov.prior=NULL, nburn=1000, nbetween=1000, nimp=5,
-      a=NULL, meth="common", output=1, out.iter=10) 
+      a=NULL, a.prior=NULL, meth="common", output=1, out.iter=10) 
   
 }
 
 \arguments{
    \item{Y}{
-    A data.frame containing the outcomes of the imputation model, i.e. the partially observed level 1 variables. Columns related to continuous variables have to be numeric and columns related to binary/categorical variables have to be factors. 
+    A data.frame containing the (level-1) outcomes of the imputation model. Columns related to continuous variables have to be numeric and columns related to binary/categorical variables have to be factors. 
   }
    \item{Y2}{
-    A data.frame containing the level-2 outcomes of the imputation model, i.e. the partially observed level-2 variables. Columns related to continuous variables have to be numeric and columns related to binary/categorical variables have to be factors.
+    A data.frame containing the level-2 outcomes of the imputation model. Columns related to continuous variables have to be numeric and columns related to binary/categorical variables have to be factors.
   }
   \item{X}{
     A data frame, or matrix, with covariates of the joint imputation model. Rows correspond to different observations, while columns are different variables. Missing values are not allowed in these variables. In case we want an intercept, a column of 1 is needed. The default is a column of 1.
@@ -43,7 +43,7 @@
     A matrix where different rows are the starting values within each cluster for the random effects estimates u. The default is a matrix of zeros.
   }
   \item{l1cov.start}{
-    Starting value for the covariance matrix. Dimension of this square matrix is equal to the number of outcomes (continuous plus latent normals) in the imputation model. The default is the identity matrix.
+    Starting value for the covariance matrix. Dimension of this square matrix is equal to the number of outcomes (continuous plus latent normals) in the imputation model. The default is the identity matrix. Functions for imputation with random cluster-specific covariance matrices are an exception, because we need to pass the starting values for all of the matrices stacked one above the other. 
   }
   \item{l2cov.start}{
     Starting value for the level 2 covariance matrix. Dimension of this square matrix is equal to the number of outcomes (continuous plus latent normals) in the imputation model times the number of random effects plus the number of level-2 outcomes. The default is an identity matrix.
@@ -64,8 +64,11 @@
     Number of Imputations. Default is 5.
   }
   \item{a}{
-    Starting value for the degrees of freedom of the inverse Wishart distribution from which all of the covariance matrices are drawn in case method="random" option in specified. Default is the minimum possible, i.e. the dimension of the covariance matrices.
-  }
+Starting value for the degrees of freedom of the inverse Wishart distribution of the cluster-specific covariance matrices. Default is 50+D, with D being the dimension of the covariance matrices. This is used only with clustered data and when option meth is set to "random".
+}
+  \item{a.prior}{
+Hyperparameter (Degrees of freedom) of the chi square prior distribution for the degrees of freedom of the inverse Wishart distribution for the cluster-specific covariance matrices. Default is D, with D being the dimension of the covariance matrices.
+}
   
   \item{meth}{
     Method used to deal with level 1 covariance matrix. When set to "common", a common matrix across clusters is used (functions jomo1rancon, jomo1rancat and jomo1ranmix). When set to "fixed", fixed study-specific matrices are considered (jomo1ranconhr, jomo1rancathr and jomo1ranmixhr with coption meth="fixed"). Finally, when set to "random", random study-specific matrices are considered (jomo1ranconhr, jomo1rancathr and jomo1ranmixhr with coption meth="random")

@@ -9,7 +9,7 @@
 #include<Rinternals.h>
 #include<Rmath.h>
 
-SEXP MCMCjomo2hr(SEXP Y, SEXP Yimp, SEXP Yimp2, SEXP Yimpcat, SEXP Y2, SEXP Y2imp, SEXP Y2imp2, SEXP Y2impcat, SEXP X, SEXP X2, SEXP Z, SEXP clus, SEXP beta, SEXP beta2, SEXP u, SEXP betapost, SEXP beta2post, SEXP upost, SEXP omega,SEXP omegapost, SEXP covu, SEXP covupost, SEXP nstep, SEXP Sp, SEXP Sup, SEXP Y_numcat, SEXP Y2_numcat, SEXP num_con, SEXP num_con2, SEXP a_start, SEXP flagrng){
+SEXP MCMCjomo2hr(SEXP Y, SEXP Yimp, SEXP Yimp2, SEXP Yimpcat, SEXP Y2, SEXP Y2imp, SEXP Y2imp2, SEXP Y2impcat, SEXP X, SEXP X2, SEXP Z, SEXP clus, SEXP beta, SEXP beta2, SEXP u, SEXP betapost, SEXP beta2post, SEXP upost, SEXP omega,SEXP omegapost, SEXP covu, SEXP covupost, SEXP nstep, SEXP Sp, SEXP Sup, SEXP Y_numcat, SEXP Y2_numcat, SEXP num_con, SEXP num_con2, SEXP a_start, SEXP a_prior, SEXP flagrng){
 int indic=0,i,j,k, IY,JY, IX, JX, Io, Jo, Ib, Jb, ns, nmiss=0,t, countm=0, counto=0, countmm=0, countmo=0,countoo=0, jj, tt, kk, ncon,ncat, pos,flag=0,nmaxx,h;
 int Iu, Ju, IZ, JZ, nj,c, fl,currncat, IY2, JY2, IX2,JX2,Ib2, Jb2, ncon2,ncat2, JYm, JXm;
 SEXP RdimY, RdimX, Rdimo, Rdimb, RdimZ, Rdimu, RdimY2, RdimX2, Rdimb2;
@@ -88,6 +88,7 @@ if (REAL(Y2impcat)[0]==(-999)) ncat2=0;
 else ncat2=length(Y2_numcat);
 a_start=PROTECT(coerceVector(a_start,REALSXP));
 a=REAL(a_start)[0];
+a_prior=PROTECT(coerceVector(a_prior,REALSXP));
 nj=Iu;
 JXm=JX;
 if (JX2>JX) JXm=JX2;
@@ -167,7 +168,7 @@ covu12= (double * ) R_alloc ( JY * JZ * JY2 , sizeof ( double ) );
 
 gamma=JY+1;
 //a=JY+1;
-eta=JY;
+eta=REAL(a_prior)[0];
 dx=0.001;
 u_new=log(a+JY);
 precision=0.001;
@@ -1076,6 +1077,6 @@ if (ncat2>0) {
 
 REAL(a_start)[0]=a;
 PutRNGstate();
-UNPROTECT(40);
+UNPROTECT(41);
 return R_NilValue;
 }

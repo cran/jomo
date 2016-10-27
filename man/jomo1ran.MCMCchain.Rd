@@ -10,13 +10,14 @@ This function is similar to jomo1ran, but it returns the values of all the param
 \usage{
 jomo1ran.MCMCchain(Y, X=NULL, Z=NULL,clus, beta.start=NULL, u.start=NULL, 
 l1cov.start=NULL,l2cov.start=NULL, l1cov.prior=NULL, l2cov.prior=NULL, 
-start.imp=NULL, nburn=1000, a=NULL, meth="common", output=1, out.iter=10) 
+start.imp=NULL, nburn=1000, a=NULL,a.prior=NULL, meth="common", output=1, 
+out.iter=10) 
 
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
  \item{Y}{
-    A data.frame containing the outcomes of the imputation model, i.e. the partially observed level 1 variables. Columns related to continuous variables have to be numeric and columns related to binary/categorical variables have to be factors. 
+    A data.frame containing the outcomes of the imputation model. Columns related to continuous variables have to be numeric and columns related to binary/categorical variables have to be factors. 
   }
   \item{X}{
 A data frame, or matrix, with covariates of the joint imputation model. Rows correspond to different observations, while columns are different variables. Missing values are not allowed in these variables. In case we want an intercept, a column of 1 is needed. The default is a column of 1.
@@ -52,8 +53,11 @@ Starting value for the imputed dataset. n-level categorical variables are substi
   \item{nburn}{
 Number of iterations. Default is 1000.
 }
-\item{a}{
-Starting value for the degrees of freedom of the inverse Wishart distribution from which all of the covariance matrices are drawn in case method="random" option in specified. Default is the minimum possible, i.e. the dimension of the covariance matrices.
+  \item{a}{
+Starting value for the degrees of freedom of the inverse Wishart distribution of the cluster-specific covariance matrices. Default is 50+D, with D being the dimension of the covariance matrices. This is used only when option meth is set to "random".
+}
+  \item{a.prior}{
+Hyperparameter (Degrees of freedom) of the chi square prior distribution for the degrees of freedom of the inverse Wishart distribution for the cluster-specific covariance matrices. Default is the starting value for a.
 }
 \item{meth}{
 Method used to deal with level 1 covariance matrix. When set to "common", a common matrix across clusters is used (functions jomo1rancon, jomo1rancat and jomo1ranmix). When set to "fixed", fixed study-specific matrices are considered (jomo1ranconhr, jomo1rancathr and jomo1ranmixhr with coption meth="fixed"). Finally, when set to "random", random study-specific matrices are considered (jomo1ranconhr, jomo1rancathr and jomo1ranmixhr with option meth="random")

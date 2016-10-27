@@ -1,12 +1,13 @@
 jomo2hr.MCMCchain <-
-  function(Y.con=NULL, Y.cat=NULL, Y.numcat=NULL,Y2.con=NULL, Y2.cat=NULL, Y2.numcat=NULL, X=NULL, X2=NULL, Z=NULL, clus, beta.start=NULL, l2.beta.start=NULL, u.start=NULL, l1cov.start=NULL, l2cov.start=NULL, l1cov.prior=NULL, l2cov.prior=NULL, start.imp=NULL, l2.start.imp=NULL, nburn=1000, a=NULL, meth="random", output=1, out.iter=10) {
+  function(Y.con=NULL, Y.cat=NULL, Y.numcat=NULL,Y2.con=NULL, Y2.cat=NULL, Y2.numcat=NULL, X=NULL, X2=NULL, Z=NULL, clus, beta.start=NULL, l2.beta.start=NULL, u.start=NULL, l1cov.start=NULL, l2cov.start=NULL, l1cov.prior=NULL, l2cov.prior=NULL, start.imp=NULL, l2.start.imp=NULL, nburn=1000, a=NULL, a.prior=NULL, meth="random", output=1, out.iter=10) {
     if (is.null(X)) X=matrix(1,max(nrow(Y.cat),nrow(Y.con)),1)
     if (is.null(X2)) X2=matrix(1,max(nrow(Y2.cat),nrow(Y2.con)),1)
     if (is.null(Z)) Z=matrix(1,nrow(X),1)
     if (is.null(beta.start)) beta.start=matrix(0,ncol(X),(max(0,ncol(Y.con))+max(0,(sum(Y.numcat)-length(Y.numcat)))))
     if (is.null(l2.beta.start)) l2.beta.start=matrix(0,ncol(X2),(max(0,ncol(Y2.con))+max(0,(sum(Y2.numcat)-length(Y2.numcat)))))
     if (is.null(l1cov.prior)) l1cov.prior=diag(1,ncol(beta.start))
-    if (is.null(a)) a=ncol(beta.start)
+    if (is.null(a)) a=ncol(beta.start)+50
+    if (is.null(a.prior)) a.prior=ncol(beta.start)
     clus<-factor(unlist(clus))
     previous_levels_clus<-levels(clus)
     levels(clus)<-0:(nlevels(clus)-1)
@@ -222,7 +223,7 @@ jomo2hr.MCMCchain <-
       .Call("MCMCjomo2hf", Y, Yimp, Yimp2, Y.cat, Y2, Y2imp,Y2imp2, Y2.cat, X, X2, Z, clus,betait,beta2it,uit,betapost,beta2post,upostall,covit,omegapost, covuit, covupost, nburn, l1cov.prior,l2cov.prior,Y.numcat,Y2.numcat, ncolYcon,ncolY2con,ait,out.iter, PACKAGE = "jomo")
     }
     if (meth=="random") {
-      .Call("MCMCjomo2hr", Y, Yimp, Yimp2, Y.cat, Y2, Y2imp,Y2imp2, Y2.cat, X, X2, Z, clus,betait,beta2it,uit,betapost,beta2post,upostall,covit,omegapost, covuit, covupost, nburn, l1cov.prior,l2cov.prior,Y.numcat,Y2.numcat, ncolYcon,ncolY2con,ait,out.iter, PACKAGE = "jomo")
+      .Call("MCMCjomo2hr", Y, Yimp, Yimp2, Y.cat, Y2, Y2imp,Y2imp2, Y2.cat, X, X2, Z, clus,betait,beta2it,uit,betapost,beta2post,upostall,covit,omegapost, covuit, covupost, nburn, l1cov.prior,l2cov.prior,Y.numcat,Y2.numcat, ncolYcon,ncolY2con,ait,a.prior,out.iter, PACKAGE = "jomo")
     }
     if (!is.null(Y.con)) {
       imp[(nrow(X)+1):(2*nrow(X)),1:ncol(Y.con)]=Yimp2[,1:ncol(Y.con)]

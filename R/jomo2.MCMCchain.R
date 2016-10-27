@@ -1,5 +1,5 @@
 jomo2.MCMCchain <-
-  function(Y, Y2, X=NULL, X2=NULL, Z=NULL,clus, beta.start=NULL,l2.beta.start=NULL, u.start=NULL, l1cov.start=NULL, l2cov.start=NULL, l1cov.prior=NULL, l2cov.prior=NULL, start.imp=NULL, l2.start.imp=NULL, nburn=1000, a=NULL, meth="common",output=1, out.iter=10) {
+  function(Y, Y2, X=NULL, X2=NULL, Z=NULL,clus, beta.start=NULL,l2.beta.start=NULL, u.start=NULL, l1cov.start=NULL, l2cov.start=NULL, l1cov.prior=NULL, l2cov.prior=NULL, start.imp=NULL, l2.start.imp=NULL, nburn=1000, a=NULL, a.prior=NULL, meth="common",output=1, out.iter=10) {
     stopifnot(meth=="common"|meth=="fixed"|meth=="random")
     ncon=0
     ncat=0
@@ -71,7 +71,7 @@ jomo2.MCMCchain <-
     }
     if (meth=="random") {
       cat("Found ", ncon, "level 1 continuous and ", ncat, "level 1 categorical outcomes, ",ncon2," level 2 continuous and ",ncat2," level 2 categorical outcomes. Using function jomo2hr with random cluster-specific covariance matrices.", "\n")
-      imp<-jomo2hr.MCMCchain(Y.con=Y.con, Y.cat=Y.cat, Y.numcat=Y.numcat, Y2.con=Y2.con, Y2.cat=Y2.cat, Y2.numcat=Y2.numcat, X=X, X2=X2, Z=Z, clus=clus, beta.start=beta.start, l2.beta.start=l2.beta.start, u.start=u.start, l1cov.start=l1cov.start, l2cov.start=l2cov.start, l1cov.prior=l1cov.prior, l2cov.prior=l2cov.prior, start.imp=start.imp, l2.start.imp=l2.start.imp, nburn=nburn, a=a, meth="random", output=output, out.iter=out.iter)
+      imp<-jomo2hr.MCMCchain(Y.con=Y.con, Y.cat=Y.cat, Y.numcat=Y.numcat, Y2.con=Y2.con, Y2.cat=Y2.cat, Y2.numcat=Y2.numcat, X=X, X2=X2, Z=Z, clus=clus, beta.start=beta.start, l2.beta.start=l2.beta.start, u.start=u.start, l1cov.start=l1cov.start, l2cov.start=l2cov.start, l1cov.prior=l1cov.prior, l2cov.prior=l2cov.prior, start.imp=start.imp, l2.start.imp=l2.start.imp, nburn=nburn, a=a, a.prior=a.prior, meth="random", output=output, out.iter=out.iter)
       attr(imp, "function") = "jomo2hr.MCMCchain.random"
     }
     return(imp)

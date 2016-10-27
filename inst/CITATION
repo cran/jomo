@@ -3,5 +3,5 @@ bibentry(bibtype = "Manual",
          author = c(person("Matteo", "Quartagno"),
                     person("James", "Carpenter")),        
          year = 2016,
-         url = "http://CRAN.R-project.org/package=jomo")
+         url = "https://CRAN.R-project.org/package=jomo")
 		 

@@ -9,14 +9,14 @@ A wrapper function linking the 2-level JM Imputation functions. The matrices of 
 \usage{
 jomo2(Y, Y2, X=NULL, X2=NULL, Z=NULL,clus, beta.start=NULL, l2.beta.start=NULL,
 u.start=NULL, l1cov.start=NULL, l2cov.start=NULL, l1cov.prior=NULL, 
-l2cov.prior=NULL, nburn=1000, nbetween=1000, nimp=5, a=NULL, meth="common", 
-output=1, out.iter=10) 
+l2cov.prior=NULL, nburn=1000, nbetween=1000, nimp=5, a=NULL, a.prior=NULL,
+meth="common", output=1, out.iter=10) 
 
 }
 
 \arguments{
   \item{Y}{
-a data.frame where columns related to continuous variables are numeric and columns related to binary/categorical variables are factors. 
+A data.frame with the level-1 outcomes of the imputation model, where columns related to continuous variables are numeric and columns related to binary/categorical variables are factors. 
 }
    \item{Y2}{
     A data.frame containing the level-2 outcomes of the imputation model, i.e. the partially observed level-2 variables. Columns related to continuous variables have to be numeric and columns related to binary/categorical variables have to be factors. 
@@ -63,8 +63,11 @@ Number of iterations between two successive imputations. Default is 1000.
   \item{nimp}{
 Number of Imputations. Default is 5.
 }
-\item{a}{
-Starting value for the degrees of freedom of the inverse Wishart distribution from which all of the level-1 covariance matrices are drawn in case method="random" option in specified. Default is the minimum possible, i.e. the dimension of the covariance matrices.
+  \item{a}{
+Starting value for the degrees of freedom of the inverse Wishart distribution of the cluster-specific covariance matrices. Default is 50+D, with D being the dimension of the covariance matrices. This is used only when option meth is set to "random".
+}
+  \item{a.prior}{
+Hyperparameter (Degrees of freedom) of the chi square prior distribution for the degrees of freedom of the inverse Wishart distribution for the cluster-specific covariance matrices. Default is D, with D being the dimension of the covariance matrices.
 }
 
 \item{meth}{

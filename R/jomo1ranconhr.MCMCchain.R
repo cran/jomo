@@ -1,9 +1,10 @@
 jomo1ranconhr.MCMCchain <-
-  function(Y, X=NULL, Z=NULL, clus, beta.start=NULL, u.start=NULL, l1cov.start=NULL, l2cov.start=NULL, l1cov.prior=NULL, l2cov.prior=NULL, start.imp=NULL, nburn=1000, a=(ncol(Y)+5.5),meth="random", output=1, out.iter=10) {
+  function(Y, X=NULL, Z=NULL, clus, beta.start=NULL, u.start=NULL, l1cov.start=NULL, l2cov.start=NULL, l1cov.prior=NULL, l2cov.prior=NULL, start.imp=NULL, nburn=1000, a=(ncol(Y)+50),a.prior=NULL, meth="random", output=1, out.iter=10) {
     if (is.null(X)) X=matrix(1,nrow(Y),1)
     if (is.null(Z)) Z=matrix(1,nrow(Y),1)
     if (is.null(beta.start)) beta.start=matrix(0,ncol(X),ncol(Y))
     if (is.null(l1cov.prior)) l1cov.prior=diag(1,ncol(beta.start))
+    if (is.null(a.prior)) a.prior=ncol(beta.start)
     clus<-factor(unlist(clus))
     previous_levels_clus<-levels(clus)
     levels(clus)<-0:(nlevels(clus)-1)
@@ -83,7 +84,7 @@ jomo1ranconhr.MCMCchain <-
       .Call("MCMCjomo1ranconhf", Y, Yimp, Yimp2, X, Z, clus, betait, uit, betapost, upostall, covit,omegapost, covuit,covupost, nburn, l1cov.prior, l2cov.prior,out.iter,  PACKAGE = "jomo") 
     }
     if (meth=="random") {
-      .Call("MCMCjomo1ranconhr", Y, Yimp, Yimp2, X, Z, clus, betait, uit, betapost, upostall, covit,omegapost, covuit,covupost, nburn, l1cov.prior, l2cov.prior, ait,out.iter, PACKAGE = "jomo") 
+      .Call("MCMCjomo1ranconhr", Y, Yimp, Yimp2, X, Z, clus, betait, uit, betapost, upostall, covit,omegapost, covuit,covupost, nburn, l1cov.prior, l2cov.prior, ait,a.prior,out.iter, PACKAGE = "jomo") 
     }
     imp[(nrow(Y)+1):(2*nrow(Y)),1:ncol(Y)]=Yimp2
     Yimp=Yimp2

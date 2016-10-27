@@ -1,0 +1,86 @@
+\name{jomo.lm}
+\alias{jomo.lm}
+
+\title{
+  Joint Modelling Imputation Compatible with Linear Regression Model
+}
+\description{
+  A function for substantive model compatible JM imputation, when the substantive model of interest is a simple linear regression model. Interactions and polynomial functions of the covariates are allowed. Data must be passed as a data.frame where continuous variables are numeric and binary/categorical variables are factors.}
+  
+\usage{
+ jomo.lm(formula, data, nburn=1000, nbetween=1000, nimp=5, output=1, out.iter=10) 
+  
+}
+
+\arguments{
+
+\item{formula}{
+    an object of class formula: a symbolic description of the model to be fitted. It is possible to include in this formula interactions (through symbols '*' and '%') and polynomial terms (with the usual lm syntax, e.g. for a quadratic effect for variable x, 'I(x^2)'). 
+  }
+  
+   \item{data}{
+    A data.frame containing all the variables to include in the imputation model. Columns related to continuous variables have to be numeric and columns related to binary/categorical variables have to be factors. 
+  }
+  
+   \item{nburn}{
+    Number of burn in iterations. Default is 1000.
+  }
+  \item{nbetween}{
+    Number of iterations between two successive imputations. Default is 1000.
+  }
+  \item{nimp}{
+    Number of Imputations. Default is 5.
+  }
+  \item{output}{
+    When set to any value different from 1 (default), no output is shown on screen at the end of the process.
+  }
+  \item{out.iter}{
+    When set to K, every K iterations a message "Iteration number N*K completed" is printed on screen. Default is 10. 
+  }
+  
+}
+\details{
+  This function allows for substantive model compatible imputation when the substantive model is a simple linear regression model. It can deal with interactions and polynomial terms through the usual lm syntax in the formula argument. 
+  Format of the columns of data is crucial in order for the function to deal with binary/categorical covariates appropriately in the imputation algorithm.  }
+\value{
+  On screen, the posterior mean of the fixed effect estimates and of the residual variance are shown. The only argument returned is the imputed dataset in long format. Column "Imputation" indexes the imputations. Imputation number 0 are the original data.
+}
+\references{
+  Carpenter J.R., Kenward M.G., (2013), Multiple Imputation and its Application. Wiley, ISBN: 978-0-470-74052-1.
+}
+
+\examples{
+  #First of all we load and atach the data:
+  
+  data(sldata)
+  attach(sldata)
+  
+  #Then we make sure sex is a factor:
+  
+  sex<-factor(sex)
+  
+  # we define the data frame with all the variables 
+  
+  data<-data.frame(measure,age, sex)
+  
+  # And the formula of the substantive lm model
+  
+  formula<-as.formula(measure~sex+age+I(age^2))
+  
+  #And finally we run the imputation function:
+  
+  imp<-jomo.lm(formula,data, nburn=100, nbetween=100)
+  
+  # Note we are using only 100 iterations to avoid time consuming examples, 
+  # which go against CRAN policies. 
+  # If we were interested in a model with interactions:
+  
+  formula2<-as.formula(measure~sex*age)
+  imp2<-jomo.lm(formula2,data, nburn=100, nbetween=100)
+  
+  # The analysis and combination steps are as for all the other functions
+  # (see e.g. help file for jomo1con)
+
+  
+  
+}
