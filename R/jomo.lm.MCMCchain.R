@@ -4,8 +4,8 @@ jomo.lm.MCMCchain <-
     stopifnot(grepl("~",deparse(formula)))
     fit.cr<-lm(formula,data=data, na.action = na.omit)
     betaY.start<-coef(fit.cr)
-    varY.start<-sigma(fit.cr)^2
-    varY.prior<-sigma(fit.cr)^2
+    varY.start<-(summary(fit.cr)$sigma)^2
+    varY.prior<-(summary(fit.cr)$sigma)^2
     colnamysub<-all.vars(formula[[2]])
     Ysub<-get(colnamysub,pos=data)
     Ycov<-data.frame(mget(all.vars(formula[[3]]), envir =as.environment(data)))
