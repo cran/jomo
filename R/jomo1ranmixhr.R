@@ -101,7 +101,7 @@ function(Y.con, Y.cat, Y.numcat, X=NULL, Z=NULL, clus, beta.start=NULL, u.start=
     .Call("jomo1ranmixhf", Y, Yimp, Yimp2, Y.cat, X, Z, clus,betait,uit,bpost,upost,covit,opost, covuit,cpost,nburn, l1cov.prior,l2cov.prior,Y.numcat, ncol(Y.con),ait,out.iter, PACKAGE = "jomo")
   }
   if (meth=="random") {
-    .Call("jomo1ranmixhr", Y, Yimp, Yimp2, Y.cat, X, Z, clus,betait,uit,bpost,upost,covit,opost, covuit,cpost,nburn, l1cov.prior,l2cov.prior,Y.numcat, ncol(Y.con),ait, a.prior, out.iter, PACKAGE = "jomo")
+    .Call("jomo1ranmixhrC", Y, Yimp, Yimp2, Y.cat, X, Z, clus,betait,uit,bpost,upost,covit,opost, covuit,cpost,nburn, l1cov.prior,l2cov.prior,Y.numcat, ncol(Y.con),ait, a.prior, out.iter, PACKAGE = "jomo")
   }
   #betapost[,,1]=bpost
   #upostall[,,1]=upost
@@ -125,7 +125,7 @@ function(Y.con, Y.cat, Y.numcat, X=NULL, Z=NULL, clus, beta.start=NULL, u.start=
       .Call("jomo1ranmixhf", Y, Yimp, Yimp2, Y.cat, X, Z, clus,betait,uit,bpost,upost,covit,opost, covuit,cpost,nbetween, l1cov.prior,l2cov.prior,Y.numcat, ncol(Y.con),ait,out.iter, PACKAGE = "jomo")
     }
     if (meth=="random") {
-      .Call("jomo1ranmixhr", Y, Yimp, Yimp2, Y.cat, X, Z, clus,betait,uit,bpost,upost,covit,opost, covuit,cpost,nbetween, l1cov.prior,l2cov.prior,Y.numcat, ncol(Y.con),ait,a.prior,out.iter, PACKAGE = "jomo")
+      .Call("jomo1ranmixhrC", Y, Yimp, Yimp2, Y.cat, X, Z, clus,betait,uit,bpost,upost,covit,opost, covuit,cpost,nbetween, l1cov.prior,l2cov.prior,Y.numcat, ncol(Y.con),ait,a.prior,out.iter, PACKAGE = "jomo")
     }
     betapost[,,(i-1)]=bpost
     upostall[,,(i-1)]=upost

@@ -105,5 +105,5 @@ attach(tldata)
 #number of nburn and nbetween iterations in real applications (at least 100)
 
 imp<-jomo2com(Y.con=data.frame(measure.a), Y2.cat=data.frame(big.city),
-                  Y2.numcat=c(2), clus=city,nburn=20,nbetween=20,nimp=3)
+                  Y2.numcat=c(2), clus=city,nburn=10,nbetween=10,nimp=3)
 }

@@ -16,7 +16,7 @@ SEXP RdimY, RdimX, Rdimo, Rdimb, RdimZ, Rdimu;
 double *betaX, *Yobs, *Ymiss, *mumiss, *omegadrawmiss, *betamiss, *betaobs, *omegaoo, *omegaom, *omegamo, *omegamm, *invomega, *invomega2, *help, *help2, *help3, *imp, *zi;
 double *sumzy, *incrzz, *incrzy, *mu, *mu2, *newbeta, *newomega, *sumzi, *yi, *invomega3, *help4, *help5, *help6, *missing, *fixomega,*resid, sdom, meanom, detom,logLH, newlogLH;
 double maxx,maxim,maxim2, *sumxy, *sumxi, *uj, *xi, *ziu, *incrxx, *incrxy, *newu, *mu3,*mu4, *help7, *help8, *help9, *invomega4, *newomega2,a, *clusnum;
-double *cumclus, *allinvomega,gamma,eta,dx,u_new,precision, *invgamma, *invA, *Gammapr, *Gammastar,u_m,con,con2,deriv2,u_prop, lambda, aj;
+double *cumclus, *allinvomega,gamma,eta,dx,u_new,precision, *invgamma, *invA, *Gammapr, *Gammastar,u_m,con2,deriv2,u_prop, lambda, aj;
 
 /* Protecting R objects from garbage collection and saving matrices dimensions*/ 
 

@@ -99,7 +99,7 @@ jomo1rancathr.MCMCchain <-
       for (i in 1:nrow(Yi)) for (j in 1:ncol(Yi)) if (is.na(Yimp[i,j])) Yimp2[i,j]=rnorm(1,meanobs[j],1)
     } 
     if (meth=="fixed") {
-      .Call("MCMCjomo1ranmixhf", Y, Yimp, Yimp2, Y.cat, X, Z, clus,betait,uit,betapost,upostall,covit,omegapost, covuit,covupost,nburn, l1cov.prior,l2cov.prior,Y.numcat, 0,ait,a.prior,out.iter, PACKAGE = "jomo")
+      .Call("MCMCjomo1ranmixhf", Y, Yimp, Yimp2, Y.cat, X, Z, clus,betait,uit,betapost,upostall,covit,omegapost, covuit,covupost,nburn, l1cov.prior,l2cov.prior,Y.numcat, 0,ait,out.iter, PACKAGE = "jomo")
     }
     if (meth=="random") {
       .Call("MCMCjomo1ranmixhr", Y, Yimp, Yimp2, Y.cat, X, Z, clus,betait,uit,betapost,upostall,covit,omegapost, covuit,covupost,nburn, l1cov.prior,l2cov.prior,Y.numcat, 0,ait,a.prior,out.iter, PACKAGE = "jomo")

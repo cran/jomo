@@ -15,7 +15,7 @@ SEXP RdimY, RdimX, Rdimo, Rdimb, RdimZ, Rdimu;
 double *betaX, *Yobs, *Ymiss, *mumiss, *omegadrawmiss, *betamiss, *betaobs, *omegaoo, *omegaom, *omegamo, *omegamm, *invomega, *help, *imp, *zi, *sumxi, *yi, *xi, *help5;
 double *sumzy, *incrxx, *incrzy, *incrzz, *mu, *newbeta, *newomega, *ziu, *uj, *sumzi, *newu, *help2, *help3, *help4,*invomega2, *sumxy, *incrxy;
 double *invomega3, *mu2, *mu3, *mu4, *newomega2, *help6, *help7, *help8, *help9, *invomega4, *missing, *clusnum, *cumclus, *allinvomega, gamma, *Gammapr, *Gammastar;
-double *invgamma, *invA, precision, dx, eta, u_new, u_m=1, u_prop, lambda,deriv2, con, con2,a;
+double *invgamma, *invA, precision, dx, eta, u_new, u_m=1, u_prop, lambda,deriv2, con2,a;
 /* Protecting R objects from garbage collection and saving matrices dimensions*/ 
 
 RdimY=PROTECT(getAttrib(Y,R_DimSymbol));

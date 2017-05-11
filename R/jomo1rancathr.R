@@ -95,10 +95,10 @@ jomo1rancathr <-
     meanobs<-colMeans(Yi,na.rm=TRUE)
     for (i in 1:nrow(Yi)) for (j in 1:ncol(Yi)) if (is.na(Yimp[i,j])) Yimp2[i,j]=rnorm(1,meanobs[j],1)
     if (meth=="fixed") {
-      .Call("jomo1ranmixhf", Y, Yimp, Yimp2, Y.cat, X, Z, clus,betait,uit,bpost,upost,covit,opost, covuit,cpost,nburn, l1cov.prior,l2cov.prior,Y.numcat, 0,ait,a.prior,out.iter, PACKAGE = "jomo")
+      .Call("jomo1ranmixhf", Y, Yimp, Yimp2, Y.cat, X, Z, clus,betait,uit,bpost,upost,covit,opost, covuit,cpost,nburn, l1cov.prior,l2cov.prior,Y.numcat, 0,ait,out.iter, PACKAGE = "jomo")
     }
     if (meth=="random") {
-      .Call("jomo1ranmixhr", Y, Yimp, Yimp2, Y.cat, X, Z, clus,betait,uit,bpost,upost,covit,opost, covuit,cpost,nburn, l1cov.prior,l2cov.prior,Y.numcat, 0,ait,a.prior,out.iter, PACKAGE = "jomo")
+      .Call("jomo1ranmixhrC", Y, Yimp, Yimp2, Y.cat, X, Z, clus,betait,uit,bpost,upost,covit,opost, covuit,cpost,nburn, l1cov.prior,l2cov.prior,Y.numcat, 0,ait,a.prior,out.iter, PACKAGE = "jomo")
     }
     #betapost[,,1]=bpost
     #upostall[,,1]=upost
@@ -121,7 +121,7 @@ jomo1rancathr <-
         .Call("jomo1ranmixhf", Y, Yimp, Yimp2, Y.cat, X, Z, clus,betait,uit,bpost,upost,covit,opost, covuit,cpost,nbetween, l1cov.prior,l2cov.prior,Y.numcat, 0,ait,out.iter, PACKAGE = "jomo")
       }
       if (meth=="random") {
-        .Call("jomo1ranmixhr", Y, Yimp, Yimp2, Y.cat, X, Z, clus,betait,uit,bpost,upost,covit,opost, covuit,cpost,nbetween, l1cov.prior,l2cov.prior,Y.numcat, 0,ait,out.iter, PACKAGE = "jomo")
+        .Call("jomo1ranmixhrC", Y, Yimp, Yimp2, Y.cat, X, Z, clus,betait,uit,bpost,upost,covit,opost, covuit,cpost,nbetween, l1cov.prior,l2cov.prior,Y.numcat, 0,ait,a.prior, out.iter, PACKAGE = "jomo")
       }
       betapost[,,(i-1)]=bpost
       upostall[,,(i-1)]=upost

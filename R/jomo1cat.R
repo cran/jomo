@@ -60,7 +60,7 @@ jomo1cat <-
     opost<-matrix(0,nrow(l1cov.start),ncol(l1cov.start))
     meanobs<-colMeans(Yi,na.rm=TRUE)
     for (i in 1:nrow(Yi)) for (j in 1:ncol(Yi)) if (is.na(Yimp[i,j])) Yimp2[i,j]=meanobs[j]
-    .Call("jomo1mix", Y, Yimp, Yimp2, Y.cat, X,betait,bpost,covit,opost, nburn, l1cov.prior,Y.numcat, 0, out.iter, PACKAGE = "jomo")
+    .Call("jomo1mixC", Y, Yimp, Yimp2, Y.cat, X,betait,bpost,covit,opost, nburn, l1cov.prior,Y.numcat, 0, out.iter, PACKAGE = "jomo")
     #betapost[,,1]=bpost
     #omegapost[,,1]=opost
     bpost<-matrix(0,nrow(beta.start),ncol(beta.start))
@@ -71,7 +71,7 @@ jomo1cat <-
       imp[(i*nrow(X)+1):((i+1)*nrow(X)),(ncol(Y)+1):(ncol(Y)+ncol(X))]=X
       imp[(i*nrow(X)+1):((i+1)*nrow(X)), (ncol(Y)+ncol(X)+1)]=i
       imp[(i*nrow(X)+1):((i+1)*nrow(X)), (ncol(Y)+ncol(X)+2)]=c(1:nrow(Y))
-      .Call("jomo1mix", Y, Yimp, Yimp2, Y.cat, X,betait,bpost,covit, opost, nbetween, l1cov.prior, Y.numcat, 0, out.iter, PACKAGE = "jomo") 
+      .Call("jomo1mixC", Y, Yimp, Yimp2, Y.cat, X,betait,bpost,covit, opost, nbetween, l1cov.prior, Y.numcat, 0, out.iter, PACKAGE = "jomo") 
       
       betapost[,,(i-1)]=bpost
       omegapost[,,(i-1)]=opost

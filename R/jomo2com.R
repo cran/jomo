@@ -201,7 +201,7 @@ jomo2com <-
     for (i in 1:nrow(Yi)) for (j in 1:ncol(Yi)) if (is.na(Yimp[i,j])) Yimp2[i,j]=meanobs[j]
     meanobs2<-colMeans(Y2i,na.rm=TRUE)
     for (i in 1:nrow(Y2i)) for (j in 1:ncol(Y2i)) if (is.na(Y2imp[i,j])) Y2imp2[i,j]=meanobs2[j]
-    .Call("jomo2com", Y, Yimp, Yimp2, Y.cat, Y2, Y2imp,Y2imp2, Y2.cat, X, X2, Z, clus,betait,beta2it,uit,bpost, b2post, upost,covit,opost, covuit, cpost, nburn, l1cov.prior,l2cov.prior,Y.numcat,Y2.numcat, ncolYcon,ncolY2con,out.iter, PACKAGE = "jomo")
+    .Call("jomo2comC", Y, Yimp, Yimp2, Y.cat, Y2, Y2imp,Y2imp2, Y2.cat, X, X2, Z, clus,betait,beta2it,uit,bpost, b2post, upost,covit,opost, covuit, cpost, nburn, l1cov.prior,l2cov.prior,Y.numcat,Y2.numcat, ncolYcon,ncolY2con,out.iter, PACKAGE = "jomo")
     #betapost[,,1]=bpost
     #upostall[,,1]=upost
     #omegapost[,,(1)]=opost
@@ -232,7 +232,7 @@ jomo2com <-
       imp[(i*nrow(clus)+1):((i+1)*nrow(clus)), (ncol(Y)+ncol(Y2)+ncol(X)+ncol(X2)+ncol(Z)+1)]=clus
       imp[(i*nrow(X)+1):((i+1)*nrow(X)), (ncol(Y)+ncol(Y2)+ncol(X)+ncol(X2)+ncol(Z)+2)]=c(1:nrow(Y))
       imp[(i*nrow(X)+1):((i+1)*nrow(X)), (ncol(Y)+ncol(Y2)+ncol(X)+ncol(X2)+ncol(Z)+3)]=i
-      .Call("jomo2com", Y, Yimp, Yimp2, Y.cat, Y2, Y2imp,Y2imp2, Y2.cat, X, X2, Z, clus,betait,beta2it,uit,bpost,b2post,upost,covit,opost, covuit, cpost, nbetween, l1cov.prior,l2cov.prior,Y.numcat,Y2.numcat, ncolYcon,ncolY2con,out.iter, PACKAGE = "jomo")
+      .Call("jomo2comC", Y, Yimp, Yimp2, Y.cat, Y2, Y2imp,Y2imp2, Y2.cat, X, X2, Z, clus,betait,beta2it,uit,bpost,b2post,upost,covit,opost, covuit, cpost, nbetween, l1cov.prior,l2cov.prior,Y.numcat,Y2.numcat, ncolYcon,ncolY2con,out.iter, PACKAGE = "jomo")
       betapost[,,(i-1)]=bpost
       beta2post[,,(i-1)]=b2post
       upostall[,,(i-1)]=upost

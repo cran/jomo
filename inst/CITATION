@@ -2,6 +2,6 @@ bibentry(bibtype = "Manual",
          title = "{jomo}: A package for Multilevel Joint Modelling Multiple Imputation",
          author = c(person("Matteo", "Quartagno"),
                     person("James", "Carpenter")),        
-         year = 2016,
+         year = 2017,
          url = "https://CRAN.R-project.org/package=jomo")
 		 

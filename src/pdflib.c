@@ -13,7 +13,10 @@
 # include "pdflib.h"
 
 
-
+double normal_cdf(double value)
+{
+   return 0.5 * erfc(-value * M_SQRT1_2);
+}
 
 
 int checkposdef(int dim, double matr[], double matrh[],double matrh2[]) 

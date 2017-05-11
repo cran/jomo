@@ -1,10 +1,11 @@
 jomo.lm.MCMCchain <-
-  function(formula, data, start.imp=NULL, start.imp.sub=NULL, nburn=1000, output=1, out.iter=10) {
+  function(formula, data, start.imp=NULL, start.imp.sub=NULL, beta.start=NULL, l1cov.start=NULL, l1cov.prior=NULL, betaY.start=NULL, varY.start=NULL, nburn=1000, output=1, out.iter=10) {
+    cat("This function is beta software. Use carefully and please report any bug to the package mantainer\n")
     stopifnot(is.data.frame(data))
     stopifnot(grepl("~",deparse(formula)))
     fit.cr<-lm(formula,data=data, na.action = na.omit)
-    betaY.start<-coef(fit.cr)
-    varY.start<-(summary(fit.cr)$sigma)^2
+    if (is.null(betaY.start)) betaY.start<-coef(fit.cr)
+    if (is.null(varY.start)) varY.start<-(summary(fit.cr)$sigma)^2
     varY.prior<-(summary(fit.cr)$sigma)^2
     colnamysub<-all.vars(formula[[2]])
     Ysub<-get(colnamysub,pos=data)
@@ -52,7 +53,7 @@ jomo.lm.MCMCchain <-
         h<-h+1  
       }
     }
-    X<-beta.start<-l1cov.start<-l1cov.prior<-NULL
+    X<-NULL
     if (is.null(X)) X=matrix(1,max(nrow(Y.cat),nrow(Y.con)),1)
     if (is.null(beta.start)) beta.start=matrix(0,ncol(X),(max(0,ncol(Y.con))+max(0,(sum(Y.numcat)-length(Y.numcat)))))
     if (is.null(l1cov.start)) l1cov.start=diag(1,ncol(beta.start))

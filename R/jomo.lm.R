@@ -1,5 +1,6 @@
 jomo.lm <-
-  function(formula, data, nburn=1000, nbetween=1000, nimp=5, output=1, out.iter=10) {
+  function(formula, data,  beta.start=NULL, l1cov.start=NULL, l1cov.prior=NULL, nburn=1000, nbetween=1000, nimp=5, output=1, out.iter=10) {
+    cat("This function is beta software. Use carefully and please report any bug to the package mantainer\n")
     if (nimp<2) {
       nimp=2
       cat("Minimum number of imputations:2. For single imputation use function jomo.lm.MCMCchain\n")
@@ -56,7 +57,7 @@ jomo.lm <-
         h<-h+1  
       }
     }
-    X<-beta.start<-l1cov.start<-l1cov.prior<-NULL
+    X<-NULL
     if (is.null(X)) X=matrix(1,max(nrow(Y.cat),nrow(Y.con)),1)
     if (is.null(beta.start)) beta.start=matrix(0,ncol(X),(max(0,ncol(Y.con))+max(0,(sum(Y.numcat)-length(Y.numcat)))))
     if (is.null(l1cov.start)) l1cov.start=diag(1,ncol(beta.start))
@@ -155,6 +156,7 @@ jomo.lm <-
     meanobs<-colMeans(Yi,na.rm=TRUE)
     for (i in 1:nrow(Yi)) for (j in 1:ncol(Yi)) if (is.na(Yimp[i,j])) Yimp2[i,j]=meanobs[j]
     for (i in 1:length(Ysubimp)) if (is.na(Ysubimp[i])) Ysubimp[i]=mean(Ysubimp, na.rm = TRUE)
+    
     .Call("jomolm", Ysub, Ysubimp, submod, order.sub, Y, Yimp, Yimp2, Y.cat, X, betaY.start,bYpost, betait,bpost, varY.start,vYpost,covit,opost, nburn, varY.prior, l1cov.prior,Y.numcat,ncolYcon,out.iter, PACKAGE = "jomo")
     #betapost[,,1]=bpost
     #upostall[,,1]=upost

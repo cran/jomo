@@ -9,13 +9,13 @@
 #include<Rinternals.h>
 #include<Rmath.h>
 
-SEXP jomo1ranconhr(SEXP Y, SEXP Yimp, SEXP Yimp2, SEXP X, SEXP Z, SEXP clus, SEXP beta, SEXP u, SEXP betapost, SEXP upost, SEXP omega, SEXP omegapost, SEXP covu, SEXP covupost, SEXP nstep, SEXP Sp, SEXP Sup, SEXP a_start, SEXP a_prior, SEXP flagrng){
+SEXP jomo1ranconhrC(SEXP Y, SEXP Yimp, SEXP Yimp2, SEXP X, SEXP Z, SEXP clus, SEXP beta, SEXP u, SEXP betapost, SEXP upost, SEXP omega, SEXP omegapost, SEXP covu, SEXP covupost, SEXP nstep, SEXP Sp, SEXP Sup, SEXP a_start, SEXP a_prior, SEXP flagrng){
 int i,j,k, IY,JY, IX, JX, Io, Jo, Ib, Jb, IZ, JZ, Iu, Ju, ns,nj, nmiss=0,t, countm=0, counto=0, countmm=0, countmo=0, countoo=0,countt=0, jj, tt, c,flag=0, fl;
 SEXP RdimY, RdimX, Rdimo, Rdimb, RdimZ, Rdimu;
 double *betaX, *Yobs, *Ymiss, *mumiss, *omegadrawmiss, *betamiss, *betaobs, *omegaoo, *omegaom, *omegamo, *omegamm, *invomega, *help, *imp, *zi, *sumxi, *yi, *xi, *help5;
 double *sumzy, *incrxx, *incrzy, *incrzz, *mu, *newbeta, *newomega, *ziu, *uj, *sumzi, *newu, *help2, *help3, *help4,*invomega2, *sumxy, *incrxy;
 double *invomega3, *mu2, *mu3, *mu4, *newomega2, *help6, *help7, *help8, *help9, *invomega4, *missing, *clusnum, *cumclus, *allinvomega, gamma, *Gammapr, *Gammastar;
-double *invgamma, *invA, precision, dx, eta, u_new, u_m=1, u_prop, lambda,deriv2, con, con2,a;
+double *invgamma, *invA, precision, dx, eta, u_new, u_m=1, u_prop, lambda,deriv2, con2,a;
 /* Protecting R objects from garbage collection and saving matrices dimensions*/ 
 
 RdimY=PROTECT(getAttrib(Y,R_DimSymbol));

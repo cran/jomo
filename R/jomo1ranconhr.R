@@ -80,7 +80,7 @@ jomo1ranconhr <-
       .Call("jomo1ranconhf", Y, Yimp, Yimp2, X, Z, clus, betait, uit, bpost, upost, covit,opost, covuit,cpost, nburn, l1cov.prior, l2cov.prior,out.iter, PACKAGE = "jomo") 
     }
     if (meth=="random") {
-      .Call("jomo1ranconhr", Y, Yimp, Yimp2, X, Z, clus, betait, uit, bpost, upost, covit,opost, covuit,cpost, nburn, l1cov.prior, l2cov.prior, ait,a.prior,out.iter, PACKAGE = "jomo") 
+      .Call("jomo1ranconhrC", Y, Yimp, Yimp2, X, Z, clus, betait, uit, bpost, upost, covit,opost, covuit,cpost, nburn, l1cov.prior, l2cov.prior, ait,a.prior,out.iter, PACKAGE = "jomo") 
     }
     #betapost[,,1]=bpost
     #upostall[,,1]=upost
@@ -104,7 +104,7 @@ jomo1ranconhr <-
         .Call("jomo1ranconhf", Y, Yimp, Yimp2, X, Z, clus, betait, uit, bpost, upost, covit, opost, covuit, cpost, nbetween, l1cov.prior, l2cov.prior,out.iter, PACKAGE = "jomo") 
       }
       if (meth=="random") {
-        .Call("jomo1ranconhr", Y, Yimp, Yimp2, X, Z, clus, betait, uit, bpost, upost, covit, opost, covuit, cpost, nbetween, l1cov.prior, l2cov.prior, ait,a.prior, out.iter, PACKAGE = "jomo")   
+        .Call("jomo1ranconhrC", Y, Yimp, Yimp2, X, Z, clus, betait, uit, bpost, upost, covit, opost, covuit, cpost, nbetween, l1cov.prior, l2cov.prior, ait,a.prior, out.iter, PACKAGE = "jomo")   
       }
       betapost[,,(i-1)]=bpost
       upostall[,,(i-1)]=upost

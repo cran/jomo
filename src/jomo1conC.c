@@ -9,7 +9,7 @@
 #include<Rinternals.h>
 #include<Rmath.h>
 
-SEXP jomo1con(SEXP Y, SEXP Yimp, SEXP Yimp2, SEXP X, SEXP beta, SEXP betapost, SEXP omega, SEXP omegapost, SEXP nstep, SEXP Sp, SEXP flagrng){
+SEXP jomo1conC(SEXP Y, SEXP Yimp, SEXP Yimp2, SEXP X, SEXP beta, SEXP betapost, SEXP omega, SEXP omegapost, SEXP nstep, SEXP Sp, SEXP flagrng){
 int i,j,k, IY,JY, IX, JX, Io, Jo, Ib, Jb, ns, nmiss=0,t, countm=0, counto=0, countmm=0, countmo=0, countoo=0, jj, tt,fl;
 SEXP RdimY, RdimX, Rdimo, Rdimb;
 double *betaX, *Yobs, *Ymiss, *mumiss, *omegadrawmiss, *betamiss, *betaobs, *omegaoo, *omegaom, *omegamo, *omegamm, *invomega, *invomega2, *help, *help2, *help3, *imp, *zi;

@@ -72,7 +72,7 @@ jomo1rancon<- function(Y, X=NULL, Z=NULL, clus, beta.start=NULL, u.start=NULL, l
   meanobs<-colMeans(Y,na.rm=TRUE)
   for (i in 1:nrow(Y)) for (j in 1:ncol(Y)) if (is.na(Yimp[i,j])) Yimp[i,j]=rnorm(1,meanobs[j],1)
   #for (i in 1:nrow(Y)) for (j in 1:ncol(Y)) if (is.na(Yimp[i,j])) Yimp[i,j]=rnorm(1,mean=meanobs[j], sd=0.01)
-  .Call("jomo1rancon", Y, Yimp, Yimp2, X, Z, clus, betait, uit, bpost, upost, covit, opost, covuit, cpost, nburn, l1cov.prior, l2cov.prior,out.iter, PACKAGE = "jomo")
+  .Call("jomo1ranconC", Y, Yimp, Yimp2, X, Z, clus, betait, uit, bpost, upost, covit, opost, covuit, cpost, nburn, l1cov.prior, l2cov.prior,out.iter, PACKAGE = "jomo")
   #betapost[,,1]=bpost
   #upostall[,,1]=upost
   #omegapost[,,1]=opost
@@ -91,7 +91,7 @@ jomo1rancon<- function(Y, X=NULL, Z=NULL, clus, beta.start=NULL, u.start=NULL, l
     imp[(i*nrow(clus)+1):((i+1)*nrow(clus)), (ncol(Y)+ncol(X)+ncol(Z)+1)]=clus
     imp[(i*nrow(Z)+1):((i+1)*nrow(Z)), (ncol(Y)+ncol(X)+ncol(Z)+2)]=c(1:nrow(Y))
     imp[(i*nrow(Z)+1):((i+1)*nrow(Z)), (ncol(Y)+ncol(X)+ncol(Z)+3)]=i
-    .Call("jomo1rancon", Y, Yimp, Yimp2, X, Z, clus, betait, uit, bpost, upost, covit,opost, covuit,cpost, nbetween, l1cov.prior, l2cov.prior,out.iter, PACKAGE = "jomo")
+    .Call("jomo1ranconC", Y, Yimp, Yimp2, X, Z, clus, betait, uit, bpost, upost, covit,opost, covuit,cpost, nbetween, l1cov.prior, l2cov.prior,out.iter, PACKAGE = "jomo")
     betapost[,,(i-1)]=bpost
     upostall[,,(i-1)]=upost
     omegapost[,,(i-1)]=opost

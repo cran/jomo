@@ -209,7 +209,7 @@ jomo2hr <-
       .Call("jomo2hf", Y, Yimp, Yimp2, Y.cat,  Y2, Y2imp,Y2imp2, Y2.cat, X, X2, Z, clus,betait,beta2it,uit,bpost,b2post,upost,covit,opost, covuit,cpost,nburn, l1cov.prior,l2cov.prior,Y.numcat, Y2.numcat, ncolYcon,ncolY2con,ait,out.iter, PACKAGE = "jomo")
     }
     if (meth=="random") {
-      .Call("jomo2hr", Y, Yimp, Yimp2, Y.cat,  Y2, Y2imp,Y2imp2, Y2.cat, X, X2, Z, clus,betait,beta2it,uit,bpost,b2post,upost,covit,opost, covuit,cpost,nburn, l1cov.prior,l2cov.prior,Y.numcat, Y2.numcat, ncolYcon,ncolY2con,ait,a.prior,out.iter, PACKAGE = "jomo")
+      .Call("jomo2hrC", Y, Yimp, Yimp2, Y.cat,  Y2, Y2imp,Y2imp2, Y2.cat, X, X2, Z, clus,betait,beta2it,uit,bpost,b2post,upost,covit,opost, covuit,cpost,nburn, l1cov.prior,l2cov.prior,Y.numcat, Y2.numcat, ncolYcon,ncolY2con,ait,a.prior,out.iter, PACKAGE = "jomo")
     }
     #betapost[,,1]=bpost
     #upostall[,,1]=upost
@@ -245,7 +245,7 @@ jomo2hr <-
         .Call("jomo2hf", Y, Yimp, Yimp2, Y.cat,  Y2, Y2imp,Y2imp2, Y2.cat, X, X2, Z, clus,betait,beta2it,uit,bpost,b2post,upost,covit,opost, covuit,cpost,nbetween, l1cov.prior,l2cov.prior,Y.numcat, Y2.numcat, ncolYcon,ncolY2con,ait,out.iter, PACKAGE = "jomo")
       }
       if (meth=="random") {
-        .Call("jomo2hr", Y, Yimp, Yimp2, Y.cat,  Y2, Y2imp,Y2imp2, Y2.cat, X, X2, Z, clus,betait,beta2it,uit,bpost,b2post,upost,covit,opost, covuit,cpost,nbetween, l1cov.prior,l2cov.prior,Y.numcat, Y2.numcat, ncolYcon,ncolY2con,ait,a.prior,out.iter, PACKAGE = "jomo")
+        .Call("jomo2hrC", Y, Yimp, Yimp2, Y.cat,  Y2, Y2imp,Y2imp2, Y2.cat, X, X2, Z, clus,betait,beta2it,uit,bpost,b2post,upost,covit,opost, covuit,cpost,nbetween, l1cov.prior,l2cov.prior,Y.numcat, Y2.numcat, ncolYcon,ncolY2con,ait,a.prior,out.iter, PACKAGE = "jomo")
       }
       betapost[,,(i-1)]=bpost
       beta2post[,,(i-1)]=b2post

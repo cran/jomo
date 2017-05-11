@@ -1,16 +1,16 @@
-\name{jomo.lm}
-\alias{jomo.lm}
+\name{jomo.glm}
+\alias{jomo.glm}
 
 \title{
-  Joint Modelling Imputation Compatible with Linear Regression Model
+  Joint Modelling Imputation Compatible with glm Model
 }
 \description{
-  A function for substantive model compatible JM imputation, when the substantive model of interest is a simple linear regression model. Interactions and polynomial functions of the covariates are allowed. Data must be passed as a data.frame where continuous variables are numeric and binary/categorical variables are factors.}
+  A function for substantive model compatible JM imputation, when the substantive model of interest is a simple generalized linear regression model. Interactions and polynomial functions of the covariates are allowed. Data must be passed as a data.frame where continuous variables are numeric and binary/categorical variables are factors.}
   
 \usage{
- jomo.lm(formula, data,  beta.start=NULL, l1cov.start=NULL,
-        l1cov.prior=NULL, nburn=1000, nbetween=1000, nimp=5, 
-        output=1, out.iter=10) 
+ jomo.glm(formula, data, beta.start=NULL, l1cov.start=NULL, 
+        l1cov.prior=NULL,nburn=1000, nbetween=1000, nimp=5, 
+        output=1, out.iter=10, family="binomial") 
   
 }
 
@@ -23,7 +23,7 @@
    \item{data}{
     A data.frame containing all the variables to include in the imputation model. Columns related to continuous variables have to be numeric and columns related to binary/categorical variables have to be factors. 
   }
-      \item{beta.start}{
+    \item{beta.start}{
     Starting value for beta, the vector(s) of fixed effects for the joint model for the covariates. For each n-category variable we have a fixed effect parameter for each of the n-1 latent normals. The default is a matrix of zeros.
   }
   
@@ -50,7 +50,9 @@
   \item{out.iter}{
     When set to K, every K iterations a message "Iteration number N*K completed" is printed on screen. Default is 10. 
   }
-  
+   \item{family}{
+    One of either "gaussian"" or "binomial". For binomial family, a probit link is assumed. 
+  }
 }
 \details{
   This function allows for substantive model compatible imputation when the substantive model is a simple linear regression model. It can deal with interactions and polynomial terms through the usual lm syntax in the formula argument. 
@@ -63,7 +65,7 @@
 }
 
 \examples{
-  #First of all we load and atach the data:
+   #First of all we load and attach the data:
   
   data(sldata)
   attach(sldata)
@@ -76,24 +78,18 @@
   
   data<-data.frame(measure,age, sex)
   
-  # And the formula of the substantive lm model
+  # And the formula of the substantive lm model 
+  # sex as an outcome only because it is the only binary variable in the dataset...
   
-  formula<-as.formula(measure~sex+age+I(age^2))
+  formula<-as.formula(sex~age+measure)
   
   #And finally we run the imputation function:
   
-  imp<-jomo.lm(formula,data, nburn=100, nbetween=100)
+  imp<-jomo.glm(formula,data, nburn=10, nbetween=10, nimp=2)
   
-  # Note we are using only 100 iterations to avoid time consuming examples, 
-  # which go against CRAN policies. 
-  # If we were interested in a model with interactions:
-  
-  formula2<-as.formula(measure~sex*age)
-  imp2<-jomo.lm(formula2,data, nburn=100, nbetween=100)
-  
-  # The analysis and combination steps are as for all the other functions
-  # (see e.g. help file for jomo1con)
-
+  # Note we are using only 10 iterations to avoid time consuming examples, 
+  # which go against CRAN policies. In real applications we would use
+  # much larger burn-ins (around 1000) and at least 5 imputations.
   
   
 }

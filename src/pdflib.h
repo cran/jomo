@@ -1,3 +1,4 @@
+double normal_cdf(double value);
 int checkposdef(int dim, double matr[], double matrh[],double matrh2[]); 
 double argmaxvec(int card, double vec[]);
 double maxvec(int card, double vec[]); 
