@@ -2,7 +2,7 @@
 \alias{jomo.lmer}
 
 \title{
-  Joint Modelling Imputation Compatible with Linear Regression Model
+  Joint Modelling Imputation Compatible with Linear Mixed-effects Regression Model
 }
 \description{
   A function for substantive model compatible JM imputation, when the substantive model of interest is a linear mixed-effects regression model. Interactions and polynomial functions of the covariates are allowed. Data must be passed as a data.frame where continuous variables are numeric and binary/categorical variables are factors.}

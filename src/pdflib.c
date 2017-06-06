@@ -135,11 +135,13 @@ if ( df <= 0.0 )
     
 	Rprintf ( "\n" );
     
-	Rprintf ( "R8_CHI_SAMPLE - Fatal error!\n" );
+	Rprintf ( "R8_CHI_SAMPLE - Error!\n" );
     
 	Rprintf ( "  DF <= 0.\n" );
     
-	Rprintf ( "  Value of DF: %g\n", df );
+	Rprintf ( "  Value of DF: %g\n Setting DF to 0.1 instead\n", df );
+	
+	df=0.1;
     
  }
 
@@ -1939,7 +1941,8 @@ double r8_chi_pdf ( double df, double rval)
   {
     Rprintf ( "\n" );
     Rprintf ( "R8_CHI_PDF - Fatal error!\n" );
-    Rprintf ( "  Degrees of freedom must be positive.\n" );
+    Rprintf ( "  Degrees of freedom must be positive.\nAssuming DF=0.1 instead\n" );
+	df=0.1;
   }
       
   if ( rval <= 0.0 )
@@ -2192,7 +2195,8 @@ if ( df <= 0.0 )
     
 	Rprintf ( "  DF <= 0.\n" );
     
-	Rprintf ( "  Value of DF: %g\n", df );
+	Rprintf ( "  Value of DF: %g\n Assuming DF=0.1 instead\n", df );
+	df=0.1;
     
  }
 

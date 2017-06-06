@@ -55,8 +55,8 @@ jomo1mix <-
     Yimp=Yi
     Yimp2=matrix(Yimp, nrow(Yimp),ncol(Yimp))
     imp[(nrow(X)+1):(2*nrow(X)),(ncol(Y)+1):(ncol(Y)+ncol(X))]=X
-    imp[(nrow(X)+1):(2*nrow(X)), (ncol(Y)+ncol(X)+1)]=1
-    imp[(nrow(X)+1):(2*nrow(X)), (ncol(Y)+ncol(X)+2)]=c(1:nrow(Y))
+    imp[(nrow(X)+1):(2*nrow(X)), (ncol(Y)+ncol(X)+1)]=c(1:nrow(Y))
+    imp[(nrow(X)+1):(2*nrow(X)), (ncol(Y)+ncol(X)+2)]=1
     betapost<- array(0, dim=c(nrow(beta.start),ncol(beta.start),(nimp-1)))
     bpost<-matrix(0,nrow(beta.start),ncol(beta.start))
     omegapost<- array(0, dim=c(nrow(l1cov.start),ncol(l1cov.start),(nimp-1)))
@@ -74,8 +74,8 @@ jomo1mix <-
     if (output==1) cat("First imputation registered.", "\n")
     for (i in 2:nimp) {
       imp[(i*nrow(X)+1):((i+1)*nrow(X)),(ncol(Y)+1):(ncol(Y)+ncol(X))]=X
-      imp[(i*nrow(X)+1):((i+1)*nrow(X)), (ncol(Y)+ncol(X)+1)]=i
-      imp[(i*nrow(X)+1):((i+1)*nrow(X)), (ncol(Y)+ncol(X)+2)]=c(1:nrow(Y))
+      imp[(i*nrow(X)+1):((i+1)*nrow(X)), (ncol(Y)+ncol(X)+1)]=c(1:nrow(Y))
+      imp[(i*nrow(X)+1):((i+1)*nrow(X)), (ncol(Y)+ncol(X)+2)]=i
         .Call("jomo1mixC", Y, Yimp, Yimp2, Y.cat, X,betait,bpost,covit, opost, nbetween, l1cov.prior, Y.numcat, ncol(Y.con),out.iter, PACKAGE = "jomo") 
       betapost[,,(i-1)]=bpost
       omegapost[,,(i-1)]=opost
@@ -101,6 +101,6 @@ jomo1mix <-
     if (is.null(colnamycat)) colnamycat=paste("Ycat", 1:ncol(Y.cat), sep = "")
     if (is.null(colnamycon)) colnamycon=paste("Ycon", 1:ncol(Y.con), sep = "")
     if (is.null(colnamx)) colnamx=paste("X", 1:ncol(X), sep = "")
-    colnames(imp)<-c(colnamycon,colnamycat,colnamx,"Imputation","id")
+    colnames(imp)<-c(colnamycon,colnamycat,colnamx,"id","Imputation")
     return(imp)
   }

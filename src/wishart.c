@@ -950,9 +950,11 @@ if ( df < m )
     
 	Rprintf ( "\n" );
     
-	Rprintf ( "WISHART_SAMPLE - Fatal error!\n" );
+	Rprintf ( "WISHART_SAMPLE - Error!\n" );
     
-	Rprintf ( "  DF = %d < M = %d.\n", df, m );
+	Rprintf ( "  DF = %d < M = %d.\n Setting df=m instead.\n", df, m );
+	
+	df=m;
  
 	}
 
@@ -1075,9 +1077,10 @@ if ( df < m )
     
 	Rprintf ( "\n" );
     
-	Rprintf ( "WISHART_UNIT_SAMPLE - Fatal error!\n" );
-    
-	Rprintf ( "  DF = %d < M = %d.\n", df, m );
+	Rprintf ( "  DF = %d < M = %d.\n Setting df=m instead.", df, m );
+	
+	df=m;
+ 
   
 	}
 

@@ -49,8 +49,8 @@ jomo1cat.MCMCchain <-
     Yimp=Yi
     Yimp2=matrix(Yimp, nrow(Yimp),ncol(Yimp))
     imp[(nrow(X)+1):(2*nrow(X)),(ncol(Y)+1):(ncol(Y)+ncol(X))]=X
-    imp[(nrow(X)+1):(2*nrow(X)), (ncol(Y)+ncol(X)+1)]=1
-    imp[(nrow(X)+1):(2*nrow(X)), (ncol(Y)+ncol(X)+2)]=c(1:nrow(Y))
+    imp[(nrow(X)+1):(2*nrow(X)), (ncol(Y)+ncol(X)+1)]=c(1:nrow(Y))
+    imp[(nrow(X)+1):(2*nrow(X)), (ncol(Y)+ncol(X)+2)]=1
     betapost<- array(0, dim=c(nrow(beta.start),ncol(beta.start),nburn))
     omegapost<- array(0, dim=c(nrow(l1cov.start),ncol(l1cov.start),nburn))
     meanobs<-colMeans(Yi,na.rm=TRUE)
@@ -83,7 +83,7 @@ jomo1cat.MCMCchain <-
     }
     if (is.null(colnamycat)) colnamycat=paste("Y", 1:ncol(Y.cat), sep = "")
     if (is.null(colnamx)) colnamx=paste("X", 1:ncol(X), sep = "")
-    colnames(imp)<-c(colnamycat,colnamx,"Imputation","id")
+    colnames(imp)<-c(colnamycat,colnamx,"id","Imputation")
     cnycatcomp<-rep(NA,(sum(Y.numcat)-length(Y.numcat)))
     count=0
     for ( j in 1:ncol(Y.cat)) {

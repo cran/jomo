@@ -329,8 +329,8 @@ jomo.glmer <-
       vYpost<-matrix(0,1,1)
       covupost<- array(0, dim=c(nrow(l2cov.start),ncol(l2cov.start),(nimp-1)))
       cpost<-matrix(0,nrow(l2cov.start),ncol(l2cov.start))
-      covuYpost<-array(0, dim=c(nrow(covuY.start),ncol(covuY.start),(nimp-1)))
-      cuYpost<-matrix(0,nrow(covuY.start),ncol(covuY.start))
+      covuYpost<-array(0, dim=c(nrow(as.matrix(covuY.start)),ncol(as.matrix(covuY.start)),(nimp-1)))
+      cuYpost<-matrix(0,nrow(as.matrix(covuY.start)),ncol(as.matrix(covuY.start)))
       meanobs<-colMeans(Yi,na.rm=TRUE)
       for (i in 1:nrow(Yi)) for (j in 1:ncol(Yi)) if (is.na(Yimp[i,j])) Yimp2[i,j]=meanobs[j]
       if (!is.null(Y2)) {

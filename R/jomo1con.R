@@ -33,8 +33,8 @@ jomo1con<- function(Y, X=NULL, beta.start=NULL, l1cov.start=NULL, l1cov.prior=NU
   Yimp=Y
   Yimp2=matrix(0, nrow(Y),ncol(Y))
   imp[(nrow(X)+1):(2*nrow(X)),(ncol(Y)+1):(ncol(Y)+ncol(X))]=X
-  imp[(nrow(X)+1):(2*nrow(X)), (ncol(Y)+ncol(X)+1)]=1
-  imp[(nrow(X)+1):(2*nrow(X)), (ncol(Y)+ncol(X)+2)]=c(1:nrow(Y))
+  imp[(nrow(X)+1):(2*nrow(X)), (ncol(Y)+ncol(X)+1)]=c(1:nrow(Y))
+  imp[(nrow(X)+1):(2*nrow(X)), (ncol(Y)+ncol(X)+2)]=1
   betapost<- array(0, dim=c(nrow(beta.start),ncol(beta.start),(nimp-1)))
   bpost<-matrix(0,nrow(beta.start),ncol(beta.start))
   omegapost<- array(0, dim=c(nrow(l1cov.start),ncol(l1cov.start),(nimp-1)))
@@ -52,8 +52,8 @@ jomo1con<- function(Y, X=NULL, beta.start=NULL, l1cov.start=NULL, l1cov.prior=NU
   for (i in 2:nimp) {
     Yimp2=matrix(0, nrow(Y),ncol(Y))
     imp[(i*nrow(X)+1):((i+1)*nrow(X)),(ncol(Y)+1):(ncol(Y)+ncol(X))]=X
-    imp[(i*nrow(X)+1):((i+1)*nrow(X)), (ncol(Y)+ncol(X)+1)]=i
-    imp[(i*nrow(X)+1):((i+1)*nrow(X)), (ncol(Y)+ncol(X)+2)]=c(1:nrow(Y))
+    imp[(i*nrow(X)+1):((i+1)*nrow(X)), (ncol(Y)+ncol(X)+1)]=c(1:nrow(Y))
+    imp[(i*nrow(X)+1):((i+1)*nrow(X)), (ncol(Y)+ncol(X)+2)]=i
     .Call("jomo1conC", Y, Yimp, Yimp2, X,betait,bpost,covit, opost, nbetween, l1cov.prior,out.iter, PACKAGE = "jomo")
     betapost[,,(i-1)]=bpost
     omegapost[,,(i-1)]=opost
@@ -74,6 +74,6 @@ jomo1con<- function(Y, X=NULL, beta.start=NULL, l1cov.start=NULL, l1cov.prior=NU
   imp<-data.frame(imp)
   if (is.null(colnamy)) colnamy=paste("Y", 1:ncol(Y), sep = "")
   if (is.null(colnamx)) colnamx=paste("X", 1:ncol(X), sep = "")
-  colnames(imp)<-c(colnamy,colnamx,"Imputation","id")
+  colnames(imp)<-c(colnamy,colnamx,"id","Imputation")
   return(imp)
 }
