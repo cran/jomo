@@ -110,21 +110,6 @@ jomo1ranmixhr.MCMCchain <-
     
     imp[(nrow(Y)+1):(2*nrow(Y)),1:ncol(Y.con)]=Yimp2[,1:ncol(Y.con)]
     imp[(nrow(Y)+1):(2*nrow(Y)),(ncol(Y.con)+1):ncol(Y)]=Y.cat
-    
-    betapostmean<-apply(betapost, c(1,2), mean)
-    upostmean<-apply(upostall, c(1,2), mean)
-    omegapostmean<-apply(omegapost, c(1,2), mean)
-    covupostmean<-apply(covupost, c(1,2), mean)
-    if (output==1) {
-      cat("The posterior mean of the fixed effects estimates is:\n")
-      print(betapostmean)
-      cat("The posterior mean of the random effects estimates is:\n")
-      print(upostmean)
-      cat("The posterior mean of the level 1 covariance matrices is:\n")
-      print(omegapostmean)
-      cat("The posterior mean of the level 2 covariance matrix is:\n")
-      print(covupostmean)
-    }
     imp<-data.frame(imp)
     for (i in 1:ncol(Y.cat)) {
       imp[,(ncol(Y.con)+i)]<-as.factor(imp[,(ncol(Y.con)+i)]) 
@@ -164,5 +149,19 @@ jomo1ranmixhr.MCMCchain <-
     dimnames(upostall)[1]<-list(levels(clus))
     dimnames(upostall)[2]<-list(colnamcovu)
     dimnames(Yimp2)[2] <- list(cnamycomp)
+    betapostmean<-data.frame(apply(betapost, c(1,2), mean))    
+    upostmean<-data.frame(apply(upostall, c(1,2), mean))
+    omegapostmean<-data.frame(apply(omegapost, c(1,2), mean))
+    covupostmean<-data.frame(apply(covupost, c(1,2), mean))
+    if (output==1) {
+      cat("The posterior mean of the fixed effects estimates is:\n")
+      print(t(betapostmean))
+      cat("\nThe posterior mean of the random effects estimates is:\n")
+      print(upostmean)
+      cat("\nThe posterior mean of the level 1 covariance matrices is:\n")
+      print(omegapostmean)
+      cat("\nThe posterior mean of the level 2 covariance matrix is:\n")
+      print(covupostmean)
+    }
     return(list("finimp"=imp,"collectbeta"=betapost,"collectomega"=omegapost,"collectu"=upostall, "collectcovu"=covupost, "finimp.latnorm" = Yimp2))
   }

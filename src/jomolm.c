@@ -165,7 +165,7 @@ for (i=0;i<IY;i++) {
 			}
 			else {
 				for (jj=0;jj<pos;jj++) {
-					kk=(jj*currncat)%INTEGER(submod)[3+h*4]+1;
+					kk=(jj*currncat)%INTEGER(submod)[3+h*4]+2;
 					Xsub[i+IY*(1+jj+indic)]=Xsub[i+IY*(1+jj+indic)]*(REAL(Yimpcat)[i+IY*(INTEGER(submod)[h*Is]-1)]==kk);
 				}
 			}
@@ -486,8 +486,11 @@ for (i=0;i<ns;i++) {
 								nmaxx=kk;
 							}
 						}			
-						if (maxx>0) yicategorized[jj]=nmaxx+1;
-						else yicategorized[jj]=INTEGER(Y_numcat)[j];
+						if (maxx>0) {
+							yicategorized[jj]=nmaxx+1;
+						} else {
+						    yicategorized[jj]=INTEGER(Y_numcat)[jj];
+						}
 						h=h+INTEGER(Y_numcat)[jj]-1;
 					}
 				}
@@ -511,7 +514,7 @@ for (i=0;i<ns;i++) {
 							}	
 						} else {
 							for (tt=0;tt<pos;tt++) {
-								kk=(tt*currncat)%INTEGER(submod)[3+h*4]+1;
+								kk=(tt*currncat)%INTEGER(submod)[3+h*4]+2;
 								Xsubprop[(1+tt+indic)]=Xsubprop[(1+tt+indic)]*(yicategorized[(INTEGER(submod)[h*Is]-1)]==kk);
 							}
 						}	
@@ -527,7 +530,7 @@ for (i=0;i<ns;i++) {
 	            if (exp(newlogLH-logLH)<1) prova=prova+exp(newlogLH-logLH);
 
 	else prova=prova+1;
-	
+
 				if ((( double ) unif_rand ( ) )<exp(newlogLH-logLH)) {	
 
 					imp[j+k*IY]=Ymiss[0];
@@ -606,8 +609,9 @@ totprop=totprop+1;
 		}
 	}
 	
-	if ((i+1)%fl==0) Rprintf("Iteration %d completed\n",i+1);
+	if ((i+1)%fl==0) Rprintf(".");
 }
+if (fl==1) Rprintf("\n");
 prova=(prova /(double) totprop);
 if (((double)accratio/((double)totprop))<0.3) Rprintf("Warning: acceptance ratio = %f. This might be a sign that the chain did not mix well. \n" , ((double)accratio/((double)totprop)));
 

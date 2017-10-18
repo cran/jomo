@@ -51,7 +51,7 @@ jomo1mix <-
     imp=matrix(0,nrow(Y)*(nimp+1),ncol(Y)+ncol(X)+2)
     imp[1:nrow(Y),1:ncol(Y)]=Y
     imp[1:nrow(X), (ncol(Y)+1):(ncol(Y)+ncol(X))]=X
-    imp[1:nrow(X), (ncol(Y)+ncol(X)+2)]=c(1:nrow(Y))
+    imp[1:nrow(X), (ncol(Y)+ncol(X)+1)]=c(1:nrow(Y))
     Yimp=Yi
     Yimp2=matrix(Yimp, nrow(Yimp),ncol(Yimp))
     imp[(nrow(X)+1):(2*nrow(X)),(ncol(Y)+1):(ncol(Y)+ncol(X))]=X
@@ -85,14 +85,6 @@ jomo1mix <-
       imp[(i*nrow(X)+1):((i+1)*nrow(X)),(ncol(Y.con)+1):ncol(Y)]=Y.cat
       if (output==1) cat("Imputation number ", i, "registered", "\n")
     }
-    betapostmean<-apply(betapost, c(1,2), mean)
-    omegapostmean<-apply(omegapost, c(1,2), mean)
-    if (output==1) {
-      cat("The posterior mean of the fixed effects estimates is:\n")
-      print(betapostmean)
-      cat("The posterior covariance matrix is:\n")
-      print(omegapostmean)
-    }
     imp<-data.frame(imp)
     for (i in 1:ncol(Y.cat)) {
       imp[,(ncol(Y.con)+i)]<-as.factor(imp[,(ncol(Y.con)+i)]) 
@@ -101,6 +93,27 @@ jomo1mix <-
     if (is.null(colnamycat)) colnamycat=paste("Ycat", 1:ncol(Y.cat), sep = "")
     if (is.null(colnamycon)) colnamycon=paste("Ycon", 1:ncol(Y.con), sep = "")
     if (is.null(colnamx)) colnamx=paste("X", 1:ncol(X), sep = "")
+    cnycatcomp<-rep(NA,(sum(Y.numcat)-length(Y.numcat)))
+    count=0
+    for ( j in 1:ncol(Y.cat)) {
+      for (k in 1:(Y.numcat[j]-1)) {
+        cnycatcomp[count+k]<-paste(colnamycat[j],k,sep=".")
+      }
+      count=count+Y.numcat[j]-1
+    }
+    cnamycomp<-c(colnamycon,cnycatcomp)
+    dimnames(betapost)[1] <- list(colnamx)
+    dimnames(betapost)[2] <- list(cnamycomp)
+    dimnames(omegapost)[1] <- list(cnamycomp)
+    dimnames(omegapost)[2] <- list(cnamycomp)
+    betapostmean<-data.frame(apply(betapost, c(1,2), mean))
+    omegapostmean<-data.frame(apply(omegapost, c(1,2), mean))
+    if (output==1) {
+      cat("The posterior mean of the fixed effects estimates is:\n")
+      print(t(betapostmean))
+      cat("\nThe posterior covariance matrix is:\n")
+      print(omegapostmean)
+    }
     colnames(imp)<-c(colnamycon,colnamycat,colnamx,"id","Imputation")
     return(imp)
   }

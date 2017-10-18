@@ -237,23 +237,7 @@ jomo2hr.MCMCchain <-
     if (isnullcat2==0) {
       imp[(nrow(X)+1):(2*nrow(X)),(ncolY2con+ncol(Y)+1):(ncol(Y)+ncol(Y2))]=Y2.cat
     }
-    betapostmean<-apply(betapost, c(1,2), mean)
-    beta2postmean<-apply(beta2post, c(1,2), mean)
-    upostmean<-apply(upostall, c(1,2), mean)
-    omegapostmean<-apply(omegapost, c(1,2), mean)
-    covupostmean<-apply(covupost, c(1,2), mean)
-    if (output==1) {
-      cat("The posterior mean of the fixed effects estimates is:\n")
-      print(betapostmean)
-      cat("The posterior mean of the level 2 fixed effects estimates is:\n")
-      print(beta2postmean)
-      cat("The posterior mean of the random effects estimates is:\n")
-      print(upostmean)
-      cat("The posterior mean of the level 1 covariance matrices is:\n")
-      print(omegapostmean)
-      cat("The posterior mean of the level 2 covariance matrix is:\n")
-      print(covupostmean)
-    }
+    
     imp<-data.frame(imp)
     if (isnullcat==0) {
       for (i in 1:ncol(Y.cat)) {
@@ -362,5 +346,22 @@ jomo2hr.MCMCchain <-
     dimnames(upostall)[2]<-list(colnamcovu)
     dimnames(Yimp2)[2] <- list(cnamycomp)
     dimnames(Y2imp2)[2] <- list(cnamy2comp)
+    betapostmean<-data.frame(apply(betapost, c(1,2), mean))
+    beta2postmean<-data.frame(apply(beta2post, c(1,2), mean))
+    upostmean<-data.frame(apply(upostall, c(1,2), mean))
+    omegapostmean<-data.frame(apply(omegapost, c(1,2), mean))
+    covupostmean<-data.frame(apply(covupost, c(1,2), mean))
+    if (output==1) {
+      cat("The posterior mean of the fixed effects estimates is:\n")
+      print(t(betapostmean))
+      cat("\nThe posterior mean of the level 2 fixed effects estimates is:\n")
+      print(t(beta2postmean))
+      cat("\nThe posterior mean of the random effects estimates is:\n")
+      print(upostmean)
+      cat("\nThe posterior mean of the level 1 covariance matrices is:\n")
+      print(omegapostmean)
+      cat("\nThe posterior mean of the level 2 covariance matrix is:\n")
+      print(covupostmean)
+    }
     return(list("finimp"=imp,"collectbeta"=betapost,"collect.l2.beta"=beta2post,"collectomega"=omegapost,"collectu"=upostall, "collectcovu"=covupost, "finimp.latnorm" = Yimp2, "l2.finimp.latnorm" = Y2imp2))
   }

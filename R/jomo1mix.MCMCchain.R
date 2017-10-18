@@ -48,7 +48,7 @@ jomo1mix.MCMCchain <-
     imp=matrix(0,nrow(Y)*(nimp+1),ncol(Y)+ncol(X)+2)
     imp[1:nrow(Y),1:ncol(Y)]=Y
     imp[1:nrow(X), (ncol(Y)+1):(ncol(Y)+ncol(X))]=X
-    imp[1:nrow(X), (ncol(Y)+ncol(X)+2)]=c(1:nrow(Y))
+    imp[1:nrow(X), (ncol(Y)+ncol(X)+1)]=c(1:nrow(Y))
     Yimp=Yi
     Yimp2=matrix(Yimp, nrow(Yimp),ncol(Yimp))
     imp[(nrow(X)+1):(2*nrow(X)),(ncol(Y)+1):(ncol(Y)+ncol(X))]=X
@@ -72,14 +72,6 @@ jomo1mix.MCMCchain <-
     .Call("MCMCjomo1mix", Y, Yimp, Yimp2, Y.cat, X,betait,betapost,covit,omegapost, nburn, l1cov.prior,Y.numcat, ncol(Y.con),out.iter, PACKAGE = "jomo")
     imp[(nrow(Y)+1):(2*nrow(Y)),1:ncol(Y.con)]=Yimp2[,1:ncol(Y.con)]
     imp[(nrow(Y)+1):(2*nrow(Y)),(ncol(Y.con)+1):ncol(Y)]=Y.cat
-    betapostmean<-apply(betapost, c(1,2), mean)
-    omegapostmean<-apply(omegapost, c(1,2), mean)
-    if (output==1) {
-      cat("The posterior mean of the fixed effects estimates is:\n")
-      print(betapostmean)
-      cat("The posterior covariance matrix is:\n")
-      print(omegapostmean)
-    }
     imp<-data.frame(imp)
     for (i in 1:ncol(Y.cat)) {
       imp[,(ncol(Y.con)+i)]<-as.factor(imp[,(ncol(Y.con)+i)]) 
@@ -103,5 +95,13 @@ jomo1mix.MCMCchain <-
     dimnames(omegapost)[1] <- list(cnamycomp)
     dimnames(omegapost)[2] <- list(cnamycomp)
     dimnames(Yimp2)[2] <- list(cnamycomp)
+    betapostmean<-data.frame(apply(betapost, c(1,2), mean))
+    omegapostmean<-data.frame(apply(omegapost, c(1,2), mean))
+    if (output==1) {
+      cat("The posterior mean of the fixed effects estimates is:\n")
+      print(t(betapostmean))
+      cat("\nThe posterior covariance matrix is:\n")
+      print(omegapostmean)
+    }
     return(list("finimp"=imp,"collectbeta"=betapost,"collectomega"=omegapost, "finimp.latnorm" = Yimp2))
   }

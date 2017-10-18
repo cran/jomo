@@ -11,7 +11,7 @@
 
 SEXP jomoglm(SEXP Ysub, SEXP Ysubimp, SEXP Ysubcat, SEXP submod, SEXP ordersub, SEXP Y, SEXP Yimp, SEXP Yimp2, SEXP Yimpcat, SEXP X, SEXP betaY, SEXP betaYpost, SEXP beta, SEXP betapost, SEXP varY, SEXP varYpost, SEXP omega, SEXP omegapost, SEXP nstep, SEXP varYprior, SEXP Sp, SEXP Y_numcat, SEXP num_con, SEXP flagrng){
 int indic=0,i,j,k, IY,JY, IX, JX, Io, Jo, Ib, Jb, ns, nmiss=0,t, countm=0, counto=0, countoo=0, jj, tt, kk, ncon,ncat, pos,flag=0,nmaxx,h=0;
-int fl, currncat, Is,Js, Il=0, JXm,accratio=0, totprop=0;
+int fl, currncat, Is, Il=0, JXm,accratio=0, totprop=0;
 SEXP RdimY, RdimX, Rdimo, Rdimb, Rdims;
 double *betaX, *Yobs, *Ymiss, *mumiss, *omegadrawmiss, *betamiss, *betaobs, *omegaoo, *omegamo, *omegamm, *invomega, *invomega2, *help, *help2, *help3, *imp, *Xsub;
 double *mu, *mu2, *newbeta, *newomega, *yi, *invomega3, *help4, *help5, *help6, *missing, *fixomega,meanom,sdom, *resid, logLH, newlogLH,detom, *impsub, *residsub;
@@ -24,7 +24,6 @@ IY=INTEGER(RdimY)[0];
 JY=INTEGER(RdimY)[1];
 Rdims=PROTECT(getAttrib(submod,R_DimSymbol));
 Is=INTEGER(Rdims)[0];
-Js=INTEGER(Rdims)[1];
 RdimX=PROTECT(getAttrib(X,R_DimSymbol));
 IX=INTEGER(RdimX)[0];
 JX=INTEGER(RdimX)[1];
@@ -628,8 +627,9 @@ totprop=totprop+1;
 		}
 	}
 	
-	if ((i+1)%fl==0) Rprintf("Iteration %d completed\n",i+1);
+	if ((i+1)%fl==0) Rprintf(".");
 }
+if (fl==1) Rprintf("\n");
 prova=(prova /(double) totprop);
 if (((double)accratio/((double)totprop))<0.3) Rprintf("Warning: acceptance ratio = %f. This might be a sign that the chain did not mix well. \n" , ((double)accratio/((double)totprop)));
 

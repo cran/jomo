@@ -258,23 +258,6 @@ jomo2com <-
       if (output==1) cat("Imputation number ", i, "registered", "\n")
     }
     
-    betapostmean<-apply(betapost, c(1,2), mean)
-    beta2postmean<-apply(beta2post, c(1,2), mean)
-    upostmean<-apply(upostall, c(1,2), mean)
-    omegapostmean<-apply(omegapost, c(1,2), mean)
-    covupostmean<-apply(covupost, c(1,2), mean)
-    if (output==1) {
-      cat("The posterior mean of the fixed effects estimates is:\n")
-      print(betapostmean)
-      cat("The posterior mean of the level 2 fixed effects estimates is:\n")
-      print(beta2postmean)
-      cat("The posterior mean of the random effects estimates is:\n")
-      print(upostmean)
-      cat("The posterior mean of the level 1 covariance matrix is:\n")
-      print(omegapostmean)
-      cat("The posterior mean of the level 2 covariance matrix is:\n")
-      print(covupostmean)
-    }
     imp<-data.frame(imp)
     if (isnullcat==0) {
       for (i in 1:ncol(Y.cat)) {
@@ -333,5 +316,70 @@ jomo2com <-
     if (is.null(colnamx)) colnamx=paste("X", 1:ncol(X), sep = "")
     if (is.null(colnamx2)) colnamx2=paste("X2", 1:ncol(X2), sep = ".")
     colnames(imp)<-c(colnamycon,colnamycat,colnamy2con,colnamy2cat,colnamx,colnamx2,colnamz,"clus","id","Imputation")
+    if (isnullcat==0) {
+      cnycatcomp<-rep(NA,(sum(Y.numcat)-length(Y.numcat)))
+      count=0
+      for ( j in 1:ncol(Y.cat)) {
+        for (k in 1:(Y.numcat[j]-1)) {
+          cnycatcomp[count+k]<-paste(colnamycat[j],k,sep=".")
+        }
+        count=count+Y.numcat[j]-1
+      }
+      if (!is.null(Y.con)) {
+        cnamycomp<-c(colnamycon,cnycatcomp)
+      } else {
+        cnamycomp<-c(cnycatcomp)
+      }
+      
+    } else {
+      cnamycomp<-c(colnamycon)
+    }
+    if (isnullcat2==0) {
+      cny2catcomp<-rep(NA,(sum(Y2.numcat)-length(Y2.numcat)))
+      count=0
+      for ( j in 1:ncol(Y2.cat)) {
+        for (k in 1:(Y2.numcat[j]-1)) {
+          cny2catcomp[count+k]<-paste(colnamy2cat[j],k,sep=".")
+        }
+        count=count+Y2.numcat[j]-1
+      }
+      if (!is.null(Y2.con)) {
+        cnamy2comp<-c(colnamy2con,cny2catcomp)
+      } else {
+        cnamy2comp<-c(cny2catcomp)
+      }
+      
+    } else {
+      cnamy2comp<-c(colnamy2con)
+    }
+    dimnames(betapost)[1] <- list(colnamx)
+    dimnames(betapost)[2] <- list(cnamycomp)
+    dimnames(beta2post)[1] <- list(colnamx2)
+    dimnames(beta2post)[2] <- list(cnamy2comp)
+    dimnames(omegapost)[1] <- list(cnamycomp)
+    dimnames(omegapost)[2] <- list(cnamycomp)
+    colnamcovu<-paste(cnamycomp,rep(colnamz,each=ncol(omegapost)),sep="*")
+    colnamcovu<-c(colnamcovu,cnamy2comp)
+    dimnames(covupost)[1] <- list(colnamcovu)
+    dimnames(covupost)[2] <- list(colnamcovu)
+    dimnames(upostall)[1]<-list(levels(clus))
+    dimnames(upostall)[2]<-list(colnamcovu)
+    betapostmean<-data.frame(apply(betapost, c(1,2), mean))
+    beta2postmean<-data.frame(apply(beta2post, c(1,2), mean))
+    upostmean<-data.frame(apply(upostall, c(1,2), mean))
+    omegapostmean<-data.frame(apply(omegapost, c(1,2), mean))
+    covupostmean<-data.frame(apply(covupost, c(1,2), mean))
+    if (output==1) {
+      cat("The posterior mean of the fixed effects estimates is:\n")
+      print(t(betapostmean))
+      cat("\nThe posterior mean of the level 2 fixed effects estimates is:\n")
+      print(t(beta2postmean))
+      cat("\nThe posterior mean of the random effects estimates is:\n")
+      print(upostmean)
+      cat("\nThe posterior mean of the level 1 covariance matrix is:\n")
+      print(omegapostmean)
+      cat("\nThe posterior mean of the level 2 covariance matrix is:\n")
+      print(covupostmean)
+    }
     return(imp)
   }

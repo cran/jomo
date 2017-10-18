@@ -26,7 +26,7 @@ jomo1con.MCMCchain<- function(Y, X=NULL, beta.start=NULL, l1cov.start=NULL, l1co
   imp=matrix(0,nrow(Y)*(nimp+1),ncol(Y)+ncol(X)+2)
   imp[1:nrow(Y),1:ncol(Y)]=Y
   imp[1:nrow(X), (ncol(Y)+1):(ncol(Y)+ncol(X))]=X
-  imp[1:nrow(X), (ncol(Y)+ncol(X)+2)]=c(1:nrow(Y))
+  imp[1:nrow(X), (ncol(Y)+ncol(X)+1)]=c(1:nrow(Y))
   Yimp=Y
   Yimp2=matrix(0, nrow(Y),ncol(Y))
   imp[(nrow(X)+1):(2*nrow(X)),(ncol(Y)+1):(ncol(Y)+ncol(X))]=X
@@ -50,14 +50,6 @@ jomo1con.MCMCchain<- function(Y, X=NULL, beta.start=NULL, l1cov.start=NULL, l1co
   .Call("MCMCjomo1con", Y, Yimp, Yimp2, X,betait,betapost,covit, omegapost, nburn, l1cov.prior,out.iter, PACKAGE = "jomo")
   imp[(nrow(Y)+1):(2*nrow(Y)),1:ncol(Y)]=Yimp2
   Yimp=Yimp2
-  betapostmean<-apply(betapost, c(1,2), mean)
-  omegapostmean<-apply(omegapost, c(1,2), mean)
-  if (output==1) {
-    cat("The posterior mean of the fixed effects estimates is:\n")
-    print(betapostmean)
-    cat("The posterior covariance matrix is:\n")
-    print(omegapostmean)
-  }
   imp<-data.frame(imp)
   if (is.null(colnamy)) colnamy=paste("Y", 1:ncol(Y), sep = "")
   if (is.null(colnamx)) colnamx=paste("X", 1:ncol(X), sep = "")
@@ -66,5 +58,13 @@ jomo1con.MCMCchain<- function(Y, X=NULL, beta.start=NULL, l1cov.start=NULL, l1co
   dimnames(betapost)[2] <- list(colnamy)
   dimnames(omegapost)[1] <- list(colnamy)
   dimnames(omegapost)[2] <- list(colnamy)
+  betapostmean<-data.frame(apply(betapost, c(1,2), mean))
+  omegapostmean<-data.frame(apply(omegapost, c(1,2), mean))
+  if (output==1) {
+    cat("The posterior mean of the fixed effects estimates is:\n")
+    print(t(betapostmean))
+    cat("\nThe posterior covariance matrix is:\n")
+    print(omegapostmean)
+  }
   return(list("finimp"=imp,"collectbeta"=betapost,"collectomega"=omegapost))
 }

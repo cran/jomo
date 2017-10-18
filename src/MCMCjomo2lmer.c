@@ -1399,8 +1399,9 @@ for (i=0;i<ns;i++) {
 		}
 	}
 	
-	if ((i+1)%fl==0) Rprintf("Iteration %d completed\n",i+1);
+	if ((i+1)%fl==0) Rprintf(".");
 }
+if (fl==1) Rprintf("\n");
 
 if (((double)accratio/((double)totprop))<0.3) Rprintf("Warning: acceptance ratio for level 1 variables imputation = %f. This might be a sign that the chain did not mix well. \n" , ((double)accratio/((double)totprop)));
 if (((double)accratio2/((double)totprop2))<0.3) Rprintf("Warning: acceptance ratio for level 2 variables imputation  = %f. This might be a sign that the chain did not mix well. \n" , ((double)accratio2/((double)totprop2)));

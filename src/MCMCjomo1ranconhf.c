@@ -390,8 +390,9 @@ for (i=0;i<ns;i++) {
 		}
 	
 	}
-if ((i+1)%fl==0) Rprintf("Iteration %d completed\n",i+1);
+	if ((i+1)%fl==0) Rprintf(".");
 }
+if (fl==1) Rprintf("\n");
 for(i=0;i<IY;i++)  {
 	for(j=0;j<JY;j++)  {
 		REAL(Yimp2)[i+IY*j]=imp[i+IY*j];
