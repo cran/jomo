@@ -2,7 +2,7 @@ jomo.lm.MCMCchain <-
   function(formula, data, start.imp=NULL, start.imp.sub=NULL, beta.start=NULL, l1cov.start=NULL, l1cov.prior=NULL, betaY.start=NULL, varY.start=NULL, nburn=1000, output=1, out.iter=10) {
     cat("This function is beta software. Use carefully and please report any bug to the package mantainer\n")
     stopifnot(is.data.frame(data))
-    stopifnot(grepl("~",deparse(formula)))
+    stopifnot(any(grepl("~",deparse(formula))))
     fit.cr<-lm(formula,data=data, na.action = na.omit)
     if (is.null(betaY.start)) betaY.start<-coef(fit.cr)
     if (is.null(varY.start)) varY.start<-(summary(fit.cr)$sigma)^2

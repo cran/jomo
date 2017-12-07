@@ -117,7 +117,7 @@ jomo.lmer <-
     Z=matrix(1,nrow(X),1)
     if (is.null(beta.start)) beta.start=matrix(0,ncol(X),(max(as.numeric(!is.null(Y.con)),ncol(Y.con))+max(0,(sum(Y.numcat)-length(Y.numcat)))))
     
-    clus<-factor(get(clus.name))
+    clus<-factor(data[,clus.name])
     previous_levels_clus<-levels(clus)
     levels(clus)<-0:(nlevels(clus)-1)
     uY.start<-matrix(0,nlevels(clus),length.ran)

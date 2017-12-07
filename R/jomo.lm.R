@@ -6,7 +6,7 @@ jomo.lm <-
       cat("Minimum number of imputations:2. For single imputation use function jomo.lm.MCMCchain\n")
     }
     stopifnot(is.data.frame(data))
-    stopifnot(grepl("~",deparse(formula)))
+    stopifnot(any(grepl("~",deparse(formula))))
     fit.cr<-lm(formula,data=data, na.action = na.omit)
     betaY.start<-coef(fit.cr)
     varY.start<-(summary(fit.cr)$sigma)^2

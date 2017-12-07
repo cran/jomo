@@ -7,7 +7,7 @@ jomo.glm.MCMCchain <-
     }
     if (family=="binomial") {
       stopifnot(is.data.frame(data))
-      stopifnot(grepl("~",deparse(formula)))
+      stopifnot(any(grepl("~",deparse(formula))))
       fit.cr<-glm(formula,data=data, family=binomial, na.action = na.omit)
       betaY.start<-coef(fit.cr)
       varY.start<-1

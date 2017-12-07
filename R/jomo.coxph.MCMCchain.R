@@ -2,7 +2,7 @@ jomo.coxph.MCMCchain <-
   function(formula, data,  beta.start=NULL, l1cov.start=NULL, l1cov.prior=NULL, nburn=1000, start.imp=NULL, betaY.start=NULL, output=1, out.iter=10) {
     cat("This function is beta software. Use carefully and please report any bug to the package mantainer\n")
     stopifnot(is.data.frame(data))
-    stopifnot(grepl("~",deparse(formula)))
+    stopifnot(any(grepl("~",deparse(formula))))
     fit.cr<-coxph(formula,data=data, na.action = na.omit)
     if (is.null(betaY.start)) betaY.start<-as.numeric(coef(fit.cr))
     colnamysub<-all.vars(formula[[2]])

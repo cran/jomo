@@ -6,7 +6,7 @@ jomo.coxph <-
       cat("Minimum number of imputations:2. For single imputation use function jomo.cox.MCMCchain\n")
     }
     stopifnot(is.data.frame(data))
-    stopifnot(grepl("~",deparse(formula)))
+    stopifnot(any(grepl("~",deparse(formula))))
     fit.cr<-coxph(formula,data=data, na.action = na.omit)
     betaY.start<-as.numeric(coef(fit.cr))
     colnamysub<-all.vars(formula[[2]])
