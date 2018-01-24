@@ -1,4 +1,4 @@
-46740b0849541dedb28a0e21fa53c0fc *DESCRIPTION
+c6c67255c31b6ac97eeb1ae7f326051c *DESCRIPTION
 ff5360f2b435c7550c41a84b1d19366d *NAMESPACE
 44c3d1e32c92e16d0767d7e808ffa77f *R/jomo-internal.R
 a2053b97f210d6107ee2cc9d5c773b9a *R/jomo.MCMCchain.R
@@ -41,12 +41,12 @@ b677f8ac63e21ab8f9c1e15488092af9 *R/jomo2com.MCMCchain.R
 bf8422162ca6d0baf29b0a96d56c0c5b *R/jomo2com.R
 73713cfe1bc569e92aac5fdcddf588a5 *R/jomo2hr.MCMCchain.R
 8667d616e2af16d9e6fe6d35264b2872 *R/jomo2hr.R
-ddd392db16421d9b8a8838b8709dd50a *data/cldata.RData
+15b5f7c3c2c6ce6b12535cc2271d3ae6 *data/cldata.RData
 64cac254f049269b874232cb713d6e66 *data/sldata.RData
 a8171366d0e793e5e6cbebd8464fd368 *data/surdata.RData
 d3f029cdcfdb29608f041f6c6b012fb2 *data/tldata.RData
 d2c59a11cd271b4e89250021292537ad *inst/CITATION
-5e2add174300b4614fa5ab03e46b82e3 *man/cldata.Rd
+0a0152d8a38447bbe2a608edc2876e34 *man/cldata.Rd
 7d1e5111ccd8ac404418a8539532d94e *man/jomo-package.Rd
 a8145e65a0ef6696efa4eb1a05de5ccd *man/jomo.MCMCchain.Rd
 7e79e32f54587d0f45dea3277a01bca0 *man/jomo.Rd
@@ -88,8 +88,8 @@ b6bd187b3896e28b556c86cb172c2a72 *man/jomo2com.MCMCchain.Rd
 34a2f68410641b2b5a4fe4e844b98c8e *man/jomo2com.Rd
 c18bb75ecdffb16a2ba2bae8189d30b4 *man/jomo2hr.MCMCchain.Rd
 4bbdc9caeadc1459464ddb518191b53a *man/jomo2hr.Rd
-491a8ad346097f19a477b6f52c741210 *man/sldata.Rd
-3608804faed05b4b51291f1b0109d535 *man/surdata.Rd
+fe6dbfee0281540c9ce5faaae7a1d317 *man/sldata.Rd
+cb185f4404a1a6448f4817bb663d2c2c *man/surdata.Rd
 3cbdf87324f3179a2f53ea1da6df9ad4 *man/tldata.Rd
 439cfaf82ddb89bc76325a90df79b63f *src/MCMCjomo1con.c
 495881aa45e3c690773b7730d7b9c556 *src/MCMCjomo1glmerbin.c
