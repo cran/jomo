@@ -25,7 +25,8 @@
     A data.frame containing all the variables to include in the imputation model. Columns related to continuous variables have to be numeric and columns related to binary/categorical variables have to be factors. 
   }
   \item{level}{
-  A vector, indicating whether each variable is either a level 1 or a level 2 variable. The value assigned to the cluster indicator is irrelevant.
+  A vector, indicating whether each variable is either a level 1 or a level 2 variable. The value assigned to the cluster indicator is irrelevant.   Level 2 variables must be fully observed for valid inference. 
+
   }
    \item{beta.start}{
     Starting value for beta, the vector(s) of level-1 fixed effects for the joint model for the covariates. For each n-category variable we have a fixed effect parameter for each of the n-1 latent normals. The default is a matrix of zeros.
@@ -78,7 +79,9 @@ Hyperparameter (Degrees of freedom) of the chi square prior distribution for the
 }
 \details{
   This function allows for substantive model compatible imputation when the substantive model is a linear mixed-effects model. It can deal with interactions and polynomial terms through the usual lmer syntax in the formula argument. 
-  Format of the columns of data is crucial in order for the function to deal with binary/categorical covariates appropriately in the imputation algorithm.  }
+  Format of the columns of data is crucial in order for the function to deal with binary/categorical covariates appropriately in the imputation algorithm.  
+    Level 2 variables must be fully observed for valid inference. 
+}
 \value{
   On screen, the posterior mean of the fixed effect estimates and of the residual variance are shown. The only argument returned is the imputed dataset in long format. Column "Imputation" indexes the imputations. Imputation number 0 are the original data.
 }

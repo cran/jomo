@@ -8,10 +8,10 @@
   This function is similar to the jomo.glm function, but it returns the values of all the parameters in the model at each step of the MCMC instead of the imputations. It is useful to check the convergence of the MCMC sampler.
 }
 \usage{
-  jomo.glm.MCMCchain(formula, data, start.imp=NULL, start.imp.sub=NULL, 
-                    beta.start=NULL, l1cov.start=NULL, l1cov.prior=NULL,
-                    betaY.start=NULL, varY.start=NULL, nburn=1000, 
-                    output=1, out.iter=10, family="binomial") 
+  jomo.glm.MCMCchain(formula, data, beta.start=NULL, l1cov.start=NULL, 
+  l1cov.prior=NULL, betaY.start=NULL, varY.start=NULL, nburn=1000, 
+  start.imp=NULL, start.imp.sub=NULL, output=1, out.iter=10, 
+  family="binomial") 
   
 }
 %- maybe also 'usage' for other objects documented here.

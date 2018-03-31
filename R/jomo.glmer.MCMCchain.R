@@ -10,7 +10,7 @@ jomo.glmer.MCMCchain <-
       stopifnot(any(grepl("~",deparse(formula))))
       fit.cr<-glmer(formula,data=data, family=binomial, na.action = na.omit)
       if (is.null(betaY.start)) betaY.start<-fixef(fit.cr)
-      varY.start<-1
+      if (is.null(varY.start)) varY.start<-1
       varY.prior<-1
       colnamysub<-all.vars(formula[[2]])
       Ysub<-get(colnamysub,pos=data)
@@ -110,20 +110,55 @@ jomo.glmer.MCMCchain <-
         }
       }
       order.sub<-order.sub[-j.tbd]
-      if (!is.null(Y.con)&sum((colnames(Y.con)==clus.name)==1)) Y.con<-Y.con[,-which(colnames(Y.con)==clus.name)]
-      if (!is.null(Y.cat)&sum((colnames(Y.cat)==clus.name)==1)) Y.cat<-Y.cat[,-which(colnames(Y.cat)==clus.name)]
+      if (!is.null(Y.con)&sum((colnames(Y.con)==clus.name)==1)) Y.con<-data.frame(Y.con[,-which(colnames(Y.con)==clus.name), drop=FALSE])
+      if (!is.null(Y.cat)&sum((colnames(Y.cat)==clus.name)==1)) Y.cat<-data.frame(Y.cat[,-which(colnames(Y.cat)==clus.name), drop=FALSE])
+      Y.auxiliary<-data.frame(data[,-c(which(colnames(data)%in%colnames(Y.con)),which(colnames(data)%in%colnames(Y.cat)),which(colnames(data)%in%colnames(Y2.con)),which(colnames(data)%in%colnames(Y2.cat)),which(colnames(data)==clus.name),which(colnames(data)==colnamysub)), drop=FALSE])
+      Y.aux.con<-NULL
+      Y.aux.cat<-NULL
+      Y.aux.numcat<-NULL
+      Y2.aux.con<-NULL
+      Y2.aux.cat<-NULL
+      Y2.aux.numcat<-NULL
+      if (ncol(Y.auxiliary)>0) {
+        for (j in 1:ncol(Y.auxiliary)) {
+          if (level[1, which(colnames(level)==colnames(Y.auxiliary)[j])]==1) {
+            if (is.numeric(Y.auxiliary[,j])) {
+              if (is.null(Y.aux.con)) Y.aux.con<-data.frame(Y.auxiliary[,j,drop=FALSE])
+              else Y.aux.con<-data.frame(Y.aux.con,Y.auxiliary[,j,drop=FALSE])
+            }
+            if (is.factor(Y.auxiliary[,j])) {
+              if (is.null(Y.aux.cat)) Y.aux.cat<-data.frame(Y.auxiliary[,j,drop=FALSE])
+              else Y.aux.cat<-data.frame(Y.aux.cat,Y.auxiliary[,j,drop=FALSE])
+              Y.aux.numcat<-cbind(Y.aux.numcat,nlevels(Y.auxiliary[,j]))
+            }
+          } else {
+            if (is.numeric(Y.auxiliary[,j])) {
+              if (is.null(Y2.aux.con)) Y2.aux.con<-data.frame(Y.auxiliary[,j,drop=FALSE])
+              else Y2.aux.con<-data.frame(Y2.aux.con,Y.auxiliary[,j,drop=FALSE])
+            }
+            if (is.factor(Y.auxiliary[,j])) {
+              if (is.null(Y2.aux.cat)) Y2.aux.cat<-data.frame(Y.auxiliary[,j,drop=FALSE])
+              else Y2.aux.cat<-data.frame(Y2.aux.cat,Y.auxiliary[,j,drop=FALSE])
+              Y2.aux.numcat<-cbind(Y2.aux.numcat,nlevels(Y.auxiliary[,j]))
+            }
+          }
+          
+          
+        }
+      }
       X=matrix(1,max(nrow(Y.cat),nrow(Y.con)),1)
-      if (!is.null(Y2.con)|!is.null(Y2.cat)) {
-        X2=matrix(1,max(nrow(Y2.cat),nrow(Y2.con)),1)
-        if (is.null(l2.beta.start)) l2.beta.start=matrix(0,ncol(X2),(max(0,ncol(Y2.con))+max(0,(sum(Y2.numcat)-length(Y2.numcat)))))
+      if (!is.null(Y2.con)|!is.null(Y2.cat)|!is.null(Y2.aux.con)|!is.null(Y2.aux.cat)) {
+        cat("Level 2 variables must be fully observed for valid inference. \n")
+        X2=matrix(1,max(nrow(Y2.cat),nrow(Y2.con),nrow(Y2.aux.cat),nrow(Y2.aux.con)),1)
+        if (is.null(l2.beta.start)) l2.beta.start=matrix(0,ncol(X2),(max(as.numeric(!is.null(Y2.con)),ncol(Y2.con))+max(0,(sum(Y2.numcat)-length(Y2.numcat)))+max(as.numeric(!is.null(Y2.aux.con)),ncol(Y2.aux.con))+max(0,(sum(Y2.aux.numcat)-length(Y2.aux.numcat)))))
       }
       Z=matrix(1,nrow(X),1)
-      if (is.null(beta.start)) beta.start=matrix(0,ncol(X),(max(0,ncol(Y.con))+max(0,(sum(Y.numcat)-length(Y.numcat)))))
+      if (is.null(beta.start)) beta.start=matrix(0,ncol(X),(max(as.numeric(!is.null(Y.con)),ncol(Y.con))+max(0,(sum(Y.numcat)-length(Y.numcat)))+max(as.numeric(!is.null(Y.aux.con)),ncol(Y.aux.con))+max(0,(sum(Y.aux.numcat)-length(Y.aux.numcat)))))
       
       clus<-factor(data[,clus.name])
       previous_levels_clus<-levels(clus)
       levels(clus)<-0:(nlevels(clus)-1)
-      if (is.null(uY.start)) uY.start<-matrix(0,nlevels(clus),length.ran)
+      if (is.null(uY.start)) uY.start<-matrix(0,nlevels(clus),ncol(VarCorr(fit.cr)[[1]]))
       if (is.null(l1cov.start)) {
         if (meth=="common") {
           l1cov.start=diag(1,ncol(beta.start))
@@ -132,16 +167,25 @@ jomo.glmer.MCMCchain <-
         }
       }
       if (is.null(l1cov.prior)) l1cov.prior=diag(1,ncol(l1cov.start))
-      if (is.null(covuY.start)) covuY.start<-VarCorr(fit.cr)[[1]][1:length.ran,1:length.ran]
-      covuY.prior<-VarCorr(fit.cr)[[1]][1:length.ran,1:length.ran]
+      diagVar<-as.data.frame(VarCorr(fit.cr))[1:ncol(VarCorr(fit.cr)[[1]]),4]
+      if (is.null(covuY.start)) covuY.start<-VarCorr(fit.cr)[[1]][1:ncol(VarCorr(fit.cr)[[1]]),1:ncol(VarCorr(fit.cr)[[1]])]
+      covuY.prior<-VarCorr(fit.cr)[[1]][1:ncol(VarCorr(fit.cr)[[1]]),1:ncol(VarCorr(fit.cr)[[1]])]
       if (kappa(covuY.start)>10^8) {
-        covuY.prior<-diag(1, length.ran)
-        covuY.start<-diag(1, length.ran)
+        covuY.prior<-diag(1, ncol(VarCorr(fit.cr)[[1]]))
+        covuY.start<-diag(1, ncol(VarCorr(fit.cr)[[1]]))
       }
-      ncolYcon=max(0,ncol(Y.con))
-      ncolY2con=max(0,ncol(Y2.con))
+      ncolYcon<-rep(NA,4)
+      ncolY2con<-rep(NA,4)
+      ncolYcon[1]=max(as.numeric(!is.null(Y.con)),ncol(Y.con))+max(as.numeric(!is.null(Y.aux.con)),ncol(Y.aux.con))
+      ncolY2con[1]=max(as.numeric(!is.null(Y2.con)),ncol(Y2.con))+max(as.numeric(!is.null(Y2.aux.con)),ncol(Y2.aux.con))
+      ncolYcon[2]=max(as.numeric(!is.null(Y.con)),ncol(Y.con))
+      ncolY2con[2]=max(as.numeric(!is.null(Y2.con)),ncol(Y2.con))
+      ncolYcon[3]=ncolYcon[1]+max(0,(sum(Y.numcat)-length(Y.numcat)))
+      ncolY2con[3]=ncolY2con[1]+max(0,(sum(Y2.numcat)-length(Y2.numcat)))
+      ncolYcon[4]=max(0,ncol(Y.cat))
+      ncolY2con[4]=max(0,ncol(Y2.cat))
       stopifnot(((!is.null(Y.con))||(!is.null(Y.cat)&!is.null(Y.numcat)))||((!is.null(Y2.con))||(!is.null(Y2.cat)&!is.null(Y2.numcat))))
-      if (is.null(u.start)) u.start = matrix(0, nlevels(clus), ncol(Z)*(ncolYcon+max(0,(sum(Y.numcat)-length(Y.numcat))))+(ncolY2con+max(0,(sum(Y2.numcat)-length(Y2.numcat)))))
+      if (is.null(u.start)) u.start = matrix(0, nlevels(clus), ncol(Z)*(ncolYcon[1]+max(0,(sum(Y.numcat)-length(Y.numcat)))+max(0,(sum(Y.aux.numcat)-length(Y.aux.numcat))))+(ncolY2con[1]+max(0,(sum(Y2.numcat)-length(Y2.numcat)))+max(0,(sum(Y2.aux.numcat)-length(Y2.aux.numcat)))))
       if (is.null(l2cov.start)) l2cov.start = diag(1, ncol(u.start))
       if (is.null(l2cov.prior)) l2cov.prior = diag(1, ncol(l2cov.start))
       if (!is.null(Y.cat)) {
@@ -155,8 +199,18 @@ jomo.glmer.MCMCchain <-
         }
       } else {
         isnullcat=1
-        Y.cat=-999
-        Y.numcat=-999
+      }
+      if (!is.null(Y.aux.cat)) {
+        isnullcataux=0
+        previous_levelsaux<-list()
+        Y.aux.cat<-data.frame(Y.aux.cat)
+        for (i in 1:ncol(Y.aux.cat)) {
+          Y.aux.cat[,i]<-factor(Y.aux.cat[,i])
+          previous_levelsaux[[i]]<-levels(Y.aux.cat[,i])
+          levels(Y.aux.cat[,i])<-1:nlevels(Y.aux.cat[,i])
+        }
+      } else {
+        isnullcataux=1
       } 
       if (!is.null(Y2.cat)) {
         isnullcat2=0
@@ -169,8 +223,18 @@ jomo.glmer.MCMCchain <-
         }
       } else {
         isnullcat2=1
-        Y2.cat=-999
-        Y2.numcat=-999
+      }
+      if (!is.null(Y2.aux.cat)) {
+        isnullcat2aux=0
+        previous_levels2aux<-list()
+        Y2.aux.cat<-data.frame(Y2.aux.cat)
+        for (i in 1:ncol(Y2.aux.cat)) {
+          Y2.aux.cat[,i]<-factor(Y2.aux.cat[,i])
+          previous_levels2aux[[i]]<-levels(Y2.aux.cat[,i])
+          levels(Y2.aux.cat[,i])<-1:nlevels(Y2.aux.cat[,i])
+        }
+      } else {
+        isnullcat2aux=1
       }
       if (!is.null(Y.con)) {
         stopifnot(nrow(Y.con)==nrow(clus),nrow(Y.con)==nrow(X), nrow(Z)==nrow(Y.con))
@@ -184,9 +248,9 @@ jomo.glmer.MCMCchain <-
       if (isnullcat2==0) {
         stopifnot(nrow(Y2.cat)==nrow(clus),nrow(Y2.cat)==nrow(X), nrow(Z)==nrow(Y2.cat))
       }
-      stopifnot(nrow(beta.start)==ncol(X), ncol(beta.start)==(ncolYcon+max(0,(sum(Y.numcat)-length(Y.numcat)))))
-      if (!is.null(Y2.con)||Y2.cat[1]!=-999) stopifnot(nrow(l2.beta.start)==ncol(X2), ncol(l2.beta.start)==(ncolY2con+max(0,(sum(Y2.numcat)-length(Y2.numcat)))))
-      stopifnot(ncol(u.start)==ncol(Z)*(ncolYcon+max(0,(sum(Y.numcat)-length(Y.numcat))))+(ncolY2con+max(0,(sum(Y2.numcat)-length(Y2.numcat)))))
+      stopifnot(nrow(beta.start)==ncol(X), ncol(beta.start)==(ncolYcon[1]+max(0,(sum(Y.numcat)-length(Y.numcat)))+max(0,(sum(Y.aux.numcat)-length(Y.aux.numcat)))))
+      if (!is.null(Y2.con)||isnullcat2==0||!is.null(Y2.aux.con)||isnullcat2aux==0) stopifnot(nrow(l2.beta.start)==ncol(X2), ncol(l2.beta.start)==(ncolY2con[3]+max(0,(sum(Y2.aux.numcat)-length(Y2.aux.numcat)))))
+      stopifnot(ncol(u.start)==ncol(Z)*(ncolYcon[1]+max(0,(sum(Y.numcat)-length(Y.numcat)))+max(0,(sum(Y.aux.numcat)-length(Y.aux.numcat))))+(ncolY2con[1]+max(0,(sum(Y2.numcat)-length(Y2.numcat)))+max(0,(sum(Y2.aux.numcat)-length(Y2.aux.numcat)))))
       if (meth=="common") stopifnot(nrow(l1cov.start)==ncol(l1cov.start),nrow(l1cov.prior)==nrow(l1cov.start),nrow(l1cov.start)==ncol(beta.start))
       stopifnot(nrow(l1cov.prior)==ncol(l1cov.prior))
       stopifnot(ncol(l2cov.start)==ncol(u.start), nrow(l2cov.prior)==nrow(l2cov.start), nrow(l2cov.prior)==ncol(l2cov.prior))
@@ -194,7 +258,7 @@ jomo.glmer.MCMCchain <-
       for (i in 1:nrow(beta.start)) {
         for (j in 1:ncol(beta.start)) betait[i,j]=beta.start[i,j]
       }
-      if (!is.null(Y2.con)||Y2.cat[1]!=-999) {
+      if (!is.null(Y2.con)||isnullcat2==0||!is.null(Y2.aux.con)||isnullcat2aux==0) {
         beta2it=matrix(0,nrow(l2.beta.start),ncol(l2.beta.start))
         for (i in 1:nrow(l2.beta.start)) {
           for (j in 1:ncol(l2.beta.start)) beta2it[i,j]=l2.beta.start[i,j]
@@ -232,49 +296,62 @@ jomo.glmer.MCMCchain <-
         Y2.cat<-data.matrix(Y2.cat)
         storage.mode(Y2.cat) <- "numeric"  
       }
+      if (!is.null(Y.aux.con)) {
+        colnamyauxcon<-colnames(Y.aux.con)
+        Y.aux.con<-data.matrix(Y.aux.con)
+        storage.mode(Y.aux.con) <- "numeric"  
+      }
+      if (isnullcataux==0) {
+        colnamyauxcat<-colnames(Y.aux.cat)
+        Y.aux.cat<-data.matrix(Y.aux.cat)
+        storage.mode(Y.aux.cat) <- "numeric"  
+      }
+      if (!is.null(Y2.aux.con)) {
+        colnamy2auxcon<-colnames(Y2.aux.con)
+        Y2.aux.con<-data.matrix(Y2.aux.con)
+        storage.mode(Y2.aux.con) <- "numeric"  
+      }
+      if (isnullcat2aux==0) {
+        colnamy2auxcat<-colnames(Y2.aux.cat)
+        Y2.aux.cat<-data.matrix(Y2.aux.cat)
+        storage.mode(Y2.aux.cat) <- "numeric"  
+      }
+      Y.cat.tot<-cbind(Y.cat,Y.aux.cat)
       colnamx<-colnames(X)
       colnamz<-colnames(Z)
       X<-data.matrix(X)
       storage.mode(X) <- "numeric"    
       Z<-data.matrix(Z)
       storage.mode(Z) <- "numeric" 
-      if (!is.null(Y2.con)||Y2.cat[1]!=-999) {
+      if (!is.null(Y2.con)||isnullcat2==0||!is.null(Y2.aux.con)||isnullcat2aux==0) {
         colnamx2<-colnames(X2)
         X2<-data.matrix(X2)
         storage.mode(X2) <- "numeric"
       }
       clus <- matrix(as.integer(levels(clus))[clus], ncol=1)
-      if (!is.null(Y.con)&(isnullcat==0)) {
-        Y=cbind(Y.con,Y.cat)
-        Yi=cbind(Y.con, matrix(0,nrow(Y.con),(sum(Y.numcat)-length(Y.numcat))))
-      } else if (!is.null(Y.con)) {
-        Y=Y.con
-        Yi=Y.con
-      } else {
-        Y=Y.cat
-        Yi=matrix(0,nrow(Y.cat),(sum(Y.numcat)-length(Y.numcat)))
-      }
-      if (!is.null(Y2.con)&isnullcat2==0) {
-        Y2=cbind(Y2.con,Y2.cat)
-        Y2i=cbind(Y2.con, matrix(0,nrow(Y2.con),(sum(Y2.numcat)-length(Y2.numcat))))
-      } else if (!is.null(Y2.con)) {
-        Y2=Y2.con
-        Y2i=Y2.con
-      } else if (isnullcat2==0) {
-        Y2=Y2.cat
-        Y2i=matrix(0,nrow(Y2.cat),(sum(Y2.numcat)-length(Y2.numcat)))
-      } else {
-        Y2=NULL
-      }   
+      Y=cbind(Y.con,Y.aux.con,Y.cat, Y.aux.cat)
+      Yi=cbind(Y.con, Y.aux.con, switch(is.null(Y.cat)+1, matrix(0,nrow(Y),(sum(Y.numcat)-length(Y.numcat))), NULL), switch(is.null(Y.aux.cat)+1, matrix(0,nrow(Y.aux.cat),(sum(Y.aux.numcat)-length(Y.aux.numcat))), NULL))
+      Y2=cbind(Y2.con,Y2.aux.con,Y2.cat, Y2.aux.cat)
+      Y2i=cbind(Y2.con, Y2.aux.con, switch(is.null(Y2.cat)+1, matrix(0,nrow(Y2),(sum(Y2.numcat)-length(Y2.numcat))), NULL), switch(is.null(Y2.aux.cat)+1, matrix(0,nrow(Y2.aux.cat),(sum(Y2.aux.numcat)-length(Y2.aux.numcat))), NULL))
       h=1
       if (isnullcat==0) {
         for (i in 1:length(Y.numcat)) {
           for (j in 1:nrow(Y)) {
             if (is.na(Y.cat[j,i])) {
-              Yi[j,(ncolYcon+h):(ncolYcon+h+Y.numcat[i]-2)]=NA
+              Yi[j,(ncolYcon[1]+h):(ncolYcon[1]+h+Y.numcat[i]-2)]=NA
             }
           } 
           h=h+Y.numcat[i]-1
+        }
+      }
+      if (isnullcataux==0) {
+        for (i in 1:length(Y.aux.numcat)) {
+          for (j in 1:nrow(Y)) {
+            if (is.na(Y.aux.cat[j,i])) {
+              Yi[j,(ncolYcon[1]+h):(ncolYcon[1]+h+Y.aux.numcat[i]-2)]=NA
+            }
+          } 
+          h=h+Y.aux.numcat[i]-1
         }
       }
       h=1
@@ -282,11 +359,35 @@ jomo.glmer.MCMCchain <-
         for (i in 1:length(Y2.numcat)) {
           for (j in 1:nrow(Y2)) {
             if (is.na(Y2.cat[j,i])) {
-              Y2i[j,(ncolY2con+h):(ncolY2con+h+Y2.numcat[i]-2)]=NA
+              Y2i[j,(ncolY2con[1]+h):(ncolY2con[1]+h+Y2.numcat[i]-2)]=NA
             }
           } 
           h=h+Y2.numcat[i]-1
         }
+      }
+      if (isnullcat2aux==0) {
+        for (i in 1:length(Y2.aux.numcat)) {
+          for (j in 1:nrow(Y2)) {
+            if (is.na(Y2.aux.cat[j,i])) {
+              Y2i[j,(ncolY2con[1]+h):(ncolY2con[1]+h+Y2.aux.numcat[i]-2)]=NA
+            }
+          } 
+          h=h+Y2.aux.numcat[i]-1
+        }
+      }
+      if (isnullcat==0||isnullcataux==0) {
+        Y.cat.tot<-cbind(Y.cat,Y.aux.cat)
+        Y.numcat.tot<-c(Y.numcat, Y.aux.numcat)
+      } else {
+        Y.cat.tot=-999
+        Y.numcat.tot=-999
+      }
+      if (isnullcat2==0||isnullcat2aux==0) {
+        Y2.cat.tot<-cbind(Y2.cat,Y2.aux.cat)
+        Y2.numcat.tot<-c(Y2.numcat, Y2.aux.numcat)
+      } else {
+        Y2.cat.tot=-999
+        Y2.numcat.tot=-999
       }
       ncY2<-max(0,ncol(Y2))
       Ysubimp<-Ysub
@@ -314,7 +415,7 @@ jomo.glmer.MCMCchain <-
       betaYpost<- array(0, dim=c(1,length(betaY.start),(nburn)))
       if (!is.null(Y2)) {
         beta2post<- array(0, dim=c(nrow(l2.beta.start),ncol(l2.beta.start),(nburn)))
-        }
+      }
       upostall<-array(0, dim=c(nrow(u.start),ncol(u.start),(nburn)))
       uYpostall<-array(0, dim=c(nrow(uY.start),ncol(uY.start),(nburn)))
       omegapost<- array(0, dim=c(nrow(l1cov.start),ncol(l1cov.start),(nburn)))
@@ -322,7 +423,6 @@ jomo.glmer.MCMCchain <-
       covupost<- array(0, dim=c(nrow(l2cov.start),ncol(l2cov.start),(nburn)))
       covuYpost<-array(0, dim=c(nrow(as.matrix(covuY.start)),ncol(as.matrix(covuY.start)),(nburn)))
       meanobs<-colMeans(Yi,na.rm=TRUE)
-      for (i in 1:nrow(Yi)) for (j in 1:ncol(Yi)) if (is.na(Yimp[i,j])) Yimp2[i,j]=meanobs[j]
       if (!is.null(Y2)) {
         meanobs2<-colMeans(Y2i,na.rm=TRUE)
       }
@@ -362,35 +462,36 @@ jomo.glmer.MCMCchain <-
       if (is.null(start.imp.sub)) {
         for (i in 1:length(Ysubimp)) if (is.na(Ysubimp[i])) Ysubimp[i]=mean(Ysubimp, na.rm = TRUE)
       }
-      Ysubcat<-c(Ysub)
+      Ysubcat <- c(Ysub)
       if (!is.null(Y2)) {
         if (meth=="common") {
-          .Call("MCMCjomo2glmerbin", Ysub, Ysubimp, Ysubcat, submod, order.sub, submod.ran, Y, Yimp, Yimp2, Y.cat, Y2, Y2imp, Y2imp2, Y2.cat, X, X2, Z, clus,betaY.start,betaYpost, betait,beta2it,uit,uY.start,betapost, upostall, uYpostall, beta2post, varY.start, varYpost, covit,omegapost, covuY.start, covuYpost, covuit, covupost, nburn, varY.prior, covuY.prior, l1cov.prior,l2cov.prior,Y.numcat, Y2.numcat, ncolYcon,ncolY2con, out.iter, PACKAGE= "jomo")
-        } else {
-          .Call("MCMCjomo2glmerbinhr", Ysub, Ysubimp, Ysubcat, submod, order.sub, submod.ran, Y, Yimp, Yimp2, Y.cat, Y2, Y2imp, Y2imp2, Y2.cat, X, X2, Z, clus,betaY.start,betaYpost, betait,beta2it,uit,uY.start,betapost, upostall, uYpostall, beta2post, varY.start, varYpost, covit,omegapost, covuY.start, covuYpost, covuit, covupost, nburn, varY.prior, covuY.prior, l1cov.prior,l2cov.prior,Y.numcat, Y2.numcat, ncolYcon,ncolY2con,a.start, a.prior, out.iter, PACKAGE= "jomo")
+          .Call("MCMCjomo2glmerbin", Ysub, Ysubimp, Ysubcat, submod, order.sub, submod.ran, Y, Yimp, Yimp2, Y.cat.tot, Y2, Y2imp, Y2imp2, Y2.cat.tot, X, X2, Z, clus,betaY.start,betaYpost, betait,beta2it,uit,uY.start,betapost, upostall, uYpostall, beta2post, varY.start, varYpost, covit,omegapost, covuY.start, covuYpost, covuit, covupost, nburn, varY.prior, covuY.prior, l1cov.prior,l2cov.prior,Y.numcat.tot, Y2.numcat.tot, ncolYcon,ncolY2con, out.iter, PACKAGE = "jomo")
+
+          } else {
+          .Call("MCMCjomo2glmerbinhr", Ysub, Ysubimp, Ysubcat, submod, order.sub, submod.ran, Y, Yimp, Yimp2, Y.cat.tot, Y2, Y2imp, Y2imp2, Y2.cat.tot, X, X2, Z, clus,betaY.start,betaYpost, betait,beta2it,uit,uY.start,betapost, upostall, uYpostall, beta2post, varY.start, varYpost, covit,omegapost, covuY.start, covuYpost, covuit, covupost, nburn, varY.prior, covuY.prior, l1cov.prior,l2cov.prior,Y.numcat.tot, Y2.numcat.tot, ncolYcon,ncolY2con,a.start, a.prior, out.iter, PACKAGE = "jomo")
         }
       } else {
         if (meth=="common") {
-          .Call("MCMCjomo1glmerbin", Ysub, Ysubimp, Ysubcat, submod, order.sub, submod.ran, Y, Yimp, Yimp2, Y.cat, X, Z, clus,betaY.start,betaYpost, betait,uit,uY.start,betapost, upostall, uYpostall, varY.start, varYpost, covit,omegapost, covuY.start, covuYpost, covuit, covupost, nburn, varY.prior, covuY.prior, l1cov.prior,l2cov.prior,Y.numcat, ncolYcon,out.iter, PACKAGE= "jomo")
+          .Call("MCMCjomo1glmerbin", Ysub, Ysubimp, Ysubcat, submod, order.sub, submod.ran, Y, Yimp, Yimp2, Y.cat.tot, X, Z, clus,betaY.start,betaYpost, betait,uit,uY.start,betapost, upostall, uYpostall, varY.start, varYpost, covit,omegapost, covuY.start, covuYpost, covuit, covupost, nburn, varY.prior, covuY.prior, l1cov.prior,l2cov.prior,Y.numcat.tot, ncolYcon,out.iter, PACKAGE = "jomo")
+
         } else {
-          .Call("MCMCjomo1glmerbinhr", Ysub, Ysubimp, Ysubcat, submod, order.sub, submod.ran, Y, Yimp, Yimp2, Y.cat, X, Z, clus,betaY.start,betaYpost, betait,uit,uY.start,betapost, upostall, uYpostall, varY.start, varYpost, covit,omegapost, covuY.start, covuYpost, covuit, covupost, nburn, varY.prior, covuY.prior, l1cov.prior,l2cov.prior,Y.numcat, ncolYcon,a.start, a.prior, out.iter, PACKAGE= "jomo")
-        }
+          .Call("MCMCjomo1glmerbinhr", Ysub, Ysubimp, Ysubcat, submod, order.sub, submod.ran, Y, Yimp, Yimp2, Y.cat.tot, X, Z, clus,betaY.start,betaYpost, betait,uit,uY.start,betapost, upostall, uYpostall, varY.start, varYpost, covit,omegapost, covuY.start, covuYpost, covuit, covupost, nburn, varY.prior, covuY.prior, l1cov.prior,l2cov.prior,Y.numcat.tot, ncolYcon,a.start, a.prior, out.iter, PACKAGE = "jomo")
+          }
       }
-      
       imp[(nrow(Y)+1):(2*nrow(Y)),1]=Ysubcat
-      if (!is.null(Y.con)) {
-        imp[(nrow(Y)+1):(2*nrow(Y)),2:(1+ncol(Y.con))]=Yimp2[,1:ncol(Y.con)]
+      if (!is.null(Y.con)|!is.null(Y.aux.con)) {
+        imp[(nrow(Y)+1):(2*nrow(Y)),2:(1+max(0,ncol(Y.con))+max(0,ncol(Y.aux.con)))]=Yimp2[,1:(max(0,ncol(Y.con))+max(0,ncol(Y.aux.con)))]
       }
-      if (isnullcat==0) {
-        imp[(nrow(Y)+1):(2*nrow(Y)),(ncolYcon+2):(1+ncol(Y))]=Y.cat
+      if (isnullcat==0|isnullcataux==0) {
+        imp[(nrow(Y)+1):(2*nrow(Y)),(ncolYcon[1]+2):(1+ncol(Y))]=Y.cat.tot
       }
-      if (!is.null(Y2.con)) {
-        imp[(nrow(Y2)+1):(2*nrow(Y2)),(ncol(Y)+2):(1+ncol(Y)+ncol(Y2.con))]=Y2imp2[,1:ncol(Y2.con)]
+      if (!is.null(Y2.con)|!is.null(Y2.aux.con)) {
+        imp[(nrow(Y2)+1):(2*nrow(Y2)),(ncol(Y)+2):(1+ncol(Y)+max(0,ncol(Y2.con))+max(0,ncol(Y2.aux.con)))]=Y2imp2[,1:(max(0,ncol(Y2.con))+max(0,ncol(Y2.aux.con)))]
       }
-      if (isnullcat2==0) {
-        imp[(nrow(Y2)+1):(2*nrow(Y2)),(ncolY2con+ncol(Y)+2):(ncol(Y)+ncY2+1)]=Y2.cat
+      if (isnullcat2==0|isnullcat2aux==0) {
+        imp[(nrow(Y2)+1):(2*nrow(Y2)),(ncolY2con[1]+ncol(Y)+2):(ncol(Y)+ncY2+1)]=Y2.cat.tot
       }
-      
+      if (output==1) cat("First imputation registered.", "\n")
       betaYpostmean<-apply(betaYpost, c(1,2), mean)
       varYpostmean<-mean(varYpost)
       covuYpostmean<-apply(covuYpost, c(1,2), mean)
@@ -425,27 +526,39 @@ jomo.glmer.MCMCchain <-
       imp<-data.frame(imp)
       if (isnullcat==0) {
         for (i in 1:ncol(Y.cat)) {
-          imp[,(1+ncolYcon+i)]<-as.factor(imp[,(1+ncolYcon+i)]) 
-          levels(imp[,(1+ncolYcon+i)])<-previous_levels[[i]]
+          imp[,(1+ncolYcon[1]+i)]<-as.factor(imp[,(1+ncolYcon[1]+i)]) 
+          levels(imp[,(1+ncolYcon[1]+i)])<-previous_levels[[i]]
+        }
+      }
+      if (isnullcataux==0) {
+        for (i in 1:ncol(Y.aux.cat)) {
+          imp[,(1+ncolYcon[1]+length(Y.numcat)+i)]<-as.factor(imp[,(1+ncolYcon[1]+length(Y.numcat)+i)]) 
+          levels(imp[,(1+ncolYcon[1]+length(Y.numcat)+i)])<-previous_levelsaux[[i]]
         }
       }
       if (isnullcat2==0) {
         for (i in 1:ncol(Y2.cat)) {
-          imp[,(1+ncol(Y)+ncolY2con+i)]<-as.factor(imp[,(1+ncol(Y)+ncolY2con+i)]) 
-          levels(imp[,(1+ncol(Y)+ncolY2con+i)])<-previous_levels2[[i]]
+          imp[,(1+ncol(Y)+ncolY2con[1]+i)]<-as.factor(imp[,(1+ncol(Y)+ncolY2con[1]+i)]) 
+          levels(imp[,(1+ncol(Y)+ncolY2con[1]+i)])<-previous_levels2[[i]]
+        }
+      }
+      if (isnullcat2aux==0) {
+        for (i in 1:ncol(Y2.aux.cat)) {
+          imp[,(1+ncol(Y)+ncolY2con[3]+i)]<-as.factor(imp[,(1+ncol(Y)+ncolY2con[3]+i)]) 
+          levels(imp[,(1+ncol(Y)+ncolY2con[3]+i)])<-previous_levels2aux[[i]]
         }
       }
       imp[,(ncol(Y)+ncY2+2)]<-factor(imp[,(ncol(Y)+ncY2+2)])
       levels(imp[,(ncol(Y)+ncY2+2)])<-previous_levels_clus
       clus<-factor(clus)
       levels(clus)<-previous_levels_clus
-      if (ncolYcon>0) {
-        for (j in 1:(ncolYcon)) {
+      if (ncolYcon[1]>0) {
+        for (j in 1:(ncolYcon[1])) {
           imp[,j+1]=as.numeric(imp[,j+1])
         }
       }
-      if (ncolY2con>0) {
-        for (j in 1:(ncolY2con)) {
+      if (ncolY2con[1]>0) {
+        for (j in 1:(ncolY2con[1])) {
           imp[,ncol(Y)+j+1]=as.numeric(imp[,ncol(Y)+j+1])
         }
       }
@@ -456,10 +569,29 @@ jomo.glmer.MCMCchain <-
         Y.cat=NULL
         Y.numcat=NULL
       }
+      if (isnullcataux==0) {
+        if (is.null(colnamyauxcat)) colnamyauxcat=paste("Ycat.aux", 1:ncol(Y.aux.cat), sep = "")
+      } else {
+        colnamyauxcat=NULL
+        Y.aux.cat=NULL
+        Y.aux.numcat=NULL
+      }
       if (!is.null(Y.con)) {
         if (is.null(colnamycon)) colnamycon=paste("Ycon", 1:ncol(Y.con), sep = "")
       } else {
         colnamycon=NULL
+      }
+      if (!is.null(Y.aux.con)) {
+        if (is.null(colnamyauxcon)) colnamyauxcon=paste("Ycon.aux", 1:ncol(Y.aux.con), sep = "")
+      } else {
+        colnamyauxcon=NULL
+      }
+      if (isnullcataux==0) {
+        if (is.null(colnamyauxcat)) colnamyauxcat=paste("Ycat.aux", 1:ncol(Y.aux.cat), sep = "")
+      } else {
+        colnamyauxcat=NULL
+        Y.aux.cat=NULL
+        Y.aux.numcat=NULL
       }
       if (isnullcat2==0) {
         if (is.null(colnamy2cat)) colnamy2cat=paste("Y2cat", 1:ncol(Y2.cat), sep = "")
@@ -468,13 +600,25 @@ jomo.glmer.MCMCchain <-
         Y2.cat=NULL
         Y2.numcat=NULL
       }
+      if (isnullcat2aux==0) {
+        if (is.null(colnamy2auxcat)) colnamy2auxcat=paste("Y2cat.aux", 1:ncol(Y2.aux.cat), sep = "")
+      } else {
+        colnamy2auxcat=NULL
+        Y2.aux.cat=NULL
+        Y2.aux.numcat=NULL
+      }
       if (!is.null(Y2.con)) {
         if (is.null(colnamy2con)) colnamy2con=paste("Y2con", 1:ncol(Y2.con), sep = "")
       } else {
         colnamy2con=NULL
       }
+      if (!is.null(Y2.aux.con)) {
+        if (is.null(colnamy2auxcon)) colnamy2auxcon=paste("Y2con.aux", 1:ncol(Y2.aux.con), sep = "")
+      } else {
+        colnamy2auxcon=NULL
+      }
       if (is.null(colnamysub)) colnamysub="Ysub"
-      colnames(imp)<-c(colnamysub,colnamycon,colnamycat,colnamy2con,colnamy2cat,"clus","id","Imputation")
+      colnames(imp)<-c(colnamysub,colnamycon,colnamyauxcon,colnamycat,colnamyauxcat,colnamy2con,colnamy2auxcon,colnamy2cat,colnamy2auxcat,"clus","id","Imputation")
       if (isnullcat==0) {
         cnycatcomp<-rep(NA,(sum(Y.numcat)-length(Y.numcat)))
         count=0
@@ -484,15 +628,24 @@ jomo.glmer.MCMCchain <-
           }
           count=count+Y.numcat[j]-1
         }
-        if (!is.null(Y.con)) {
-          cnamycomp<-c(colnamycon,cnycatcomp)
-        } else {
-          cnamycomp<-c(cnycatcomp)
+        
+      } else {
+        cnycatcomp<-NULL
+      }
+      if (isnullcataux==0) {
+        cnyauxcatcomp<-rep(NA,(sum(Y.aux.numcat)-length(Y.aux.numcat)))
+        count=0
+        for ( j in 1:ncol(Y.aux.cat)) {
+          for (k in 1:(Y.aux.numcat[j]-1)) {
+            cnyauxcatcomp[count+k]<-paste(colnamyauxcat[j],k,sep=".")
+          }
+          count=count+Y.aux.numcat[j]-1
         }
         
       } else {
-        cnamycomp<-c(colnamycon)
+        cnyauxcatcomp<-NULL
       }
+      cnamycomp<-c(colnamycon,colnamyauxcon,cnycatcomp,cnyauxcatcomp)
       if (isnullcat2==0) {
         cny2catcomp<-rep(NA,(sum(Y2.numcat)-length(Y2.numcat)))
         count=0
@@ -502,22 +655,35 @@ jomo.glmer.MCMCchain <-
           }
           count=count+Y2.numcat[j]-1
         }
-        if (!is.null(Y2.con)) {
-          cnamy2comp<-c(colnamy2con,cny2catcomp)
-        } else {
-          cnamy2comp<-c(cny2catcomp)
+        
+      } else {
+        cny2catcomp<-NULL
+      }
+      if (isnullcat2aux==0) {
+        cny2auxcatcomp<-rep(NA,(sum(Y2.aux.numcat)-length(Y2.aux.numcat)))
+        count=0
+        for ( j in 1:ncol(Y2.aux.cat)) {
+          for (k in 1:(Y2.aux.numcat[j]-1)) {
+            cny2auxcatcomp[count+k]<-paste(colnamy2auxcat[j],k,sep=".")
+          }
+          count=count+Y2.aux.numcat[j]-1
         }
         
       } else {
-        cnamy2comp<-c(colnamy2con)
+        cny2auxcatcomp<-NULL
       }
+      cnamy2comp<-c(colnamy2con,colnamy2auxcon,cny2catcomp,cny2auxcatcomp)
       dimnames(betapost)[1] <- list(colnamx)
       dimnames(betapost)[2] <- list(cnamycomp)
       if (!is.null(Y2)) {
         dimnames(beta2post)[1] <- list(colnamx2)
         dimnames(beta2post)[2] <- list(cnamy2comp)
       }
-      dimnames(omegapost)[1] <- list(cnamycomp)
+      if (meth=="random") {
+        dimnames(omegapost)[1] <- list(paste(rep(cnamycomp, nrow(u.start)),rep(previous_levels_clus,each=ncol(omegapost)))) 
+      } else  {
+        dimnames(omegapost)[1] <- list(cnamycomp)
+      } 
       dimnames(omegapost)[2] <- list(cnamycomp)
       dimnames(Yimp2)[2] <- list(cnamycomp)
       return(list("finimp"=imp,"collectbeta"=betapost,"collectu"=upostall,"collectomega"=omegapost, "collectcovu"=covupost, "finimp.latnorm" = Yimp2, "l2.finimp.latnorm" = Y2imp2, "collectbetaY"=betaYpost, "collectvarY"=varYpost, "collectcovuY"=covuYpost, "collectuY"=uYpostall))    }

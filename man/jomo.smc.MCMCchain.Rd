@@ -1,21 +1,20 @@
-\name{jomo.lmer.MCMCchain}
-\alias{jomo.lmer.MCMCchain}
+\name{jomo.smc.MCMCchain}
+\alias{jomo.smc.MCMCchain}
 
 \title{
-  lmer Compatible JM Imputation - A tool to check convergence of the MCMC
+  Substantive Model Compatible JM Imputation - A tool to check convergence of the MCMC
 }
 \description{
-  This function is similar to the jomo.lmer function, but it returns the values of all the parameters in the model at each step of the MCMC instead of the imputations. It is useful to check the convergence of the MCMC sampler.
+  This function is similar to the jomo.smc function, but it returns the values of all the parameters in the model at each step of the MCMC instead of the imputations. It is useful to check the convergence of the MCMC sampler.
 }
 \usage{
-  jomo.lmer.MCMCchain(formula, data, level=rep(1,ncol(data)), beta.start=NULL, 
-                      l2.beta.start=NULL, u.start=NULL, l1cov.start=NULL, 
-                      l2cov.start=NULL, l1cov.prior=NULL, l2cov.prior=NULL, 
-                      a.start=NULL, a.prior=NULL, betaY.start=NULL, 
-                      varY.start=NULL, covuY.start=NULL, uY.start=NULL, 
-                      nburn=1000, meth="common", start.imp=NULL, 
-                      start.imp.sub=NULL, l2.start.imp=NULL, output=1, 
-                      out.iter=10) 
+  jomo.smc.MCMCchain(formula, data, level=rep(1,ncol(data)), beta.start=NULL,
+  l2.beta.start=NULL, u.start=NULL, l1cov.start=NULL, l2cov.start=NULL, 
+  l1cov.prior=NULL, l2cov.prior=NULL, a.start=NULL, a.prior=NULL, 
+  betaY.start=NULL, varY.start=NULL, covuY.start=NULL, uY.start=NULL, 
+  nburn=1000,  meth="common", family="binomial", 
+  start.imp=NULL, start.imp.sub=NULL, l2.start.imp=NULL, output=1, 
+  out.iter=10, model) 
 
 }
 %- maybe also 'usage' for other objects documented here.
@@ -28,7 +27,7 @@
     A data.frame containing all the variables to include in the imputation model. Columns related to continuous variables have to be numeric and columns related to binary/categorical variables have to be factors. 
   }
   \item{level}{
-  A vector, indicating whether each variable is either a level 1 or a level 2 variable. The value assigned to the cluster indicator is irrelevant. Level 2 variables must be fully observed for valid inference. 
+  If the dataset is multilevel, this must be a vector indicating whether each variable is either a level 1 or a level 2 variable. The value assigned to the cluster indicator is irrelevant.
   }
    \item{beta.start}{
     Starting value for beta, the vector(s) of level-1 fixed effects for the joint model for the covariates. For each n-category variable we have a fixed effect parameter for each of the n-1 latent normals. The default is a matrix of zeros.
@@ -96,11 +95,16 @@ Hyperparameter (Degrees of freedom) of the chi square prior distribution for the
   \item{start.imp.sub}{
     Starting value for the missing data in the outcome of the substantive model.
   }
+    \item{model}{
+    The type of model we want to impute compatibly with. It can currently be one of lm, glm (binomial), coxph, lmer or glmer (binomial).
+  }
+     \item{family}{
+    One of either "gaussian"" or "binomial". For binomial family, a probit link is assumed. 
+  }
 }
 
 \value{
   A list is returned; this contains the final imputed dataset (finimp) and several 3-dimensional matrices, containing all the values drawn for each parameter at each iteration: these are fixed effect parameters of the covariates beta (collectbeta), level 1 covariance matrices (collectomega), fixed effect estimates of the substantive model and associated residual variances. If there are some categorical outcomes, a further output is included in the list, finimp.latnorm, containing the final state of the imputed dataset with the latent normal variables.
-  Level 2 variables must be fully observed for valid inference. 
 }
 
 \examples{
@@ -124,7 +128,7 @@ Hyperparameter (Degrees of freedom) of the chi square prior distribution for the
   
   #And finally we run the imputation function:
   
-  imp<-jomo.lmer.MCMCchain(formula,data, level=mylevel, nburn=10)
+  imp<-jomo.smc.MCMCchain(formula,data, level=mylevel, nburn=10, model="lmer")
   
   # Note we are using only 10 iterations to avoid time consuming examples, 
   # which go against CRAN policies. 

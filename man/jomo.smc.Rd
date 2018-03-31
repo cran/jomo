@@ -1,25 +1,23 @@
-\name{jomo.lmer.MCMCchain}
-\alias{jomo.lmer.MCMCchain}
+\name{jomo.smc}
+\alias{jomo.smc}
 
 \title{
-  lmer Compatible JM Imputation - A tool to check convergence of the MCMC
+  Joint Modelling Substantive Model Compatible Imputation 
 }
 \description{
-  This function is similar to the jomo.lmer function, but it returns the values of all the parameters in the model at each step of the MCMC instead of the imputations. It is useful to check the convergence of the MCMC sampler.
-}
-\usage{
-  jomo.lmer.MCMCchain(formula, data, level=rep(1,ncol(data)), beta.start=NULL, 
-                      l2.beta.start=NULL, u.start=NULL, l1cov.start=NULL, 
-                      l2cov.start=NULL, l1cov.prior=NULL, l2cov.prior=NULL, 
-                      a.start=NULL, a.prior=NULL, betaY.start=NULL, 
-                      varY.start=NULL, covuY.start=NULL, uY.start=NULL, 
-                      nburn=1000, meth="common", start.imp=NULL, 
-                      start.imp.sub=NULL, l2.start.imp=NULL, output=1, 
-                      out.iter=10) 
+  A wrapper function for all the substantive model compatible JM imputation functions. The substantive model of interest is either lm, glm, lmer, glmer or coxph. Interactions and polynomial functions of the covariates are allowed. Data must be passed as a data.frame where continuous variables are numeric and binary/categorical variables are factors.}
 
+\usage{
+  jomo.smc(formula, data, level=rep(1,ncol(data)), beta.start=NULL,
+  l2.beta.start=NULL, u.start=NULL, l1cov.start=NULL, l2cov.start=NULL,
+  l1cov.prior=NULL, l2cov.prior=NULL, a.start=NULL, a.prior=NULL, 
+  nburn=1000, nbetween=1000, nimp=5, meth="common", family="binomial",
+  output=1, out.iter=10, model) 
+    
 }
-%- maybe also 'usage' for other objects documented here.
+
 \arguments{
+  
   \item{formula}{
     an object of class formula: a symbolic description of the model to be fitted. It is possible to include in this formula interactions (through symbols '*' and '%') and polynomial terms (with the usual lm syntax, e.g. for a quadratic effect for variable x, 'I(x^2)'). Random effects follow the usual lmer syntax; however, it is possible only to allow for one grouping variable and all the variables with random effects must be included within the same brackets (es: (1+X|clus) is correct, while (1|clus)+(X|clus) is NOT).
   }
@@ -28,7 +26,7 @@
     A data.frame containing all the variables to include in the imputation model. Columns related to continuous variables have to be numeric and columns related to binary/categorical variables have to be factors. 
   }
   \item{level}{
-  A vector, indicating whether each variable is either a level 1 or a level 2 variable. The value assigned to the cluster indicator is irrelevant. Level 2 variables must be fully observed for valid inference. 
+  If the dataset is multilevel, this must be a vector indicating whether each variable is either a level 1 or a level 2 variable. The value assigned to the cluster indicator is irrelevant.
   }
    \item{beta.start}{
     Starting value for beta, the vector(s) of level-1 fixed effects for the joint model for the covariates. For each n-category variable we have a fixed effect parameter for each of the n-1 latent normals. The default is a matrix of zeros.
@@ -62,24 +60,14 @@ Hyperparameter (Degrees of freedom) of the chi square prior distribution for the
     Method used to deal with level 1 covariance matrix. When set to "common", a common matrix across clusters is used (functions jomo1rancon, jomo1rancat and jomo1ranmix). When set to "fixed", fixed study-specific matrices are considered (jomo1ranconhr, jomo1rancathr and jomo1ranmixhr with coption meth="fixed"). Finally, when set to "random", random study-specific matrices are considered (jomo1ranconhr, jomo1rancathr and jomo1ranmixhr with option meth="random")
   }
 
-   \item{betaY.start}{
-    Starting value for betaY, the vector of fixed effects for the substantive analysis model.  The default is the complete records estimate.
-  }
-
-   \item{varY.start}{
-    Starting value for varY, the residual variance of the substantive analysis model.  The default is the complete records estimate.
-  }
-  
-   \item{covuY.start}{
-    Starting value for covuY, the random effects covariance matrix of the substantive analysis model.  The default is the complete records estimate.
-  }
-  
-    \item{uY.start}{
-    Starting value for uY, the random effects matrix of the substantive analysis model.  The default is the complete records estimate.
-  }
-  
   \item{nburn}{
     Number of burn in iterations. Default is 1000.
+  }
+  \item{nbetween}{
+    Number of iterations between two successive imputations. Default is 1000.
+  }
+  \item{nimp}{
+    Number of Imputations. Default is 5.
   }
   \item{output}{
     When set to any value different from 1 (default), no output is shown on screen at the end of the process.
@@ -87,24 +75,26 @@ Hyperparameter (Degrees of freedom) of the chi square prior distribution for the
   \item{out.iter}{
     When set to K, every K iterations a message "Iteration number N*K completed" is printed on screen. Default is 10. 
   }
-  \item{start.imp}{
-    Starting value for the missing data in the covariates of the substantive model. n-level categorical variables are substituted by n-1 latent normals.
+   \item{model}{
+    The type of model we want to impute compatibly with. It can currently be one of lm, glm (binomial), coxph, lmer or glmer (binomial).
   }
-    \item{l2.start.imp}{
-    Starting value for the missing data in the level-2 covariates of the substantive model. n-level categorical variables are substituted by n-1 latent normals.
+     \item{family}{
+    One of either "gaussian"" or "binomial". For binomial family, a probit link is assumed. 
   }
-  \item{start.imp.sub}{
-    Starting value for the missing data in the outcome of the substantive model.
-  }
+  
 }
-
+\details{
+  This function allows for substantive model compatible imputation. It can deal with interactions and polynomial terms through the usual lmer syntax in the formula argument. 
+  Format of the columns of data is crucial in order for the function to deal with binary/categorical covariates appropriately in the imputation algorithm.  }
 \value{
-  A list is returned; this contains the final imputed dataset (finimp) and several 3-dimensional matrices, containing all the values drawn for each parameter at each iteration: these are fixed effect parameters of the covariates beta (collectbeta), level 1 covariance matrices (collectomega), fixed effect estimates of the substantive model and associated residual variances. If there are some categorical outcomes, a further output is included in the list, finimp.latnorm, containing the final state of the imputed dataset with the latent normal variables.
-  Level 2 variables must be fully observed for valid inference. 
+  On screen, the posterior mean of the fixed effect estimates and of the residual variance are shown. The only argument returned is the imputed dataset in long format. Column "Imputation" indexes the imputations. Imputation number 0 are the original data.
+}
+\references{
+  Carpenter J.R., Kenward M.G., (2013), Multiple Imputation and its Application. Wiley, ISBN: 978-0-470-74052-1.
 }
 
 \examples{
-   #First of all we load and atach the data:
+  #First of all we load and atach the data:
   
   data(cldata)
   attach(cldata)
@@ -124,14 +114,18 @@ Hyperparameter (Degrees of freedom) of the chi square prior distribution for the
   
   #And finally we run the imputation function:
   
-  imp<-jomo.lmer.MCMCchain(formula,data, level=mylevel, nburn=10)
+  imp<-jomo.smc(formula,data, level=mylevel, nburn=10, nbetween=10, model="lmer")
   
   # Note we are using only 10 iterations to avoid time consuming examples, 
   # which go against CRAN policies. 
+  # If we were interested in a model with interactions:
   
-  # We can check, for example, the convergence of the first element of beta:
+  # formula2<-as.formula(measure~sex*age+(1|city))
+  # imp2<-jomo.smc(formula2,data, level=mylevel, nburn=10, nbetween=10, model="lmer")
   
-  plot(c(1:10),imp$collectbeta[1,1,1:10],type="l")
+  # The analysis and combination steps are as for all the other functions
+  # (see e.g. help file for jomo1con)
+  
   
   
 }
