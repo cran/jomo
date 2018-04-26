@@ -28,7 +28,7 @@
     A data.frame containing all the variables to include in the imputation model. Columns related to continuous variables have to be numeric and columns related to binary/categorical variables have to be factors. 
   }
   \item{level}{
-  A vector, indicating whether each variable is either a level 1 or a level 2 variable. The value assigned to the cluster indicator is irrelevant.   Level 2 variables must be fully observed for valid inference. 
+  A vector, indicating whether each variable is either a level 1 or a level 2 variable. The value assigned to the cluster indicator is irrelevant.   
 
   }
    \item{beta.start}{
@@ -103,7 +103,7 @@ Hyperparameter (Degrees of freedom) of the chi square prior distribution for the
 }
 
 \value{
-  A list is returned; this contains the final imputed dataset (finimp) and several 3-dimensional matrices, containing all the values drawn for each parameter at each iteration: these are fixed effect parameters of the covariates beta (collectbeta), level 1 covariance matrices (collectomega), fixed effect estimates of the substantive model and associated residual variances. If there are some categorical outcomes, a further output is included in the list, finimp.latnorm, containing the final state of the imputed dataset with the latent normal variables.   Level 2 variables must be fully observed for valid inference. 
+  A list is returned; this contains the final imputed dataset (finimp) and several 3-dimensional matrices, containing all the values drawn for each parameter at each iteration: these are fixed effect parameters of the covariates beta (collectbeta), level 1 covariance matrices (collectomega), fixed effect estimates of the substantive model and associated residual variances. If there are some categorical outcomes, a further output is included in the list, finimp.latnorm, containing the final state of the imputed dataset with the latent normal variables.   
 
 }
 

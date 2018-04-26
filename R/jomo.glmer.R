@@ -101,7 +101,7 @@ jomo.glmer <-
             } else if (length(which(colnames(Y2.cat)==current.term))!=0) {
               submod[1,h]<-which(colnames(Y2.cat)==current.term)
               submod[2,h]<-4
-              submod[4,h]<-Y.numcat[submod[1,h]]-1
+              submod[4,h]<-Y2.numcat[submod[1,h]]-1
             } else if (length(which(colnames(Y2.con)==current.term))!=0) {
               submod[1,h]<-which(colnames(Y2.con)==current.term)
               submod[2,h]<-3
@@ -150,7 +150,7 @@ jomo.glmer <-
       }
       X=matrix(1,max(nrow(Y.cat),nrow(Y.con)),1)
       if (!is.null(Y2.con)|!is.null(Y2.cat)|!is.null(Y2.aux.con)|!is.null(Y2.aux.cat)) {
-        cat("Level 2 variables must be fully observed for valid inference. \n")
+        #cat("Level 2 variables must be fully observed for valid inference. \n")
         X2=matrix(1,max(nrow(Y2.cat),nrow(Y2.con),nrow(Y2.aux.cat),nrow(Y2.aux.con)),1)
         if (is.null(l2.beta.start)) l2.beta.start=matrix(0,ncol(X2),(max(as.numeric(!is.null(Y2.con)),ncol(Y2.con))+max(0,(sum(Y2.numcat)-length(Y2.numcat)))+max(as.numeric(!is.null(Y2.aux.con)),ncol(Y2.aux.con))+max(0,(sum(Y2.aux.numcat)-length(Y2.aux.numcat)))))
       }
@@ -577,8 +577,8 @@ jomo.glmer <-
       }
       if (isnullcataux==0) {
         for (i in 1:ncol(Y.aux.cat)) {
-          imp[,(1+ncolYcon[1]+length(Y.numcat)+i)]<-as.factor(imp[,(1+ncolYcon[1]+length(Y.numcat)+i)]) 
-          levels(imp[,(1+ncolYcon[1]+length(Y.numcat)+i)])<-previous_levelsaux[[i]]
+          imp[,(1+ncolYcon[1]+ncolYcon[4]+i)]<-as.factor(imp[,(1+ncolYcon[1]+ncolYcon[4]+i)]) 
+          levels(imp[,(1+ncolYcon[1]+ncolYcon[4]+i)])<-previous_levelsaux[[i]]
         }
       }
       if (isnullcat2==0) {
@@ -589,8 +589,8 @@ jomo.glmer <-
       }
       if (isnullcat2aux==0) {
         for (i in 1:ncol(Y2.aux.cat)) {
-          imp[,(1+ncol(Y)+ncolY2con[3]+i)]<-as.factor(imp[,(1+ncol(Y)+ncolY2con[3]+i)]) 
-          levels(imp[,(1+ncol(Y)+ncolY2con[3]+i)])<-previous_levels2aux[[i]]
+          imp[,(1+ncol(Y)+ncolY2con[1]+ncolY2con[4]+i)]<-as.factor(imp[,(1+ncol(Y)+ncolY2con[1]+ncolY2con[4]+i)]) 
+          levels(imp[,(1+ncol(Y)+ncolY2con[1]+ncolY2con[4]+i)])<-previous_levels2aux[[i]]
         }
       }
       imp[,(ncol(Y)+ncY2+2)]<-factor(imp[,(ncol(Y)+ncY2+2)])

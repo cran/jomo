@@ -1168,12 +1168,12 @@ for (i=0;i<ns;i++) {
 				r8mat_pofac((Ju-1),omegaoo,help,14);
 				r8mat_poinv((Ju-1),help,invomega3);
 				for (jj=1;jj<Ju-1;jj++) for (tt=0;tt<jj;tt++) invomega3[jj+(Ju-1)*tt]=invomega3[tt+(Ju-1)*jj];
-				r8mat_mmt_new((Ju-1),(Ju-1),1,invomega3,omegamo,help4);
+				r8mat_mmt_new((Ju-1),(Ju-1),1,invomega3,omegamo,help5);
 				r8mat_divide((Ju-1),1,-1,betaobs);
 				r8mat_add((Ju-1),1,betaobs,Yobs);
-				r8mat_mtm_new(1,(Ju-1),1,Yobs,help4,mumiss);
+				r8mat_mtm_new(1,(Ju-1),1,Yobs,help5,mumiss);
 				mumiss[0]=mumiss[0]+betamiss[0];
-				r8mat_mm_new(1,(Ju-1),1,omegamo,help4,omegadrawmiss);
+				r8mat_mm_new(1,(Ju-1),1,omegamo,help5,omegadrawmiss);
 				omegadrawmiss[0]=omegamm[0]-omegadrawmiss[0];
 
 				if (((k-JY*JZ)<nconnoaux2)||(((k-JY*JZ)>=ncon2)&((k-JY*JZ)<nconcat2))) {

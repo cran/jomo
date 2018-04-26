@@ -230,8 +230,8 @@ jomo.coxph.MCMCchain <-
     }
     if (isnullcataux==0) {
       for (i in 1:ncol(Y.aux.cat)) {
-        imp[,(2+ncolYcon[3]+i)]<-as.factor(imp[,(2+ncolYcon[3]+i)]) 
-        levels(imp[,(2+ncolYcon[3]+i)])<-previous_levelsaux[[i]]
+        imp[,(2+ncolYcon[1]+ncolYcon[4]+i)]<-as.factor(imp[,(2+ncolYcon[1]+ncolYcon[4]+i)]) 
+        levels(imp[,(2+ncolYcon[1]+ncolYcon[4]+i)])<-previous_levelsaux[[i]]
       }
     }
     if (ncolYcon[1]>0) {
