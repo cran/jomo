@@ -66,7 +66,7 @@ jomo1cat.MCMCchain <-
     if (is.null(start.imp)) {
       for (i in 1:nrow(Yi)) for (j in 1:ncol(Yi)) if (is.na(Yimp[i,j])) Yimp2[i,j]=meanobs[j]
     } 
-    .Call("MCMCjomo1mix", Y, Yimp, Yimp2, Y.cat, X,betait,betapost,covit,omegapost, nburn, l1cov.prior,Y.numcat, 0, out.iter, PACKAGE = "jomo")
+    .Call("jomo1C", Y, Yimp, Yimp2, Y.cat, X,betait,betapost,covit,omegapost, nburn, l1cov.prior,Y.numcat, 0, out.iter, 1, PACKAGE = "jomo")
     imp[(nrow(Y)+1):(2*nrow(Y)),1:ncol(Y)]=Y.cat
     imp<-data.frame(imp)
     for (i in 1:ncol(Y)) {

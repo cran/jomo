@@ -55,8 +55,8 @@ Starting value for the missing data in the covariates of the substantive model. 
   }
 
   \examples{
-    #Load data and define substantive model
-    data(surdata)
+    # define substantive model
+
     formula<-as.formula(Surv(time, status) ~ measure + sex + I(measure^2))
     
     #Run imputation

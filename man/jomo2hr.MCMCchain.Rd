@@ -106,13 +106,11 @@ When set to K, every K iterations a message "Iteration number N*K completed" is 
 
 \examples{
 
- #First of all we load and attach the data:
-  
-data(tldata)
+
 attach(tldata)
 nburn=20
 
-#And then we run the imputation function. Note that we would typically use an higher 
+#now we run the imputation function. Note that we would typically use an higher 
 #number of nburn iterations in real applications (at least 100)
 
 imp<-jomo2hr.MCMCchain(Y.con=data.frame(measure.a), 

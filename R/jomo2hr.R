@@ -206,11 +206,11 @@ jomo2hr <-
     meanobs2<-colMeans(Y2i,na.rm=TRUE)
     for (i in 1:nrow(Y2i)) for (j in 1:ncol(Y2i)) if (is.na(Y2imp[i,j])) Y2imp2[i,j]=meanobs2[j]
     if (meth=="fixed") {
-      .Call("jomo2hf", Y, Yimp, Yimp2, Y.cat,  Y2, Y2imp,Y2imp2, Y2.cat, X, X2, Z, clus,betait,beta2it,uit,bpost,b2post,upost,covit,opost, covuit,cpost,nburn, l1cov.prior,l2cov.prior,Y.numcat, Y2.numcat, ncolYcon,ncolY2con,ait,out.iter, PACKAGE = "jomo")
+      fixed=1    
+    } else {
+      fixed=0
     }
-    if (meth=="random") {
-      .Call("jomo2hrC", Y, Yimp, Yimp2, Y.cat,  Y2, Y2imp,Y2imp2, Y2.cat, X, X2, Z, clus,betait,beta2it,uit,bpost,b2post,upost,covit,opost, covuit,cpost,nburn, l1cov.prior,l2cov.prior,Y.numcat, Y2.numcat, ncolYcon,ncolY2con,ait,a.prior,out.iter, PACKAGE = "jomo")
-    }
+    .Call("jomo2hrC", Y, Yimp, Yimp2, Y.cat,  Y2, Y2imp,Y2imp2, Y2.cat, X, X2, Z, clus,betait,beta2it,uit,bpost,b2post,upost,covit,opost, covuit,cpost,nburn, l1cov.prior,l2cov.prior,Y.numcat, Y2.numcat, ncolYcon,ncolY2con,ait,a.prior,out.iter, fixed, 0, PACKAGE = "jomo")
     #betapost[,,1]=bpost
     #upostall[,,1]=upost
     #omegapost[,,(1)]=opost
@@ -241,12 +241,7 @@ jomo2hr <-
       imp[(i*nrow(clus)+1):((i+1)*nrow(clus)), (ncol(Y)+ncol(Y2)+ncol(X)+ncol(X2)+ncol(Z)+1)]=clus
       imp[(i*nrow(X)+1):((i+1)*nrow(X)), (ncol(Y)+ncol(Y2)+ncol(X)+ncol(X2)+ncol(Z)+2)]=c(1:nrow(Y))
       imp[(i*nrow(X)+1):((i+1)*nrow(X)), (ncol(Y)+ncol(Y2)+ncol(X)+ncol(X2)+ncol(Z)+3)]=i
-      if (meth=="fixed") {
-        .Call("jomo2hf", Y, Yimp, Yimp2, Y.cat,  Y2, Y2imp,Y2imp2, Y2.cat, X, X2, Z, clus,betait,beta2it,uit,bpost,b2post,upost,covit,opost, covuit,cpost,nbetween, l1cov.prior,l2cov.prior,Y.numcat, Y2.numcat, ncolYcon,ncolY2con,ait,out.iter, PACKAGE = "jomo")
-      }
-      if (meth=="random") {
-        .Call("jomo2hrC", Y, Yimp, Yimp2, Y.cat,  Y2, Y2imp,Y2imp2, Y2.cat, X, X2, Z, clus,betait,beta2it,uit,bpost,b2post,upost,covit,opost, covuit,cpost,nbetween, l1cov.prior,l2cov.prior,Y.numcat, Y2.numcat, ncolYcon,ncolY2con,ait,a.prior,out.iter, PACKAGE = "jomo")
-      }
+      .Call("jomo2hrC", Y, Yimp, Yimp2, Y.cat,  Y2, Y2imp,Y2imp2, Y2.cat, X, X2, Z, clus,betait,beta2it,uit,bpost,b2post,upost,covit,opost, covuit,cpost,nbetween, l1cov.prior,l2cov.prior,Y.numcat, Y2.numcat, ncolYcon,ncolY2con,ait,a.prior,out.iter, fixed, 0, PACKAGE = "jomo")
       betapost[,,(i-1)]=bpost
       beta2post[,,(i-1)]=b2post
       upostall[,,(i-1)]=upost

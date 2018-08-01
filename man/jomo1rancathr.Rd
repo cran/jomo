@@ -92,12 +92,9 @@ Yucel R.M., (2011), Random-covariances and mixed-effects models for imputing mul
 
 \examples{
 
-#First of all we load and attach the data:
-
-data(cldata)
 attach(cldata)
 
-#Then we define the inputs
+# we define the inputs
 # nimp, nburn and nbetween are smaller than they should. This is
 #just because of CRAN policies on the examples.
 

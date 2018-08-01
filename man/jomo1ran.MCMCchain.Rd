@@ -77,9 +77,7 @@ A list with six elements is returned: the final imputed dataset (finimp) and fou
 }
 
 \examples{
-  #First of all we load and atach the data:
-  
-data(cldata)
+
 attach(cldata)
 
 #Then we define all the inputs:

@@ -94,7 +94,7 @@ jomo1rancat.MCMCchain <-
     if (is.null(start.imp)) {
       for (i in 1:nrow(Yi)) for (j in 1:ncol(Yi)) if (is.na(Yimp[i,j])) Yimp2[i,j]=rnorm(1,meanobs[j],1)
     } 
-    .Call("MCMCjomo1ranmix", Y, Yimp, Yimp2, Y.cat, X, Z, clus,betait,uit,betapost,upostall,covit,omegapost, covuit, covupost, nburn, l1cov.prior,l2cov.prior,Y.numcat, 0,out.iter, PACKAGE = "jomo")
+    .Call("jomo1ranC", Y, Yimp, Yimp2, Y.cat, X, Z, clus,betait,uit,betapost,upostall,covit,omegapost, covuit, covupost, nburn, l1cov.prior,l2cov.prior,Y.numcat, 0,out.iter, 1, PACKAGE = "jomo")
     
     imp[(nrow(Y)+1):(2*nrow(Y)),1:ncol(Y)]=Y.cat
     imp<-data.frame(imp)

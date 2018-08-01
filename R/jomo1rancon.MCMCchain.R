@@ -52,7 +52,7 @@ jomo1rancon.MCMCchain<- function(Y, X=NULL, Z=NULL, clus, beta.start=NULL, u.sta
   imp[1:nrow(clus), (ncol(Y)+ncol(X)+ncol(Z)+1)]=clus
   imp[1:nrow(X), (ncol(Y)+ncol(X)+ncol(Z)+2)]=c(1:nrow(Y))
   Yimp=Y
-  Yimp2=matrix(0, nrow(Y),ncol(Y))
+  Yimp2=matrix(Yimp, nrow(Y),ncol(Y))
   imp[(nrow(X)+1):(2*nrow(X)),(ncol(Y)+1):(ncol(Y)+ncol(X))]=X
   imp[(nrow(Z)+1):(2*nrow(Z)), (ncol(Y)+ncol(X)+1):(ncol(Y)+ncol(X)+ncol(Z))]=Z
   imp[(nrow(clus)+1):(2*nrow(clus)), (ncol(Y)+ncol(X)+ncol(Z)+1)]=clus
@@ -73,13 +73,13 @@ jomo1rancon.MCMCchain<- function(Y, X=NULL, Z=NULL, clus, beta.start=NULL, u.sta
     }
   }
   if (is.null(start.imp)) {
-    for (i in 1:nrow(Y)) for (j in 1:ncol(Y)) if (is.na(Yimp[i,j])) Yimp[i,j]=rnorm(1,meanobs[j],1)
+    for (i in 1:nrow(Y)) for (j in 1:ncol(Y)) if (is.na(Yimp[i,j])) Yimp2[i,j]=rnorm(1,meanobs[j],1)
   } 
   #for (i in 1:nrow(Y)) for (j in 1:ncol(Y)) if (is.na(Yimp[i,j])) Yimp[i,j]=rnorm(1,mean=meanobs[j], sd=0.01)
-  .Call("MCMCjomo1rancon", Y, Yimp, Yimp2, X, Z, clus, betait, uit, betapost, upostall, covit, omegapost, covuit, covupost, nburn, l1cov.prior, l2cov.prior,out.iter, PACKAGE = "jomo")
- 
+  Y.cat<-Y.numcat<-(-999)
+  .Call("jomo1ranC", Y, Yimp, Yimp2, Y.cat, X, Z, clus,betait,uit,betapost,upostall,covit,omegapost, covuit, covupost, nburn, l1cov.prior,l2cov.prior,Y.numcat, ncol(Y),out.iter, 1, PACKAGE = "jomo")
+  
   imp[(nrow(Y)+1):(2*nrow(Y)),1:ncol(Y)]=Yimp2
-  Yimp=Yimp2
   imp<-data.frame(imp)
   imp[,(ncol(Y)+ncol(X)+ncol(Z)+1)]<-factor(imp[,(ncol(Y)+ncol(X)+ncol(Z)+1)])
   levels(imp[,(ncol(Y)+ncol(X)+ncol(Z)+1)])<-previous_levels_clus

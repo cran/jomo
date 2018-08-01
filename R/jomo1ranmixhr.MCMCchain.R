@@ -43,8 +43,7 @@ jomo1ranmixhr.MCMCchain <-
     for (i in 1:nrow(l2cov.start)) {
       for (j in 1:ncol(l2cov.start)) covuit[i,j]=l2cov.start[i,j]
     }   
-    ait=0
-    ait=a
+    ait=as.numeric(a)
     nimp=1
     colnamycon<-colnames(Y.con)
     colnamycat<-colnames(Y.cat)
@@ -102,12 +101,11 @@ jomo1ranmixhr.MCMCchain <-
       for (i in 1:nrow(Yi)) for (j in 1:ncol(Yi)) if (is.na(Yimp[i,j])) Yimp2[i,j]=rnorm(1,meanobs[j],1)
     } 
     if (meth=="fixed") {
-      .Call("MCMCjomo1ranmixhf", Y, Yimp, Yimp2, Y.cat, X, Z, clus,betait,uit,betapost,upostall,covit,omegapost, covuit,covupost,nburn, l1cov.prior,l2cov.prior,Y.numcat, ncol(Y.con),ait,out.iter,PACKAGE = "jomo")
+      fixed=1    
+    } else {
+      fixed=0
     }
-    if (meth=="random") {
-      .Call("MCMCjomo1ranmixhr", Y, Yimp, Yimp2, Y.cat, X, Z, clus,betait,uit,betapost,upostall,covit,omegapost, covuit,covupost,nburn, l1cov.prior,l2cov.prior,Y.numcat, ncol(Y.con),ait,a.prior,out.iter,PACKAGE = "jomo")
-    }
-    
+      .Call("jomo1ranhrC", Y, Yimp, Yimp2, Y.cat, X, Z, clus,betait,uit,betapost,upostall,covit,omegapost, covuit,covupost,nburn, l1cov.prior,l2cov.prior,Y.numcat, ncol(Y.con),ait,a.prior,out.iter, fixed, 1, PACKAGE = "jomo")
     imp[(nrow(Y)+1):(2*nrow(Y)),1:ncol(Y.con)]=Yimp2[,1:ncol(Y.con)]
     imp[(nrow(Y)+1):(2*nrow(Y)),(ncol(Y.con)+1):ncol(Y)]=Y.cat
     imp<-data.frame(imp)

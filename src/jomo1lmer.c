@@ -866,8 +866,8 @@ for (i=0;i<ns;i++) {
 	r8mat_mmt_new(1,IY,1,residsub,residsub,mu2);
 	mu2[0]=mu2[0]+REAL(varYprior)[0];
 	invomega3[0]=1/mu2[0];
-	wishart_sample(1,IY+1,invomega3,newomega,help, omegaoo,omegamo,omegamm,0);	
-	REAL(varY)[0]=1/newomega[0];
+	wishart_sample(1,IY+1,invomega3,omegadrawmiss,help, omegaoo,omegamo,omegamm,0);	
+	REAL(varY)[0]=1/omegadrawmiss[0];
 //REAL(varY)[0]=1;
 	REAL(varYpost)[0]=REAL(varYpost)[0]+REAL(varY)[0];
 

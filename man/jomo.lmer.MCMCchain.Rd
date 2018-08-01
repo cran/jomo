@@ -103,9 +103,7 @@ Hyperparameter (Degrees of freedom) of the chi square prior distribution for the
 }
 
 \examples{
-   #First of all we load and atach the data:
-  
-  data(cldata)
+
   attach(cldata)
   
   #Then we make sure sex is a factor:

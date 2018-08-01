@@ -215,7 +215,7 @@ jomo2com.MCMCchain <-
     if (is.null(l2.start.imp)) {
       for (i in 1:nrow(Y2i)) for (j in 1:ncol(Y2i)) if (is.na(Y2imp[i,j])) Y2imp2[i,j]=l2.meanobs[j]
     }
-    .Call("MCMCjomo2com", Y, Yimp, Yimp2, Y.cat, Y2, Y2imp,Y2imp2, Y2.cat, X, X2, Z, clus,betait,beta2it,uit,betapost,beta2post,upostall,covit,omegapost, covuit, covupost, nburn, l1cov.prior,l2cov.prior,Y.numcat,Y2.numcat, ncolYcon,ncolY2con, out.iter, PACKAGE = "jomo")
+    .Call("jomo2comC", Y, Yimp, Yimp2, Y.cat, Y2, Y2imp,Y2imp2, Y2.cat, X, X2, Z, clus,betait,beta2it,uit,betapost,beta2post,upostall,covit,omegapost, covuit, covupost, nburn, l1cov.prior,l2cov.prior,Y.numcat,Y2.numcat, ncolYcon,ncolY2con, out.iter,1, PACKAGE = "jomo")
     if (!is.null(Y.con)) {
       imp[(nrow(X)+1):(2*nrow(X)),1:ncol(Y.con)]=Yimp2[,1:ncol(Y.con)]
     }
@@ -233,18 +233,6 @@ jomo2com.MCMCchain <-
     upostmean<-apply(upostall, c(1,2), mean)
     omegapostmean<-apply(omegapost, c(1,2), mean)
     covupostmean<-apply(covupost, c(1,2), mean)
-    if (output==1) {
-      cat("The posterior mean of the fixed effects estimates is:\n")
-      print(betapostmean)
-      cat("The posterior mean of the level 2 fixed effects estimates is:\n")
-      print(beta2postmean)
-      cat("The posterior mean of the random effects estimates is:\n")
-      print(upostmean)
-      cat("The posterior mean of the level 1 covariance matrix is:\n")
-      print(omegapostmean)
-      cat("The posterior mean of the level 2 covariance matrix is:\n")
-      print(covupostmean)
-    }
     imp<-data.frame(imp)
     if (isnullcat==0) {
       for (i in 1:ncol(Y.cat)) {

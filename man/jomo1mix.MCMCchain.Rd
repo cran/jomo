@@ -57,9 +57,7 @@ A list with four elements is returned: the final imputed dataset (finimp) and th
 
 
 \examples{
-#First of all we load and attach sldata
 
-data(sldata)
 attach(sldata)
 
 #Then, we define all the inputs:

@@ -76,11 +76,9 @@ Carpenter J.R., Kenward M.G., (2013), Multiple Imputation and its Application. C
 
 \examples{
 
-#First of all we load and attach the data:
-data(cldata)
 attach(cldata)
 
-#Then we define all the inputs:
+# we define all the inputs:
 Y<-data.frame(measure,age)
 X<-data.frame(rep(1,1000),sex)
 Z<-data.frame(rep(1,1000))

@@ -220,11 +220,11 @@ jomo2hr.MCMCchain <-
       for (i in 1:nrow(Y2i)) for (j in 1:ncol(Y2i)) if (is.na(Y2imp[i,j])) Y2imp2[i,j]=l2.meanobs[j]
     }
     if (meth=="fixed") {
-      .Call("MCMCjomo2hf", Y, Yimp, Yimp2, Y.cat, Y2, Y2imp,Y2imp2, Y2.cat, X, X2, Z, clus,betait,beta2it,uit,betapost,beta2post,upostall,covit,omegapost, covuit, covupost, nburn, l1cov.prior,l2cov.prior,Y.numcat,Y2.numcat, ncolYcon,ncolY2con,ait,out.iter, PACKAGE = "jomo")
+      fixed=1    
+    } else {
+      fixed=0
     }
-    if (meth=="random") {
-      .Call("MCMCjomo2hr", Y, Yimp, Yimp2, Y.cat, Y2, Y2imp,Y2imp2, Y2.cat, X, X2, Z, clus,betait,beta2it,uit,betapost,beta2post,upostall,covit,omegapost, covuit, covupost, nburn, l1cov.prior,l2cov.prior,Y.numcat,Y2.numcat, ncolYcon,ncolY2con,ait,a.prior,out.iter, PACKAGE = "jomo")
-    }
+    .Call("jomo2hrC", Y, Yimp, Yimp2, Y.cat, Y2, Y2imp,Y2imp2, Y2.cat, X, X2, Z, clus,betait,beta2it,uit,betapost,beta2post,upostall,covit,omegapost, covuit, covupost, nburn, l1cov.prior,l2cov.prior,Y.numcat,Y2.numcat, ncolYcon,ncolY2con,ait,a.prior,out.iter, fixed, 1, PACKAGE = "jomo")
     if (!is.null(Y.con)) {
       imp[(nrow(X)+1):(2*nrow(X)),1:ncol(Y.con)]=Yimp2[,1:ncol(Y.con)]
     }

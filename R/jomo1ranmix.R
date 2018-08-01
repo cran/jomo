@@ -93,7 +93,7 @@ function(Y.con, Y.cat, Y.numcat, X=NULL, Z=NULL, clus, beta.start=NULL, u.start=
   cpost<-matrix(0,nrow(l2cov.start),ncol(l2cov.start))
   meanobs<-colMeans(Yi,na.rm=TRUE)
   for (i in 1:nrow(Yi)) for (j in 1:ncol(Yi)) if (is.na(Yimp[i,j])) Yimp2[i,j]=rnorm(1,meanobs[j],1)
-  .Call("jomo1ranmixC", Y, Yimp, Yimp2, Y.cat, X, Z, clus,betait,uit,bpost,upost,covit,opost, covuit, cpost, nburn, l1cov.prior,l2cov.prior,Y.numcat, ncol(Y.con),out.iter, PACKAGE = "jomo")
+  .Call("jomo1ranC", Y, Yimp, Yimp2, Y.cat, X, Z, clus,betait,uit,bpost,upost,covit,opost, covuit, cpost, nburn, l1cov.prior,l2cov.prior,Y.numcat, ncol(Y.con),out.iter,0, PACKAGE = "jomo")
   #betapost[,,1]=bpost
   #upostall[,,1]=upost
   #omegapost[,,(1)]=opost
@@ -112,7 +112,7 @@ function(Y.con, Y.cat, Y.numcat, X=NULL, Z=NULL, clus, beta.start=NULL, u.start=
     imp[(i*nrow(clus)+1):((i+1)*nrow(clus)), (ncol(Y)+ncol(X)+ncol(Z)+1)]=clus
     imp[(i*nrow(Z)+1):((i+1)*nrow(Z)), (ncol(Y)+ncol(X)+ncol(Z)+2)]=c(1:nrow(Y))
     imp[(i*nrow(Z)+1):((i+1)*nrow(Z)), (ncol(Y)+ncol(X)+ncol(Z)+3)]=i 
-    .Call("jomo1ranmixC", Y, Yimp, Yimp2, Y.cat, X, Z, clus,betait,uit,bpost,upost,covit,opost, covuit, cpost, nbetween, l1cov.prior,l2cov.prior,Y.numcat, ncol(Y.con),out.iter, PACKAGE = "jomo")
+    .Call("jomo1ranC", Y, Yimp, Yimp2, Y.cat, X, Z, clus,betait,uit,bpost,upost,covit,opost, covuit, cpost, nbetween, l1cov.prior,l2cov.prior,Y.numcat, ncol(Y.con),out.iter,0, PACKAGE = "jomo")
     betapost[,,(i-1)]=bpost
     upostall[,,(i-1)]=upost
     omegapost[,,(i-1)]=opost

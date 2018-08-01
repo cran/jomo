@@ -59,12 +59,9 @@ On screen, the posterior mean of the fixed effects estimates and of the covarian
 Carpenter J.R., Kenward M.G., (2013), Multiple Imputation and its Application. Chapter 5, Wiley, ISBN: 978-0-470-74052-1.
 }
 \examples{
-#First of all we load and attach sldata
-library(jomo)
-data(sldata)
 attach(sldata)
 
-#Then, we define all the inputs:
+# we define all the inputs:
 # nimp, nburn and nbetween are smaller than they should. This is
 #just because of CRAN policies on the examples.
 

@@ -31,7 +31,7 @@ jomo1con<- function(Y, X=NULL, beta.start=NULL, l1cov.start=NULL, l1cov.prior=NU
   imp[1:nrow(X), (ncol(Y)+1):(ncol(Y)+ncol(X))]=X
   imp[1:nrow(X), (ncol(Y)+ncol(X)+1)]=c(1:nrow(Y))
   Yimp=Y
-  Yimp2=matrix(0, nrow(Y),ncol(Y))
+  Yimp2=matrix(Yimp, nrow(Y),ncol(Y))
   imp[(nrow(X)+1):(2*nrow(X)),(ncol(Y)+1):(ncol(Y)+ncol(X))]=X
   imp[(nrow(X)+1):(2*nrow(X)), (ncol(Y)+ncol(X)+1)]=c(1:nrow(Y))
   imp[(nrow(X)+1):(2*nrow(X)), (ncol(Y)+ncol(X)+2)]=1
@@ -40,27 +40,25 @@ jomo1con<- function(Y, X=NULL, beta.start=NULL, l1cov.start=NULL, l1cov.prior=NU
   omegapost<- array(0, dim=c(nrow(l1cov.start),ncol(l1cov.start),(nimp-1)))
   opost<-matrix(0,nrow(l1cov.start),ncol(l1cov.start))
   meanobs<-colMeans(Y,na.rm=TRUE)
-  for (i in 1:nrow(Y)) for (j in 1:ncol(Y)) if (is.na(Yimp[i,j])) Yimp[i,j]=meanobs[j]
-  .Call("jomo1conC", Y, Yimp, Yimp2, X,betait,bpost,covit, opost, nburn, l1cov.prior,out.iter, PACKAGE = "jomo")
+  for (i in 1:nrow(Y)) for (j in 1:ncol(Y)) if (is.na(Yimp[i,j])) Yimp2[i,j]=meanobs[j]
+  Y.cat<-Y.numcat<-(-999)
+  .Call("jomo1C", Y, Yimp, Yimp2, Y.cat, X,betait,bpost,covit,opost, nburn, l1cov.prior,Y.numcat, ncol(Y),out.iter,0, PACKAGE = "jomo")
   #betapost[,,1]=bpost
   #omegapost[,,1]=opost
   bpost<-matrix(0,nrow(beta.start),ncol(beta.start))
   opost<-matrix(0,nrow(l1cov.start),ncol(l1cov.start))
   imp[(nrow(Y)+1):(2*nrow(Y)),1:ncol(Y)]=Yimp2
-  Yimp=Yimp2
   if (output==1) cat("First imputation registered.", "\n")
   for (i in 2:nimp) {
-    Yimp2=matrix(0, nrow(Y),ncol(Y))
     imp[(i*nrow(X)+1):((i+1)*nrow(X)),(ncol(Y)+1):(ncol(Y)+ncol(X))]=X
     imp[(i*nrow(X)+1):((i+1)*nrow(X)), (ncol(Y)+ncol(X)+1)]=c(1:nrow(Y))
     imp[(i*nrow(X)+1):((i+1)*nrow(X)), (ncol(Y)+ncol(X)+2)]=i
-    .Call("jomo1conC", Y, Yimp, Yimp2, X,betait,bpost,covit, opost, nbetween, l1cov.prior,out.iter, PACKAGE = "jomo")
+    .Call("jomo1C", Y, Yimp, Yimp2, Y.cat, X,betait,bpost,covit, opost, nbetween, l1cov.prior, Y.numcat, ncol(Y),out.iter,0, PACKAGE = "jomo")
     betapost[,,(i-1)]=bpost
     omegapost[,,(i-1)]=opost
     bpost<-matrix(0,nrow(beta.start),ncol(beta.start))
     opost<-matrix(0,nrow(l1cov.start),ncol(l1cov.start))
     imp[(i*nrow(Y)+1):((i+1)*nrow(Y)),1:ncol(Y)]=Yimp2
-    Yimp=Yimp2
     if (output==1) cat("Imputation number ", i, "registered", "\n")
   }
   imp<-data.frame(imp)

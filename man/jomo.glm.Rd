@@ -65,9 +65,8 @@
 }
 
 \examples{
-   #First of all we load and attach the data:
+   #First of all we attach the data (only for simplicity in these examples):
   
-  data(sldata)
   attach(sldata)
   
   #Then we make sure sex is a factor:

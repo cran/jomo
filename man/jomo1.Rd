@@ -55,9 +55,7 @@ Carpenter J.R., Kenward M.G., (2013), Multiple Imputation and its Application. C
 }
 
 \examples{
-# Using sldata:
 
-data(sldata)
 attach(sldata)
 
 #We define all the inputs:

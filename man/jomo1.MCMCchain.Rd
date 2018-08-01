@@ -49,9 +49,7 @@ A list with three elements is returned: the final imputed dataset (finimp) and t
 }
 
 \examples{
-# Using sldata:
 
-data(sldata)
 attach(sldata)
 
 #We define all the inputs:

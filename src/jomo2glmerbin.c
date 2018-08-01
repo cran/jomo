@@ -909,7 +909,7 @@ for (i=0;i<ns;i++) {
 			mu2[0]=0;
 			for (t=0;t<Il;t++) mu2[0]=mu2[0]+REAL(betaY)[t]*Xsub[j+IY*t];
 			for (t=0;t<Ir;t++) mu2[0]=mu2[0]+REAL(uY)[(INTEGER(clus)[j])+nj*t]*Zsub[j+IY*t];
-			if (REAL(Ysubcat)[j]==0) mu2[0]=-mu2[0];
+			if (REAL(Ysubcat)[j]==1) mu2[0]=-mu2[0];
 			logLH=log(normal_cdf(mu2[0]))-help6[0]/2;
 		}
 		while (nmiss>0) {
@@ -948,7 +948,7 @@ for (i=0;i<ns;i++) {
 					mu2[0]=0;
 					for (t=0;t<Il;t++) mu2[0]=mu2[0]+REAL(betaY)[t]*Xsub[j+IY*t];
 					for (t=0;t<Ir;t++) mu2[0]=mu2[0]+REAL(uY)[(INTEGER(clus)[j])+nj*t]*Zsub[j+IY*t];
-					if (REAL(Ysubcat)[j]==0) mu2[0]=-mu2[0];
+					if (REAL(Ysubcat)[j]==1) mu2[0]=-mu2[0];
 					logLH=log(normal_cdf(mu2[0]))-help6[0]/2;
 
 				// Controllare se accettabile
@@ -1053,7 +1053,7 @@ for (i=0;i<ns;i++) {
 					for (t=0;t<Il;t++) mu2[0]=mu2[0]+REAL(betaY)[t]*Xsubprop[t];
 					for (t=0;t<Ir;t++) mu2[0]=mu2[0]+REAL(uY)[(INTEGER(clus)[j])+nj*t]*Zsubprop[t];
 					
-					if (REAL(Ysubcat)[j]==0) mu2[0]=-mu2[0];	
+					if (REAL(Ysubcat)[j]==1) mu2[0]=-mu2[0];	
 					newlogLH=log(normal_cdf(mu2[0]))-help[0]/2;
 
 					if ((( double ) unif_rand ( ) )<exp(newlogLH-logLH)) {	
@@ -1118,7 +1118,7 @@ for (i=0;i<ns;i++) {
 					mu2[0]=0;
 					for (t=0;t<Il;t++) mu2[0]=mu2[0]+REAL(betaY)[t]*Xsub[tt+IY*t];
 					for (t=0;t<Ir;t++) mu2[0]=mu2[0]+REAL(uY)[j+nj*t]*Zsub[tt+IY*t];
-					if (REAL(Ysubcat)[tt]==0) mu2[0]=-mu2[0];	
+					if (REAL(Ysubcat)[tt]==1) mu2[0]=-mu2[0];	
 					logLH=log(normal_cdf(mu2[0]))+logLH;
 				}				
 			}
@@ -1166,7 +1166,7 @@ for (i=0;i<ns;i++) {
 							mu2[0]=0;
 							for (t=0;t<Il;t++) mu2[0]=mu2[0]+REAL(betaY)[t]*Xsub[tt+IY*t];
 							for (t=0;t<Ir;t++) mu2[0]=mu2[0]+REAL(uY)[j+nj*t]*Zsub[tt+IY*t];
-							if (REAL(Ysubcat)[tt]==0) mu2[0]=-mu2[0];	
+							if (REAL(Ysubcat)[tt]==1) mu2[0]=-mu2[0];	
 							logLH=log(normal_cdf(mu2[0]))+logLH;
 						}				
 					}
@@ -1265,7 +1265,7 @@ for (i=0;i<ns;i++) {
 							mu2[0]=0;
 							for (t=0;t<Il;t++) mu2[0]=mu2[0]+REAL(betaY)[t]*Xsub[tt+IY*t];
 							for (t=0;t<Ir;t++) mu2[0]=mu2[0]+REAL(uY)[j+nj*t]*Zsub[tt+IY*t];
-							if (REAL(Ysubcat)[tt]==0) mu2[0]=-mu2[0];	
+							if (REAL(Ysubcat)[tt]==1) mu2[0]=-mu2[0];	
 							newlogLH=log(normal_cdf(mu2[0]))+logLH;
 						}				
 					}
@@ -1314,7 +1314,7 @@ for (i=0;i<ns;i++) {
 				for (k=0;k<Ir;k++) mu2[0]=mu2[0]+REAL(uY)[(INTEGER(clus)[t])+nj*k]*Zsub[t+k*IX];
 				while (flag==0&&kk<10000) {
 					yi[0]=r8_normal_sample(mu2[0],sqrt(REAL(varY)[0]),0);
-					if ((REAL(Ysub)[t]==1&&yi[0]>0)||(REAL(Ysub)[t]==0&&yi[0]<0)) {
+					if ((REAL(Ysub)[t]==2&&yi[0]>0)||(REAL(Ysub)[t]==1&&yi[0]<0)) {
 						impsub[t]=yi[0];
 						flag=1;
 					} else {
@@ -1438,7 +1438,7 @@ for (i=0;i<ns;i++) {
 			for (k=0;k<Il;k++) mu2[0]=mu2[0]+REAL(betaY)[k]*Xsub[t+k*IX];
 			for (k=0;k<Ir;k++) mu2[0]=mu2[0]+REAL(uY)[(INTEGER(clus)[t])+nj*k]*Zsub[t+k*IX];
 			impsub[t]=r8_normal_sample(mu2[0],sqrt(REAL(varY)[0]),0);
-			REAL(Ysubcat)[t]=(impsub[t]>0);
+			REAL(Ysubcat)[t]=(impsub[t]>0)+1;
 		}
 	}
 	

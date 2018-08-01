@@ -63,12 +63,10 @@
 }
 
 \examples{
-  #First of all we load and atach the data:
-  
-  data(sldata)
+
   attach(sldata)
   
-  #Then we make sure sex is a factor:
+  # make sure sex is a factor:
   
   sex<-factor(sex)
   

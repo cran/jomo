@@ -54,12 +54,9 @@ A list with four elements is returned: the final imputed dataset (finimp) and th
 }
 
 \examples{
-#First of all we load and attach sldata
-library(jomo)
-data(sldata)
 attach(sldata)
 
-#Then, we define all the inputs:
+# we define all the inputs:
 # nimp, nburn and nbetween are smaller than they should. This is
 #just because of CRAN policies on the examples.
 

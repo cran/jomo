@@ -109,14 +109,10 @@ Yucel R.M., (2011), Random-covariances and mixed-effects models for imputing mul
 
 \examples{
 
-
- #First of all we load and attach the data:
-  
-data(tldata)
 attach(tldata)
 
 
-#And then we run the imputation function. Note that we would typically use an higher 
+#now we run the imputation function. Note that we would typically use an higher 
 #number of nburn and nbetween iterations in real applications (at least 100)
 
 imp<-jomo2hr(Y.con=data.frame(measure.a), Y2.cat=data.frame(big.city),

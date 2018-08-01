@@ -47,8 +47,7 @@ function(Y.con, Y.cat, Y.numcat, X=NULL, Z=NULL, clus, beta.start=NULL, u.start=
   for (i in 1:nrow(l2cov.start)) {
     for (j in 1:ncol(l2cov.start)) covuit[i,j]=l2cov.start[i,j]
   }   
-  ait=0
-  ait=a
+  ait=as.numeric(a)
   colnamycon<-colnames(Y.con)
   colnamycat<-colnames(Y.cat)
   colnamx<-colnames(X)
@@ -98,11 +97,11 @@ function(Y.con, Y.cat, Y.numcat, X=NULL, Z=NULL, clus, beta.start=NULL, u.start=
   meanobs<-colMeans(Yi,na.rm=TRUE)
   for (i in 1:nrow(Yi)) for (j in 1:ncol(Yi)) if (is.na(Yimp[i,j])) Yimp2[i,j]=rnorm(1,meanobs[j],1)
   if (meth=="fixed") {
-    .Call("jomo1ranmixhf", Y, Yimp, Yimp2, Y.cat, X, Z, clus,betait,uit,bpost,upost,covit,opost, covuit,cpost,nburn, l1cov.prior,l2cov.prior,Y.numcat, ncol(Y.con),ait,out.iter, PACKAGE = "jomo")
+    fixed=1    
+  } else {
+    fixed=0
   }
-  if (meth=="random") {
-    .Call("jomo1ranmixhrC", Y, Yimp, Yimp2, Y.cat, X, Z, clus,betait,uit,bpost,upost,covit,opost, covuit,cpost,nburn, l1cov.prior,l2cov.prior,Y.numcat, ncol(Y.con),ait, a.prior, out.iter, PACKAGE = "jomo")
-  }
+    .Call("jomo1ranhrC", Y, Yimp, Yimp2, Y.cat, X, Z, clus,betait,uit,bpost,upost,covit,opost, covuit,cpost,nburn, l1cov.prior,l2cov.prior,Y.numcat, ncol(Y.con),ait, a.prior, out.iter, fixed, 0, PACKAGE = "jomo")
   #betapost[,,1]=bpost
   #upostall[,,1]=upost
   #omegapost[,,(1)]=opost
@@ -122,11 +121,11 @@ function(Y.con, Y.cat, Y.numcat, X=NULL, Z=NULL, clus, beta.start=NULL, u.start=
     imp[(i*nrow(Z)+1):((i+1)*nrow(Z)), (ncol(Y)+ncol(X)+ncol(Z)+2)]=c(1:nrow(Y))
     imp[(i*nrow(Z)+1):((i+1)*nrow(Z)), (ncol(Y)+ncol(X)+ncol(Z)+3)]=i  
     if (meth=="fixed") {
-      .Call("jomo1ranmixhf", Y, Yimp, Yimp2, Y.cat, X, Z, clus,betait,uit,bpost,upost,covit,opost, covuit,cpost,nbetween, l1cov.prior,l2cov.prior,Y.numcat, ncol(Y.con),ait,out.iter, PACKAGE = "jomo")
+      fixed=1    
+    } else {
+      fixed=0
     }
-    if (meth=="random") {
-      .Call("jomo1ranmixhrC", Y, Yimp, Yimp2, Y.cat, X, Z, clus,betait,uit,bpost,upost,covit,opost, covuit,cpost,nbetween, l1cov.prior,l2cov.prior,Y.numcat, ncol(Y.con),ait,a.prior,out.iter, PACKAGE = "jomo")
-    }
+    .Call("jomo1ranhrC", Y, Yimp, Yimp2, Y.cat, X, Z, clus,betait,uit,bpost,upost,covit,opost, covuit,cpost,nbetween, l1cov.prior,l2cov.prior,Y.numcat, ncol(Y.con),ait,a.prior,out.iter, fixed, 0, PACKAGE = "jomo")
     betapost[,,(i-1)]=bpost
     upostall[,,(i-1)]=upost
     omegapost[,,(i-1)]=opost

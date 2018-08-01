@@ -69,12 +69,10 @@ Starting value for the imputations of the outcome. When using binomial family, t
 }
 
 \examples{
-   #First of all we load and attach the data:
-  
-  data(sldata)
+
   attach(sldata)
   
-  #Then we make sure sex is a factor:
+  #we make sure sex is a factor:
   
   sex<-factor(sex)
   
@@ -93,7 +91,7 @@ Starting value for the imputations of the outcome. When using binomial family, t
   
   # Note we are using only 10 iterations to avoid time consuming examples,
   # which go against CRAN policies. In real applications we would use
-  # much larger burn-ins (around 1000).
+  # much larger burn-ins (around 1000, to say the least).
   
   # We can check, for example, the convergence of the first element of beta:
   

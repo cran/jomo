@@ -75,11 +75,9 @@ Carpenter J.R., Kenward M.G., (2013), Multiple Imputation and its Application. C
 }
 \examples{
 
-#First of all we load and attach the data:
-data(cldata)
 attach(cldata)
 
-#Then we define all the inputs:
+#we define all the inputs:
 # nimp, nburn and nbetween are smaller than they should. This is
 #just because of CRAN policies on the examples.
 

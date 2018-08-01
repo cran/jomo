@@ -9,9 +9,9 @@
 #include<Rinternals.h>
 #include<Rmath.h>
 
-SEXP jomo2hrC(SEXP Y, SEXP Yimp, SEXP Yimp2, SEXP Yimpcat, SEXP Y2, SEXP Y2imp, SEXP Y2imp2, SEXP Y2impcat, SEXP X, SEXP X2, SEXP Z, SEXP clus, SEXP beta, SEXP beta2, SEXP u, SEXP betapost, SEXP beta2post, SEXP upost, SEXP omega,SEXP omegapost, SEXP covu, SEXP covupost, SEXP nstep, SEXP Sp, SEXP Sup, SEXP Y_numcat, SEXP Y2_numcat, SEXP num_con, SEXP num_con2, SEXP a_start, SEXP flagrng){
+SEXP jomo2hrC(SEXP Y, SEXP Yimp, SEXP Yimp2, SEXP Yimpcat, SEXP Y2, SEXP Y2imp, SEXP Y2imp2, SEXP Y2impcat, SEXP X, SEXP X2, SEXP Z, SEXP clus, SEXP beta, SEXP beta2, SEXP u, SEXP betapost, SEXP beta2post, SEXP upost, SEXP omega,SEXP omegapost, SEXP covu, SEXP covupost, SEXP nstep, SEXP Sp, SEXP Sup, SEXP Y_numcat, SEXP Y2_numcat, SEXP num_con, SEXP num_con2, SEXP a_start, SEXP a_prior, SEXP flagrng, SEXP fixed, SEXP MCMCchain){
 int indic=0,i,j,k, IY,JY, IX, JX, Io, Jo, Ib, Jb, ns, nmiss=0,t, countm=0, counto=0, countmm=0, countmo=0,countoo=0, jj, tt, kk, ncon,ncat, pos,flag=0,nmaxx,h;
-int Iu, Ju, IZ, JZ, nj,c, fl,currncat, IY2, JY2, IX2,JX2,Ib2, Jb2,ncon2, ncat2, JYm, JXm;
+int Iu, Ju, IZ, JZ, nj,c, fl,currncat, IY2, JY2, IX2,JX2,Ib2, Jb2,ncon2, ncat2, JYm, JXm, MCMC, fix;
 SEXP RdimY, RdimX, Rdimo, Rdimb, RdimZ, Rdimu, RdimY2, RdimX2, Rdimb2;
 double *betaX, *Yobs, *Ymiss, *mumiss, *omegadrawmiss, *betamiss, *betaobs, *omegaoo, *omegaom, *omegamo, *omegamm, *invomega, *invomega2, *help, *help2, *help3, *imp, *imp2, *zi;
 double *sumzy, *incrzz, *incrzy, *mu, *mu2, *newbeta, *newomega, *sumzi, *yi, *invomega3, *help4, *help5, *help6, *missing, *fixomega,*resid, sdom, meanom, detom,logLH, newlogLH;
@@ -82,12 +82,17 @@ num_con2=PROTECT(coerceVector(num_con2,INTSXP));
 ncon2=INTEGER(num_con2)[0];
 flagrng=PROTECT(coerceVector(flagrng,INTSXP));
 fl=INTEGER(flagrng)[0];
+MCMCchain=PROTECT(coerceVector(MCMCchain,INTSXP));
+MCMC=INTEGER(MCMCchain)[0];
+fixed=PROTECT(coerceVector(fixed,INTSXP));
+fix=INTEGER(fixed)[0];
 if (REAL(Yimpcat)[0]==(-999)) ncat=0;
 else ncat=length(Y_numcat);
 if (REAL(Y2impcat)[0]==(-999)) ncat2=0;
 else ncat2=length(Y2_numcat);
 a_start=PROTECT(coerceVector(a_start,REALSXP));
 a=REAL(a_start)[0];
+a_prior=PROTECT(coerceVector(a_prior,REALSXP));
 nj=Iu;
 JXm=JX;
 if (JX2>JX) JXm=JX2;
@@ -167,7 +172,7 @@ covu12= (double * ) R_alloc ( JY * JZ * JY2 , sizeof ( double ) );
 
 gamma=JY+1;
 //a=JY+1;
-eta=JY;
+eta=REAL(a_prior)[0];
 dx=0.001;
 u_new=log(a+JY);
 precision=0.001;
@@ -513,8 +518,16 @@ for (i=0;i<ns;i++) {
 	r8mat_pofac(JY * JX,invomega2,help3,6);
 	r8vec_multinormal_sample(JY*JX, mu,help3, REAL(beta),newbeta,0);
 	
-	r8mat_add(Ib,Jb,REAL(beta),REAL(betapost));
+	if (MCMC==0) {
+		r8mat_add(Ib,Jb,REAL(beta),REAL(betapost));
+	} else {
+		for (j=0;j<Ib;j++) {
+			for (t=0;t<Jb;t++) {
+				REAL(betapost)[j+Ib*t+i*Ib*Jb]=REAL(beta)[j+Ib*t];
+			}
+		}
 
+	}
 		// Partitioning covu
 	
 	for (j=0;j<JY*JZ;j++) {
@@ -553,8 +566,16 @@ for (i=0;i<ns;i++) {
 	r8mat_mm_new(JY2*JX2,JY2*JX2,1,invomega2,sumxy,mu);
 	r8mat_pofac(JY2 * JX2,invomega2,help3,5);
 	r8vec_multinormal_sample(JY2*JX2, mu,help3, REAL(beta2),newbeta,0);
-	r8mat_add(Ib2,Jb2,REAL(beta2),REAL(beta2post));
+	if (MCMC==0) {
+		r8mat_add(Ib2,Jb2,REAL(beta2),REAL(beta2post));
+	} else {
+		for (j=0;j<Ib2;j++) {
+			for (t=0;t<Jb2;t++) {
+				REAL(beta2post)[j+Ib2*t+i*Ib2*Jb2]=REAL(beta2)[j+Ib2*t];
+			}
+		}
 
+	}
 	
 	// Calculating level 2 residuals 
 	
@@ -628,8 +649,16 @@ for (i=0;i<ns;i++) {
 		for (t=0;t<JY;t++) for (k=0;k<JZ;k++) REAL(u)[c+nj*(k+t*JZ)] = newu[k+t*JZ];
 		
 	}
-	r8mat_add(Iu,Ju,REAL(u),REAL(upost));
+	if (MCMC==0) {
+		r8mat_add(Iu,Ju,REAL(u),REAL(upost));
+	} else {
+		for (j=0;j<Iu;j++) {
+			for (t=0;t<Ju;t++) {
+				REAL(upost)[j+Iu*t+i*Iu*Ju]=REAL(u)[j+Iu*t];
+			}
+		}
 
+	}
 	//Updating level 2 covariance matrix
 
 	if (ncat2==0) {
@@ -651,7 +680,6 @@ for (i=0;i<ns;i++) {
 		for (jj=1;jj<(Ju);jj++) for (tt=0;tt<jj;tt++) invomega3[jj+(Ju)*tt]=invomega3[tt+(Ju)*jj];
 		for(k=0;k<(Ju);k++)  for(j=0;j<(Ju);j++)  REAL(covu)[j+(Ju)*k]=invomega3[j+(Ju)*k];
 	
-		r8mat_add(Ju,Ju,REAL(covu),REAL(covupost));
 	}
 	else {
 			flag=0;
@@ -712,10 +740,16 @@ for (i=0;i<ns;i++) {
 				}
 			}
 						
-		//	r8mat_print(Ju,Ju,REAL(covu),"covu");
-			r8mat_add(Ju,Ju,REAL(covu),REAL(covupost));
 	}
-
+	if (MCMC==0) {
+			r8mat_add(Ju,Ju,REAL(covu),REAL(covupost));
+	} else {
+		for (j=0;j<Ju;j++) {
+			for (t=0;t<Ju;t++) {
+				REAL(covupost)[j+Ju*t+i*Ju*Ju]=REAL(covu)[j+Ju*t];
+			}
+		}
+	}
 
 	//Updating residuals
 
@@ -729,54 +763,75 @@ for (i=0;i<ns;i++) {
 
 	//Updating omega
 
+	if (fix==0) {
+		
 	//Updating scale matrix of inverse Wishart
 	
-	for (t=0;t<JY*JY;t++) help[t]=0;
-	for (c=0;c<nj;c++) {
-		for (t=0;t<JY;t++) {
-			for (k=0;k<JY;k++) {
-				help[t+k*JY]=help[t+k*JY]+allinvomega[(c*JY+t)+k*(JY*nj)];
+		for (t=0;t<JY*JY;t++) help[t]=0;
+		for (c=0;c<nj;c++) {
+			for (t=0;t<JY;t++) {
+				for (k=0;k<JY;k++) {
+					help[t+k*JY]=help[t+k*JY]+allinvomega[(c*JY+t)+k*(JY*nj)];
+				}
 			}
 		}
+		r8mat_add(JY,JY,invgamma,help);
+		r8mat_pofac(JY,help,help7,10);
+		r8mat_poinv(JY, help7, Gammastar);
+		for (jj=1;jj<JY;jj++) for (tt=0;tt<jj;tt++) Gammastar[jj+JY*tt]=Gammastar[tt+JY*jj];
+
+		wishart_sample(JY,(nj*a+gamma),Gammastar,invA,help2, omegaoo,omegaom,omegamm,0);
+
+		u_new=log(a+JY);	
+		u_m=newton_raphson(u_new,precision, dx,eta,JY,nj,allinvomega,invomega,invgamma,help,help2);	
+		if (u_m==(-9999)) u_m=u_new;
+		deriv2=derive2_log_f_u(dx,eta, u_m, JY, nj, allinvomega, invomega,  invA,  help,  help2);
+		lambda=sqrt(-5/(4*deriv2));
+		u_prop=lambda*t_sample(4,0)+u_m;								
+		con2=exp(log_f_u(eta, u_prop, JY, nj, allinvomega, invomega, invA,help,help2)-log_f_u(eta, u_new, JY, nj, allinvomega, invomega, invA,help,help2))*h_u(u_new,u_m,lambda)/h_u(u_prop,u_m,lambda);
+		if ((( double ) unif_rand ( ) )<r8_min(1,con2)) u_new=u_prop;
+		if (isnan(exp(u_new)-JY)) u_new=log(a+JY);
+		if ((exp(u_new)-JY)<JY) u_new=log(a+JY);
+		a=exp(u_new)-JY;	
 	}
-	r8mat_add(JY,JY,invgamma,help);
-	r8mat_pofac(JY,help,help7,10);
-	r8mat_poinv(JY, help7, Gammastar);
-	for (jj=1;jj<JY;jj++) for (tt=0;tt<jj;tt++) Gammastar[jj+JY*tt]=Gammastar[tt+JY*jj];
-
-	wishart_sample(JY,(nj*a+gamma),Gammastar,invA,help2, omegaoo,omegaom,omegamm,0);
-
-	u_new=log(a+JY);	
-	u_m=newton_raphson(u_new,precision, dx,eta,JY,nj,allinvomega,invomega,invgamma,help,help2);	
-	if (u_m==(-9999)) u_m=u_new;
-	deriv2=derive2_log_f_u(dx,eta, u_m, JY, nj, allinvomega, invomega,  invA,  help,  help2);
-	lambda=sqrt(-5/(4*deriv2));
-	u_prop=lambda*t_sample(4,0)+u_m;								
-	con2=exp(log_f_u(eta, u_prop, JY, nj, allinvomega, invomega, invA,help,help2)-log_f_u(eta, u_new, JY, nj, allinvomega, invomega, invA,help,help2))*h_u(u_new,u_m,lambda)/h_u(u_prop,u_m,lambda);
-	if ((( double ) unif_rand ( ) )<r8_min(1,con2)) u_new=u_prop;
-	if (isnan(exp(u_new)-JY)) u_new=log(a+JY);
-	if ((exp(u_new)-JY)<JY) u_new=log(a+JY);
-	a=exp(u_new)-JY;	
-	
 	
 	//Updating matrices
 	
 	if (ncat==0) {
 		for (c=0;c<nj;c++) {	
-			for (j=0;j<JY*JY;j++) mu4[j]=0;
-			for (j=cumclus[c];j<cumclus[c+1];j++) {
-				for (t=0;t<JY;t++) {
-					yi[t]=resid[j+t*IY];
+			if (fix==0) {
+				for (j=0;j<JY*JY;j++) mu4[j]=0;
+				for (j=cumclus[c];j<cumclus[c+1];j++) {
+					for (t=0;t<JY;t++) {
+						yi[t]=resid[j+t*IY];
+					}
+					r8mat_mmt_new(JY,1,JY,yi,yi,help);
+					r8mat_add(JY,JY,help,mu4);
 				}
-				r8mat_mmt_new(JY,1,JY,yi,yi,help);
-				r8mat_add(JY,JY,help,mu4);
+				r8mat_add(JY,JY,invA,mu4);
+				r8mat_pofac(JY,mu4,help,11);
+				r8mat_poinv(JY, help,invomega);
+				for (jj=1;jj<JY;jj++) for (tt=0;tt<jj;tt++) invomega[jj+JY*tt]=invomega[tt+JY*jj];
+				wishart_sample(JY,clusnum[c]+a,invomega,newomega,help, omegaoo,omegaom,omegamm,0);
+				r8mat_pofac(JY,newomega,help,12);
+			} else {
+				for (j=0;j<JY*JY;j++) mu4[j]=0;
+				for (j=cumclus[c];j<cumclus[c+1];j++) {
+					for (t=0;t<JY;t++) {
+						yi[t]=resid[j+t*IY];
+					}
+					r8mat_mmt_new(JY,1,JY,yi,yi,help);
+					r8mat_add(JY,JY,help,mu4);		
+				}
+				r8mat_add(JY,JY,REAL(Sp),mu4);
+	
+				r8mat_pofac(JY,mu4,help,9);
+				r8mat_poinv(JY, help,invomega);
+				for (jj=1;jj<JY;jj++) for (tt=0;tt<jj;tt++) invomega[jj+JY*tt]=invomega[tt+JY*jj];
+				wishart_sample(JY,clusnum[c],invomega,newomega,help, omegaoo,omegamo,omegamm, 0);	
+				r8mat_pofac(JY,newomega,help,10);
+
 			}
-			r8mat_add(JY,JY,invA,mu4);
-			r8mat_pofac(JY,mu4,help,11);
-			r8mat_poinv(JY, help,invomega);
-			for (jj=1;jj<JY;jj++) for (tt=0;tt<jj;tt++) invomega[jj+JY*tt]=invomega[tt+JY*jj];
-			wishart_sample(JY,clusnum[c]+a,invomega,newomega,help, omegaoo,omegaom,omegamm,0);
-			r8mat_pofac(JY,newomega,help,12);
 			r8mat_poinv(JY, help,invomega);
 			for (jj=1;jj<JY;jj++) for (tt=0;tt<jj;tt++) invomega[jj+JY*tt]=invomega[tt+JY*jj];
 			for(k=0;k<JY;k++)  for(j=0;j<JY;j++)  REAL(omega)[(c*JY+j)+k*(JY*nj)]=invomega[j+JY*k];
@@ -784,7 +839,6 @@ for (i=0;i<ns;i++) {
 	}
 	else {
 		for (c=0;c<nj;c++) {	
-			aj=a+clusnum[c];
 			for (kk=0;kk<JY;kk++) {
 				for (tt=0;tt<JY;tt++) {
 					newomega[kk+tt*JY]=REAL(omega)[(c*JY+kk)+tt*(JY*nj)];
@@ -796,18 +850,30 @@ for (i=0;i<ns;i++) {
 
 			r8mat_poinv(JY, help,invomega);
 			for (jj=1;jj<JY;jj++) for (tt=0;tt<jj;tt++) invomega[jj+JY*tt]=invomega[tt+JY*jj];
-			logLH=0;
-			for (t=0;t<JY*JY;t++) help5[t]=0;
+			if (fix==0) {
+				aj=a+clusnum[c];
+				logLH=0;
+				for (t=0;t<JY*JY;t++) help5[t]=0;
+				for (t=cumclus[c];t<cumclus[c+1];t++) {
+					for (jj=0;jj<JY;jj++) help4[jj]=resid[t+jj*IY];
+						r8mat_mmt_new(JY,1,JY,help4,help4,help7);
+						r8mat_add(JY,JY,help7, help5);
+				}
+				r8mat_add(JY,JY,invA, help5);
+
+				r8mat_mm_new(JY,JY,JY,help5,invomega,help6);
+				for (t=0;t<JY;t++) logLH=logLH+help6[t+t*JY];
+				logLH=logLH*(-0.5)-(aj+JY+1)*log(detom)/2;
+			} else {
+				logLH=0;
 			for (t=cumclus[c];t<cumclus[c+1];t++) {
 				for (jj=0;jj<JY;jj++) help4[jj]=resid[t+jj*IY];
-					r8mat_mmt_new(JY,1,JY,help4,help4,help7);
-					r8mat_add(JY,JY,help7, help5);
+				r8mat_mm_new(1,JY,JY,help4,invomega,help5);
+				r8mat_mmt_new(1,JY,1,help5,help4,help6);
+				logLH=logLH+help6[0];
 			}
-			r8mat_add(JY,JY,invA, help5);
-
-			r8mat_mm_new(JY,JY,JY,help5,invomega,help6);
-			for (t=0;t<JY;t++) logLH=logLH+help6[t+t*JY];
-			logLH=logLH*(-0.5)-(aj+JY+1)*log(detom)/2;
+			logLH=logLH*(-0.5)-clusnum[c]*log(detom)/2;
+			}
 			for (j=0;j<JY;j++) {
 				for (k=0;k<JY;k++) {
 					if ((fixomega[j+JY*k]==0)&(j<=k)) {
@@ -823,17 +889,28 @@ for (i=0;i<ns;i++) {
 						while ((flag==0)&(kk<100)) {
 							newomega[j+JY*k]=r8_normal_sample(meanom,sdom,0);
 							newomega[k+JY*j]=newomega[j+JY*k];
-							flag=checkposdef(JY,newomega,help,help6);
+							if (fix==0) flag=checkposdef(JY,newomega,help,help6); else flag=checkposdef(JY,newomega,help,help5);
 							kk++;
 						}
 						r8mat_pofac(JY,newomega,help,7);
 						detom=r8mat_podet(JY, help);
 						r8mat_poinv(JY, help,invomega);
 						for (jj=1;jj<JY;jj++) for (tt=0;tt<jj;tt++) invomega[jj+JY*tt]=invomega[tt+JY*jj];
-						newlogLH=0;
-						r8mat_mm_new(JY,JY,JY,help5,invomega,help6);
-						for (t=0;t<JY;t++) newlogLH=newlogLH+help6[t+t*JY];
-						newlogLH=newlogLH*(-0.5)-(aj+JY+1)*log(detom)/2;
+						if (fix==0) {
+							newlogLH=0;
+							r8mat_mm_new(JY,JY,JY,help5,invomega,help6);
+							for (t=0;t<JY;t++) newlogLH=newlogLH+help6[t+t*JY];
+							newlogLH=newlogLH*(-0.5)-(aj+JY+1)*log(detom)/2;
+						} else {
+							newlogLH=0;
+							for (t=cumclus[c];t<cumclus[c+1];t++) {
+								for (jj=0;jj<JY;jj++) help4[jj]=resid[t+jj*IY];
+								r8mat_mm_new(1,JY,JY,help4,invomega,help5);
+								r8mat_mmt_new(1,JY,1,help5,help4,help6);
+								newlogLH=newlogLH+help6[0];
+							}
+						newlogLH=newlogLH*(-0.5)-clusnum[c]*log(detom)/2;
+						}
 						if (((( double ) unif_rand ( ))<exp(newlogLH-logLH))&(flag==1)) {
 							REAL(omega)[(c*JY+j)+k*(JY*nj)]=newomega[j+JY*k];
 							REAL(omega)[(c*JY+k)+j*(JY*nj)]=newomega[k+JY*j];
@@ -849,8 +926,16 @@ for (i=0;i<ns;i++) {
 			}
 		}
 	}
-	r8mat_add(Io,Jo,REAL(omega),REAL(omegapost));
-
+	if (MCMC==0) {
+			r8mat_add(Io,Jo,REAL(omega),REAL(omegapost));
+	} else {
+		for (j=0;j<Io;j++) {
+			for (t=0;t<Jo;t++) {
+				REAL(omegapost)[j+Io*t+i*Jo*Io]=REAL(omega)[j+Io*t];
+				}
+			}
+		}
+		
 	//imputing missing values
 	
 for (j=0; j<IY; j++) {
@@ -1062,14 +1147,15 @@ if (ncat2>0) {
 
 }
 
-
-r8mat_divide(Ib,Jb,ns,REAL(betapost));
-r8mat_divide(Ib2,Jb2,ns,REAL(beta2post));
-r8mat_divide(Iu,Ju,ns,REAL(upost));
-r8mat_divide(Ju,Ju,ns,REAL(covupost));
-r8mat_divide(JY,nj*JY,ns,REAL(omegapost));
+if (MCMC==0) {
+	r8mat_divide(Ib,Jb,ns,REAL(betapost));
+	r8mat_divide(Ib2,Jb2,ns,REAL(beta2post));
+	r8mat_divide(Iu,Ju,ns,REAL(upost));
+	r8mat_divide(Ju,Ju,ns,REAL(covupost));
+	r8mat_divide(JY,nj*JY,ns,REAL(omegapost));
+}
 REAL(a_start)[0]=a;
 PutRNGstate();
-UNPROTECT(40);
+UNPROTECT(43);
 return R_NilValue;
 }

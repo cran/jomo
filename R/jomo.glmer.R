@@ -187,6 +187,9 @@ jomo.glmer <-
       ncolYcon[4]=max(0,ncol(Y.cat))
       ncolY2con[4]=max(0,ncol(Y2.cat))
       stopifnot(((!is.null(Y.con))||(!is.null(Y.cat)&!is.null(Y.numcat)))||((!is.null(Y2.con))||(!is.null(Y2.cat)&!is.null(Y2.numcat))))
+      Ysub<-as.factor(Ysub)
+      previous_levelssub<-levels(Ysub)
+      levels(Ysub)<-1:2
       if (is.null(u.start)) u.start = matrix(0, nlevels(clus), ncol(Z)*(ncolYcon[1]+max(0,(sum(Y.numcat)-length(Y.numcat)))+max(0,(sum(Y.aux.numcat)-length(Y.aux.numcat))))+(ncolY2con[1]+max(0,(sum(Y2.numcat)-length(Y2.numcat)))+max(0,(sum(Y2.aux.numcat)-length(Y2.aux.numcat)))))
       if (is.null(l2cov.start)) l2cov.start = diag(1, ncol(u.start))
       if (is.null(l2cov.prior)) l2cov.prior = diag(1, ncol(l2cov.start))
@@ -569,6 +572,8 @@ jomo.glmer <-
         print(covupostmean)
       }
       imp<-data.frame(imp)
+      imp[,1]<-as.factor(imp[,1])
+      levels(imp[,1])<-previous_levelssub
       if (isnullcat==0) {
         for (i in 1:ncol(Y.cat)) {
           imp[,(1+ncolYcon[1]+i)]<-as.factor(imp[,(1+ncolYcon[1]+i)]) 

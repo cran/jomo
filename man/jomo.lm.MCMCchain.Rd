@@ -64,12 +64,10 @@ Starting value for the missing data in the outcome of the substantive model.
 }
 
 \examples{
-   #First of all we load and attach the data:
-  
-  data(sldata)
+
   attach(sldata)
   
-  #Then we make sure sex is a factor:
+  #make sure sex is a factor:
   
   sex<-factor(sex)
   

@@ -76,12 +76,10 @@ A list with five elements is returned: the final imputed dataset (finimp) and fo
 }
 
 \examples{
-#First of all we load and attach the data:
 
-data(cldata)
 attach(cldata)
 
-#Then we define the inputs
+# we define the inputs
 # nimp, nburn and nbetween are smaller than they should. This is
 #just because of CRAN policies on the examples.
 

@@ -83,12 +83,10 @@ Carpenter J.R., Kenward M.G., (2013), Multiple Imputation and its Application. C
 }
 
 \examples{
-  #First of all we load and atach the data:
-  
-data(cldata)
+
 attach(cldata)
 
-#Then we define all the inputs:
+# define all the inputs:
 
 Y<-data.frame(measure,age)
 clus<-data.frame(city)

@@ -89,12 +89,10 @@ Hyperparameter (Degrees of freedom) of the chi square prior distribution for the
 }
 
 \examples{
-  #First of all we load and attach the data:
-  
-  data(cldata)
+
   attach(cldata)
   
-  #Then we define all the inputs:
+  # define all the inputs:
   
   Y<-data.frame(measure,age)
   clus<-data.frame(city)

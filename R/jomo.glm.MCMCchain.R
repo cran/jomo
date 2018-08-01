@@ -92,6 +92,9 @@ jomo.glm.MCMCchain <-
       ncolYcon[3]=ncolYcon[1]+max(0,(sum(Y.numcat)-length(Y.numcat)))
       ncolYcon[4]=max(0,ncol(Y.cat))
       stopifnot(((!is.null(Y.con))||(!is.null(Y.cat)&!is.null(Y.numcat))))
+      Ysub<-as.factor(Ysub)
+      previous_levelssub<-levels(Ysub)
+      levels(Ysub)<-1:2
       if (!is.null(Y.cat)) {
         isnullcat=0
         previous_levels<-list()
@@ -251,6 +254,8 @@ jomo.glm.MCMCchain <-
         print(omegapostmean)
       }
       imp<-data.frame(imp)
+      imp[,1]<-as.factor(imp[,1])
+      levels(imp[,1])<-previous_levelssub
       if (isnullcat==0) {
         for (i in 1:ncol(Y.cat)) {
           imp[,(1+ncolYcon[1]+i)]<-as.factor(imp[,(1+ncolYcon[1]+i)]) 

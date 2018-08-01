@@ -55,7 +55,7 @@ jomo1rancon<- function(Y, X=NULL, Z=NULL, clus, beta.start=NULL, u.start=NULL, l
   imp[1:nrow(clus), (ncol(Y)+ncol(X)+ncol(Z)+1)]=clus
   imp[1:nrow(X), (ncol(Y)+ncol(X)+ncol(Z)+2)]=c(1:nrow(Y))
   Yimp=Y
-  Yimp2=matrix(0, nrow(Y),ncol(Y))
+  Yimp2=matrix(Yimp, nrow(Y),ncol(Y))
   imp[(nrow(X)+1):(2*nrow(X)),(ncol(Y)+1):(ncol(Y)+ncol(X))]=X
   imp[(nrow(Z)+1):(2*nrow(Z)), (ncol(Y)+ncol(X)+1):(ncol(Y)+ncol(X)+ncol(Z))]=Z
   imp[(nrow(clus)+1):(2*nrow(clus)), (ncol(Y)+ncol(X)+ncol(Z)+1)]=clus
@@ -70,9 +70,10 @@ jomo1rancon<- function(Y, X=NULL, Z=NULL, clus, beta.start=NULL, u.start=NULL, l
   covupost<- array(0, dim=c(nrow(l2cov.start),ncol(l2cov.start),(nimp-1)))
   cpost<-matrix(0,nrow(l2cov.start),ncol(l2cov.start))
   meanobs<-colMeans(Y,na.rm=TRUE)
-  for (i in 1:nrow(Y)) for (j in 1:ncol(Y)) if (is.na(Yimp[i,j])) Yimp[i,j]=rnorm(1,meanobs[j],1)
+  for (i in 1:nrow(Y)) for (j in 1:ncol(Y)) if (is.na(Yimp[i,j])) Yimp2[i,j]=rnorm(1,meanobs[j],1)
   #for (i in 1:nrow(Y)) for (j in 1:ncol(Y)) if (is.na(Yimp[i,j])) Yimp[i,j]=rnorm(1,mean=meanobs[j], sd=0.01)
-  .Call("jomo1ranconC", Y, Yimp, Yimp2, X, Z, clus, betait, uit, bpost, upost, covit, opost, covuit, cpost, nburn, l1cov.prior, l2cov.prior,out.iter, PACKAGE = "jomo")
+  Y.cat<-Y.numcat<-(-999)
+  .Call("jomo1ranC", Y, Yimp, Yimp2, Y.cat, X, Z, clus,betait,uit,bpost,upost,covit,opost, covuit, cpost, nburn, l1cov.prior,l2cov.prior,Y.numcat, ncol(Y),out.iter,0, PACKAGE = "jomo")
   #betapost[,,1]=bpost
   #upostall[,,1]=upost
   #omegapost[,,1]=opost
@@ -82,16 +83,14 @@ jomo1rancon<- function(Y, X=NULL, Z=NULL, clus, beta.start=NULL, u.start=NULL, l
   upost<-matrix(0,nrow(u.start),ncol(u.start))
   cpost<-matrix(0,nrow(l2cov.start),ncol(l2cov.start))
   imp[(nrow(Y)+1):(2*nrow(Y)),1:ncol(Y)]=Yimp2
-  Yimp=Yimp2
   if (output==1) cat("First imputation registered.", "\n")
   for (i in 2:nimp) {
-    Yimp2=matrix(0, nrow(Y),ncol(Y))
     imp[(i*nrow(X)+1):((i+1)*nrow(X)),(ncol(Y)+1):(ncol(Y)+ncol(X))]=X
     imp[(i*nrow(Z)+1):((i+1)*nrow(Z)), (ncol(Y)+ncol(X)+1):(ncol(Y)+ncol(X)+ncol(Z))]=Z
     imp[(i*nrow(clus)+1):((i+1)*nrow(clus)), (ncol(Y)+ncol(X)+ncol(Z)+1)]=clus
     imp[(i*nrow(Z)+1):((i+1)*nrow(Z)), (ncol(Y)+ncol(X)+ncol(Z)+2)]=c(1:nrow(Y))
     imp[(i*nrow(Z)+1):((i+1)*nrow(Z)), (ncol(Y)+ncol(X)+ncol(Z)+3)]=i
-    .Call("jomo1ranconC", Y, Yimp, Yimp2, X, Z, clus, betait, uit, bpost, upost, covit,opost, covuit,cpost, nbetween, l1cov.prior, l2cov.prior,out.iter, PACKAGE = "jomo")
+    .Call("jomo1ranC", Y, Yimp, Yimp2, Y.cat, X, Z, clus,betait,uit,bpost,upost,covit,opost, covuit, cpost, nbetween, l1cov.prior,l2cov.prior,Y.numcat, ncol(Y),out.iter,0, PACKAGE = "jomo")
     betapost[,,(i-1)]=bpost
     upostall[,,(i-1)]=upost
     omegapost[,,(i-1)]=opost
@@ -101,7 +100,6 @@ jomo1rancon<- function(Y, X=NULL, Z=NULL, clus, beta.start=NULL, u.start=NULL, l
     upost<-matrix(0,nrow(u.start),ncol(u.start))
     cpost<-matrix(0,nrow(l2cov.start),ncol(l2cov.start))
     imp[(i*nrow(Y)+1):((i+1)*nrow(Y)),1:ncol(Y)]=Yimp2
-    Yimp=Yimp2
     if (output==1) cat("Imputation number ", i, "registered", "\n")
   }
   imp<-data.frame(imp)
