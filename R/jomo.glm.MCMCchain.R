@@ -1,5 +1,5 @@
 jomo.glm.MCMCchain <-
-  function(formula, data, beta.start=NULL, l1cov.start=NULL, l1cov.prior=NULL, betaY.start=NULL, varY.start=NULL, nburn=1000, start.imp=NULL, start.imp.sub=NULL, output=1, out.iter=10, family="binomial") {
+  function(formula, data, beta.start=NULL, l1cov.start=NULL, l1cov.prior=NULL, betaY.start=NULL, nburn=1000, start.imp=NULL, start.imp.sub=NULL, output=1, out.iter=10, family="binomial") {
     cat("This function is beta software. Use carefully and please report any bug to the package mantainer\n")
     if (family != "gaussian" & family != "binomial") 
       cat("ERROR: choose either family binomial or gaussian\n")
@@ -15,7 +15,7 @@ jomo.glm.MCMCchain <-
       stopifnot(any(grepl("~",deparse(formula))))
       fit.cr<-glm(formula,data=data, na.action = na.omit, family=binomial)
       if (is.null(betaY.start)) betaY.start<-coef(fit.cr)
-      if (is.null(varY.start)) varY.start<-1
+      varY.start<-1
       varY.prior<-1
       colnamysub<-all.vars(formula[[2]])
       Ysub<-get(colnamysub,pos=data)
@@ -227,7 +227,7 @@ jomo.glm.MCMCchain <-
       }   
       Ysubcat <- c(Ysub)
       
-      .Call("MCMCjomoglmbin", Ysub, Ysubimp, Ysubcat, submod, order.sub, Y, Yimp, Yimp2, Y.cat.tot, X,betaY.start,betaYpost, betait,betapost, varY.start, varYpost, covit,omegapost, nburn, varY.prior, l1cov.prior,Y.numcat.tot, ncolYcon,out.iter, PACKAGE = "jomo")
+      .Call("jomoglmbinC", Ysub, Ysubimp, Ysubcat, submod, order.sub, Y, Yimp, Yimp2, Y.cat.tot, X,betaY.start,betaYpost, betait,betapost, varY.start, varYpost, covit,omegapost, nburn, varY.prior, l1cov.prior,Y.numcat.tot, ncolYcon,out.iter, 1, PACKAGE = "jomo")
       #betapost[,,1]=bpost
       #omegapost[,,(1)]=opost
       imp[(nrow(Y)+1):(2*nrow(Y)),1]=Ysubcat

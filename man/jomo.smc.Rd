@@ -5,7 +5,7 @@
   Joint Modelling Substantive Model Compatible Imputation 
 }
 \description{
-  A wrapper function for all the substantive model compatible JM imputation functions. The substantive model of interest is either lm, glm, lmer, glmer or coxph. Interactions and polynomial functions of the covariates are allowed. Data must be passed as a data.frame where continuous variables are numeric and binary/categorical variables are factors.}
+  A wrapper function for all the substantive model compatible JM imputation functions. The substantive model of interest is either lm, glm, polr, lmer, clmm, glmer or coxph. Interactions and polynomial functions of the covariates are allowed. Data must be passed as a data.frame where continuous variables are numeric and binary/categorical variables are factors.}
 
 \usage{
   jomo.smc(formula, data, level=rep(1,ncol(data)), beta.start=NULL,
@@ -73,10 +73,10 @@ Hyperparameter (Degrees of freedom) of the chi square prior distribution for the
     When set to any value different from 1 (default), no output is shown on screen at the end of the process.
   }
   \item{out.iter}{
-    When set to K, every K iterations a message "Iteration number N*K completed" is printed on screen. Default is 10. 
+    When set to K, every K iterations a dot is printed on screen. Default is 10. 
   }
    \item{model}{
-    The type of model we want to impute compatibly with. It can currently be one of lm, glm (binomial), coxph, lmer or glmer (binomial).
+    The type of model we want to impute compatibly with. It can currently be one of lm, glm (binomial), polr, coxph, lmer, clmm or glmer (binomial).
   }
      \item{family}{
     One of either "gaussian"" or "binomial". For binomial family, a probit link is assumed. 

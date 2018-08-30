@@ -1,5 +1,5 @@
 jomo.glmer.MCMCchain <-
-  function(formula, data, level=rep(1,ncol(data)), beta.start=NULL, l2.beta.start=NULL, u.start=NULL, l1cov.start=NULL, l2cov.start=NULL, l1cov.prior=NULL, l2cov.prior=NULL, a.start=NULL, a.prior=NULL, betaY.start=NULL, varY.start=NULL, covuY.start=NULL, uY.start=NULL, nburn=1000, meth="common", start.imp=NULL, start.imp.sub=NULL, l2.start.imp=NULL, output=1, out.iter=10, family="binomial") {
+  function(formula, data, level=rep(1,ncol(data)), beta.start=NULL, l2.beta.start=NULL, u.start=NULL, l1cov.start=NULL, l2cov.start=NULL, l1cov.prior=NULL, l2cov.prior=NULL, a.start=NULL, a.prior=NULL, betaY.start=NULL, covuY.start=NULL, uY.start=NULL, nburn=1000, meth="common", start.imp=NULL, start.imp.sub=NULL, l2.start.imp=NULL, output=1, out.iter=10, family="binomial") {
     cat("This function is beta software. Please use carefully and report any bug to the package mantainer\n")
     if (family!="gaussian"&family!="binomial") cat("ERROR: choose either family binomial or gaussian\n")
     if (family=="gaussian") {
@@ -10,7 +10,7 @@ jomo.glmer.MCMCchain <-
       stopifnot(any(grepl("~",deparse(formula))))
       fit.cr<-glmer(formula,data=data, family=binomial, na.action = na.omit)
       if (is.null(betaY.start)) betaY.start<-fixef(fit.cr)
-      if (is.null(varY.start)) varY.start<-1
+      varY.start<-1
       varY.prior<-1
       colnamysub<-all.vars(formula[[2]])
       Ysub<-get(colnamysub,pos=data)
@@ -468,17 +468,17 @@ jomo.glmer.MCMCchain <-
       Ysubcat <- c(Ysub)
       if (!is.null(Y2)) {
         if (meth=="common") {
-          .Call("MCMCjomo2glmerbin", Ysub, Ysubimp, Ysubcat, submod, order.sub, submod.ran, Y, Yimp, Yimp2, Y.cat.tot, Y2, Y2imp, Y2imp2, Y2.cat.tot, X, X2, Z, clus,betaY.start,betaYpost, betait,beta2it,uit,uY.start,betapost, upostall, uYpostall, beta2post, varY.start, varYpost, covit,omegapost, covuY.start, covuYpost, covuit, covupost, nburn, varY.prior, covuY.prior, l1cov.prior,l2cov.prior,Y.numcat.tot, Y2.numcat.tot, ncolYcon,ncolY2con, out.iter, PACKAGE = "jomo")
+          .Call("jomo2glmerbinC", Ysub, Ysubimp, Ysubcat, submod, order.sub, submod.ran, Y, Yimp, Yimp2, Y.cat.tot, Y2, Y2imp, Y2imp2, Y2.cat.tot, X, X2, Z, clus,betaY.start,betaYpost, betait,beta2it,uit,uY.start,betapost, upostall, uYpostall, beta2post, varY.start, varYpost, covit,omegapost, covuY.start, covuYpost, covuit, covupost, nburn, varY.prior, covuY.prior, l1cov.prior,l2cov.prior,Y.numcat.tot, Y2.numcat.tot, ncolYcon,ncolY2con, out.iter, 1, PACKAGE = "jomo")
 
           } else {
-          .Call("MCMCjomo2glmerbinhr", Ysub, Ysubimp, Ysubcat, submod, order.sub, submod.ran, Y, Yimp, Yimp2, Y.cat.tot, Y2, Y2imp, Y2imp2, Y2.cat.tot, X, X2, Z, clus,betaY.start,betaYpost, betait,beta2it,uit,uY.start,betapost, upostall, uYpostall, beta2post, varY.start, varYpost, covit,omegapost, covuY.start, covuYpost, covuit, covupost, nburn, varY.prior, covuY.prior, l1cov.prior,l2cov.prior,Y.numcat.tot, Y2.numcat.tot, ncolYcon,ncolY2con,a.start, a.prior, out.iter, PACKAGE = "jomo")
+          .Call("jomo2glmerbinhrC", Ysub, Ysubimp, Ysubcat, submod, order.sub, submod.ran, Y, Yimp, Yimp2, Y.cat.tot, Y2, Y2imp, Y2imp2, Y2.cat.tot, X, X2, Z, clus,betaY.start,betaYpost, betait,beta2it,uit,uY.start,betapost, upostall, uYpostall, beta2post, varY.start, varYpost, covit,omegapost, covuY.start, covuYpost, covuit, covupost, nburn, varY.prior, covuY.prior, l1cov.prior,l2cov.prior,Y.numcat.tot, Y2.numcat.tot, ncolYcon,ncolY2con,a.start, a.prior, out.iter, 1, PACKAGE = "jomo")
         }
       } else {
         if (meth=="common") {
-          .Call("MCMCjomo1glmerbin", Ysub, Ysubimp, Ysubcat, submod, order.sub, submod.ran, Y, Yimp, Yimp2, Y.cat.tot, X, Z, clus,betaY.start,betaYpost, betait,uit,uY.start,betapost, upostall, uYpostall, varY.start, varYpost, covit,omegapost, covuY.start, covuYpost, covuit, covupost, nburn, varY.prior, covuY.prior, l1cov.prior,l2cov.prior,Y.numcat.tot, ncolYcon,out.iter, PACKAGE = "jomo")
+          .Call("jomo1glmerbinC", Ysub, Ysubimp, Ysubcat, submod, order.sub, submod.ran, Y, Yimp, Yimp2, Y.cat.tot, X, Z, clus,betaY.start,betaYpost, betait,uit,uY.start,betapost, upostall, uYpostall, varY.start, varYpost, covit,omegapost, covuY.start, covuYpost, covuit, covupost, nburn, varY.prior, covuY.prior, l1cov.prior,l2cov.prior,Y.numcat.tot, ncolYcon,out.iter, 1, PACKAGE = "jomo")
 
         } else {
-          .Call("MCMCjomo1glmerbinhr", Ysub, Ysubimp, Ysubcat, submod, order.sub, submod.ran, Y, Yimp, Yimp2, Y.cat.tot, X, Z, clus,betaY.start,betaYpost, betait,uit,uY.start,betapost, upostall, uYpostall, varY.start, varYpost, covit,omegapost, covuY.start, covuYpost, covuit, covupost, nburn, varY.prior, covuY.prior, l1cov.prior,l2cov.prior,Y.numcat.tot, ncolYcon,a.start, a.prior, out.iter, PACKAGE = "jomo")
+          .Call("jomo1glmerbinhrC", Ysub, Ysubimp, Ysubcat, submod, order.sub, submod.ran, Y, Yimp, Yimp2, Y.cat.tot, X, Z, clus,betaY.start,betaYpost, betait,uit,uY.start,betapost, upostall, uYpostall, varY.start, varYpost, covit,omegapost, covuY.start, covuYpost, covuit, covupost, nburn, varY.prior, covuY.prior, l1cov.prior,l2cov.prior,Y.numcat.tot, ncolYcon,a.start, a.prior, out.iter, 1, PACKAGE = "jomo")
           }
       }
       imp[(nrow(Y)+1):(2*nrow(Y)),1]=Ysubcat

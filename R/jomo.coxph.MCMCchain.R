@@ -198,7 +198,7 @@ jomo.coxph.MCMCchain <-
       for (i in 1:nrow(Yi)) for (j in 1:ncol(Yi)) if (is.na(Yimp[i,j])) Yimp2[i,j]=meanobs[j]
     }
     
-    .Call("MCMCjomocox", Ysub, submod, order.sub, Y, Yimp, Yimp2, Y.cat.tot, X, betaY.start, betaYpost, betait, betapost, covit, omegapost, nburn, l1cov.prior,Y.numcat.tot, ncolYcon,out.iter, PACKAGE = "jomo")
+    .Call("jomocoxC", Ysub, submod, order.sub, Y, Yimp, Yimp2, Y.cat.tot, X, betaY.start, betaYpost, betait, betapost, covit, omegapost, nburn, l1cov.prior,Y.numcat.tot, ncolYcon,out.iter, 1, PACKAGE = "jomo")
     #betapost[,,1]=bpost
     #omegapost[,,(1)]=opost
     imp[(nrow(Y)+1):(2*nrow(Y)),1:2]=as.matrix(Ysub)

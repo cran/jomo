@@ -12,7 +12,7 @@
                       beta.start=NULL, l2.beta.start=NULL, u.start=NULL,
                       l1cov.start=NULL, l2cov.start=NULL, l1cov.prior=NULL,
                       l2cov.prior=NULL, a.start=NULL, a.prior=NULL,
-                      betaY.start=NULL, varY.start=NULL, covuY.start=NULL,
+                      betaY.start=NULL, covuY.start=NULL,
                       uY.start=NULL, nburn=1000, meth="common", 
                       start.imp=NULL, start.imp.sub=NULL, l2.start.imp=NULL,
                       output=1, out.iter=10, family="binomial") 
@@ -67,10 +67,6 @@ Hyperparameter (Degrees of freedom) of the chi square prior distribution for the
     Starting value for betaY, the vector of fixed effects for the substantive analysis model.  The default is the complete records estimate.
   }
 
-   \item{varY.start}{
-    Starting value for varY, the residual variance of the substantive analysis model.  The default is the complete records estimate. When using family="binomial", this is fixed to 1. 
-  }
-  
    \item{covuY.start}{
     Starting value for covuY, the random effects covariance matrix of the substantive analysis model.  The default is the complete records estimate.
   }
@@ -86,7 +82,7 @@ Hyperparameter (Degrees of freedom) of the chi square prior distribution for the
     When set to any value different from 1 (default), no output is shown on screen at the end of the process.
   }
   \item{out.iter}{
-    When set to K, every K iterations a message "Iteration number N*K completed" is printed on screen. Default is 10. 
+    When set to K, every K iterations a dot is printed on screen. Default is 10. 
   }
   \item{start.imp}{
     Starting value for the missing data in the covariates of the substantive model. n-level categorical variables are substituted by n-1 latent normals.

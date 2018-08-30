@@ -212,7 +212,7 @@ jomo.lm.MCMCchain <-
     if (is.null(start.imp.sub)) {
       for (i in 1:length(Ysubimp)) if (is.na(Ysubimp[i])) Ysubimp[i]=mean(Ysubimp, na.rm = TRUE)
     }    
-    .Call("MCMCjomolm", Ysub, Ysubimp, submod, order.sub, Y, Yimp, Yimp2, Y.cat.tot, X,betaY.start,betaYpost, betait,betapost, varY.start, varYpost, covit,omegapost, nburn, varY.prior, l1cov.prior,Y.numcat.tot, ncolYcon,out.iter, PACKAGE = "jomo")
+    .Call("jomolmC", Ysub, Ysubimp, submod, order.sub, Y, Yimp, Yimp2, Y.cat.tot, X,betaY.start,betaYpost, betait,betapost, varY.start, varYpost, covit,omegapost, nburn, varY.prior, l1cov.prior,Y.numcat.tot, ncolYcon,out.iter, 1, PACKAGE = "jomo")
     #betapost[,,1]=bpost
     #omegapost[,,(1)]=opost
     imp[(nrow(Y)+1):(2*nrow(Y)),1]=Ysubimp

@@ -9,7 +9,7 @@
 }
 \usage{
   jomo.glm.MCMCchain(formula, data, beta.start=NULL, l1cov.start=NULL, 
-  l1cov.prior=NULL, betaY.start=NULL, varY.start=NULL, nburn=1000, 
+  l1cov.prior=NULL, betaY.start=NULL, nburn=1000, 
   start.imp=NULL, start.imp.sub=NULL, output=1, out.iter=10, 
   family="binomial") 
   
@@ -45,10 +45,6 @@ Starting value for the imputations of the outcome. When using binomial family, t
     Starting value for betaY, the vector of fixed effects for the substantive analysis model.  The default is the complete records estimate.
   }
 
-   \item{varY.start}{
-    Starting value for varY, the residual variance of the substantive analysis model.  The default is the complete records estimate. When using family binomial, the variance is fixed to 1. 
-  }
-  
    \item{nburn}{
     Number of burn in iterations. Default is 1000.
   }
@@ -56,7 +52,7 @@ Starting value for the imputations of the outcome. When using binomial family, t
     When set to any value different from 1 (default), no output is shown on screen at the end of the process.
   }
   \item{out.iter}{
-    When set to K, every K iterations a message "Iteration number N*K completed" is printed on screen. Default is 10. 
+    When set to K, every K iterations a dot is printed on screen. Default is 10. 
   }
    \item{family}{
     One of either "gaussian"" or "binomial". For binomial family, a probit link is assumed. 

@@ -84,7 +84,7 @@ Hyperparameter (Degrees of freedom) of the chi square prior distribution for the
     When set to any value different from 1 (default), no output is shown on screen at the end of the process.
   }
   \item{out.iter}{
-    When set to K, every K iterations a message "Iteration number N*K completed" is printed on screen. Default is 10. 
+    When set to K, every K iterations a dot is printed on screen. Default is 10. 
   }
   \item{start.imp}{
     Starting value for the missing data in the covariates of the substantive model. n-level categorical variables are substituted by n-1 latent normals.
@@ -96,7 +96,7 @@ Hyperparameter (Degrees of freedom) of the chi square prior distribution for the
     Starting value for the missing data in the outcome of the substantive model.
   }
     \item{model}{
-    The type of model we want to impute compatibly with. It can currently be one of lm, glm (binomial), coxph, lmer or glmer (binomial).
+    The type of model we want to impute compatibly with. It can currently be one of lm, glm (binomial), polr, coxph, lmer, clmm or glmer (binomial).
   }
      \item{family}{
     One of either "gaussian"" or "binomial". For binomial family, a probit link is assumed. 

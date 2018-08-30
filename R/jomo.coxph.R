@@ -193,7 +193,7 @@ jomo.coxph <-
     meanobs<-colMeans(Yi,na.rm=TRUE)
     for (i in 1:nrow(Yi)) for (j in 1:ncol(Yi)) if (is.na(Yimp[i,j])) Yimp2[i,j]=meanobs[j]
 
-    .Call("jomocox", Ysub, submod, order.sub, Y, Yimp, Yimp2, Y.cat.tot, X, betaY.start, bYpost, betait,bpost, covit,opost, nburn, l1cov.prior,Y.numcat.tot, ncolYcon,out.iter, PACKAGE = "jomo")
+    .Call("jomocoxC", Ysub, submod, order.sub, Y, Yimp, Yimp2, Y.cat.tot, X, betaY.start, bYpost, betait,bpost, covit,opost, nburn, l1cov.prior,Y.numcat.tot, ncolYcon,out.iter, 0, PACKAGE = "jomo")
     #betapost[,,1]=bpost
     #omegapost[,,(1)]=opost
     bpost<-matrix(0,nrow(beta.start),ncol(beta.start))
@@ -211,7 +211,7 @@ jomo.coxph <-
       #Yimp2=matrix(0, nrow(Yimp),ncol(Yimp))
       imp[(i*nrow(X)+1):((i+1)*nrow(X)), (ncol(Y)+3)]=c(1:nrow(Y))
       imp[(i*nrow(X)+1):((i+1)*nrow(X)), (ncol(Y)+4)]=i
-      .Call("jomocox", Ysub, submod, order.sub, Y, Yimp, Yimp2, Y.cat.tot, X, betaY.start, bYpost, betait,bpost, covit,opost, nbetween, l1cov.prior,Y.numcat.tot, ncolYcon,out.iter, PACKAGE = "jomo")
+      .Call("jomocoxC", Ysub, submod, order.sub, Y, Yimp, Yimp2, Y.cat.tot, X, betaY.start, bYpost, betait,bpost, covit,opost, nbetween, l1cov.prior,Y.numcat.tot, ncolYcon,out.iter, 0, PACKAGE = "jomo")
       betapost[,,(i-1)]=bpost
       betaYpost[,,(i-1)]=bYpost
       omegapost[,,(i-1)]=opost

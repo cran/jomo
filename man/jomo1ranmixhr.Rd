@@ -74,7 +74,7 @@ When set to "random", we are assuming that all the covariance matrices are draws
 When set to any value different from 1 (default), no output is shown on screen at the end of the process.
 }
 \item{out.iter}{
-When set to K, every K iterations a message "Iteration number N*K completed" is printed on screen. Default is 10. 
+When set to K, every K iterations a dot is printed on screen. Default is 10. 
 }
 }
 \details{

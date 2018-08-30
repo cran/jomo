@@ -446,15 +446,15 @@ jomo.glmer <-
       
       if (!is.null(Y2)) {
         if (meth=="common") {
-          .Call("jomo2glmerbin", Ysub, Ysubimp, Ysubcat, submod, order.sub, submod.ran, Y, Yimp, Yimp2, Y.cat.tot, Y2, Y2imp, Y2imp2, Y2.cat.tot, X, X2, Z, clus,betaY.start,bYpost, betait, beta2it, uit,uY.start,bpost, upost, uYpost, b2post, varY.start, vYpost, covit,opost, covuY.start, cuYpost, covuit, cpost, nburn, varY.prior, covuY.prior, l1cov.prior,l2cov.prior,Y.numcat.tot, Y2.numcat.tot, ncolYcon,ncolY2con, out.iter, PACKAGE = "jomo")
+          .Call("jomo2glmerbinC", Ysub, Ysubimp, Ysubcat, submod, order.sub, submod.ran, Y, Yimp, Yimp2, Y.cat.tot, Y2, Y2imp, Y2imp2, Y2.cat.tot, X, X2, Z, clus,betaY.start,bYpost, betait, beta2it, uit,uY.start,bpost, upost, uYpost, b2post, varY.start, vYpost, covit,opost, covuY.start, cuYpost, covuit, cpost, nburn, varY.prior, covuY.prior, l1cov.prior,l2cov.prior,Y.numcat.tot, Y2.numcat.tot, ncolYcon,ncolY2con, out.iter, 0, PACKAGE = "jomo")
         } else {
-          .Call("jomo2glmerbinhr", Ysub, Ysubimp, Ysubcat, submod, order.sub, submod.ran, Y, Yimp, Yimp2, Y.cat.tot, Y2, Y2imp, Y2imp2, Y2.cat.tot, X, X2, Z, clus,betaY.start,bYpost, betait, beta2it, uit,uY.start,bpost, upost, uYpost, b2post, varY.start, vYpost, covit,opost, covuY.start, cuYpost, covuit, cpost, nburn, varY.prior, covuY.prior, l1cov.prior,l2cov.prior,Y.numcat.tot, Y2.numcat.tot, ncolYcon,ncolY2con, a.start, a.prior, out.iter, PACKAGE = "jomo")
+          .Call("jomo2glmerbinhrC", Ysub, Ysubimp, Ysubcat, submod, order.sub, submod.ran, Y, Yimp, Yimp2, Y.cat.tot, Y2, Y2imp, Y2imp2, Y2.cat.tot, X, X2, Z, clus,betaY.start,bYpost, betait, beta2it, uit,uY.start,bpost, upost, uYpost, b2post, varY.start, vYpost, covit,opost, covuY.start, cuYpost, covuit, cpost, nburn, varY.prior, covuY.prior, l1cov.prior,l2cov.prior,Y.numcat.tot, Y2.numcat.tot, ncolYcon,ncolY2con, a.start, a.prior, out.iter, 0, PACKAGE = "jomo")
         }
       } else {
         if (meth=="common") {
-          .Call("jomo1glmerbin", Ysub, Ysubimp, Ysubcat, submod, order.sub, submod.ran, Y, Yimp, Yimp2, Y.cat.tot, X, Z, clus,betaY.start,bYpost, betait,uit,uY.start,bpost, upost, uYpost, varY.start, vYpost, covit,opost, covuY.start, cuYpost, covuit, cpost, nburn, varY.prior, covuY.prior, l1cov.prior,l2cov.prior,Y.numcat.tot, ncolYcon,out.iter, PACKAGE = "jomo")
+          .Call("jomo1glmerbinC", Ysub, Ysubimp, Ysubcat, submod, order.sub, submod.ran, Y, Yimp, Yimp2, Y.cat.tot, X, Z, clus,betaY.start,bYpost, betait,uit,uY.start,bpost, upost, uYpost, varY.start, vYpost, covit,opost, covuY.start, cuYpost, covuit, cpost, nburn, varY.prior, covuY.prior, l1cov.prior,l2cov.prior,Y.numcat.tot, ncolYcon,out.iter, 0, PACKAGE = "jomo")
         } else {
-          .Call("jomo1glmerbinhr", Ysub, Ysubimp, Ysubcat, submod, order.sub, submod.ran, Y, Yimp, Yimp2, Y.cat.tot, X, Z, clus,betaY.start,bYpost, betait,uit,uY.start,bpost, upost, uYpost, varY.start, vYpost, covit,opost, covuY.start, cuYpost, covuit, cpost, nburn, varY.prior, covuY.prior, l1cov.prior,l2cov.prior,Y.numcat.tot, ncolYcon, a.start, a.prior, out.iter, PACKAGE = "jomo")
+          .Call("jomo1glmerbinhrC", Ysub, Ysubimp, Ysubcat, submod, order.sub, submod.ran, Y, Yimp, Yimp2, Y.cat.tot, X, Z, clus,betaY.start,bYpost, betait,uit,uY.start,bpost, upost, uYpost, varY.start, vYpost, covit,opost, covuY.start, cuYpost, covuit, cpost, nburn, varY.prior, covuY.prior, l1cov.prior,l2cov.prior,Y.numcat.tot, ncolYcon, a.start, a.prior, out.iter, 0, PACKAGE = "jomo")
           }
       }
       #betapost[,,1]=bpost
@@ -493,15 +493,15 @@ jomo.glmer <-
         imp[(i*nrow(X)+1):((i+1)*nrow(X)), (ncol(Y)+ncY2+4)]=i
         if (!is.null(Y2)) {
           if (meth=="common") {
-            .Call("jomo2glmerbin", Ysub, Ysubimp, Ysubcat, submod, order.sub, submod.ran, Y, Yimp, Yimp2, Y.cat.tot, Y2, Y2imp, Y2imp2, Y2.cat.tot, X, X2, Z, clus,betaY.start,bYpost, betait, beta2it, uit,uY.start,bpost, upost, uYpost, b2post, varY.start, vYpost, covit,opost, covuY.start, cuYpost, covuit, cpost, nbetween, varY.prior, covuY.prior, l1cov.prior,l2cov.prior,Y.numcat.tot, Y2.numcat.tot, ncolYcon,ncolY2con, out.iter, PACKAGE = "jomo")
+            .Call("jomo2glmerbinC", Ysub, Ysubimp, Ysubcat, submod, order.sub, submod.ran, Y, Yimp, Yimp2, Y.cat.tot, Y2, Y2imp, Y2imp2, Y2.cat.tot, X, X2, Z, clus,betaY.start,bYpost, betait, beta2it, uit,uY.start,bpost, upost, uYpost, b2post, varY.start, vYpost, covit,opost, covuY.start, cuYpost, covuit, cpost, nbetween, varY.prior, covuY.prior, l1cov.prior,l2cov.prior,Y.numcat.tot, Y2.numcat.tot, ncolYcon,ncolY2con, out.iter, 0, PACKAGE = "jomo")
           } else {
-            .Call("jomo2glmerbinhr", Ysub, Ysubimp, Ysubcat, submod, order.sub, submod.ran, Y, Yimp, Yimp2, Y.cat.tot, Y2, Y2imp, Y2imp2, Y2.cat.tot, X, X2, Z, clus,betaY.start,bYpost, betait, beta2it, uit,uY.start,bpost, upost, uYpost, b2post, varY.start, vYpost, covit,opost, covuY.start, cuYpost, covuit, cpost, nbetween, varY.prior, covuY.prior, l1cov.prior,l2cov.prior,Y.numcat.tot, Y2.numcat.tot, ncolYcon,ncolY2con, a.start, a.prior, out.iter, PACKAGE = "jomo")
+            .Call("jomo2glmerbinhrC", Ysub, Ysubimp, Ysubcat, submod, order.sub, submod.ran, Y, Yimp, Yimp2, Y.cat.tot, Y2, Y2imp, Y2imp2, Y2.cat.tot, X, X2, Z, clus,betaY.start,bYpost, betait, beta2it, uit,uY.start,bpost, upost, uYpost, b2post, varY.start, vYpost, covit,opost, covuY.start, cuYpost, covuit, cpost, nbetween, varY.prior, covuY.prior, l1cov.prior,l2cov.prior,Y.numcat.tot, Y2.numcat.tot, ncolYcon,ncolY2con, a.start, a.prior, out.iter, 0, PACKAGE = "jomo")
           }
         } else {
           if (meth=="common") {
-            .Call("jomo1glmerbin", Ysub, Ysubimp, Ysubcat, submod, order.sub, submod.ran, Y, Yimp, Yimp2, Y.cat.tot, X, Z, clus,betaY.start,bYpost, betait,uit,uY.start,bpost, upost, uYpost, varY.start, vYpost, covit,opost, covuY.start, cuYpost, covuit, cpost, nbetween, varY.prior, covuY.prior, l1cov.prior,l2cov.prior,Y.numcat.tot, ncolYcon,out.iter, PACKAGE = "jomo")
+            .Call("jomo1glmerbinC", Ysub, Ysubimp, Ysubcat, submod, order.sub, submod.ran, Y, Yimp, Yimp2, Y.cat.tot, X, Z, clus,betaY.start,bYpost, betait,uit,uY.start,bpost, upost, uYpost, varY.start, vYpost, covit,opost, covuY.start, cuYpost, covuit, cpost, nbetween, varY.prior, covuY.prior, l1cov.prior,l2cov.prior,Y.numcat.tot, ncolYcon,out.iter, 0, PACKAGE = "jomo")
           } else {
-            .Call("jomo1glmerbinhr", Ysub, Ysubimp, Ysubcat, submod, order.sub, submod.ran, Y, Yimp, Yimp2, Y.cat.tot, X, Z, clus,betaY.start,bYpost, betait,uit,uY.start,bpost, upost, uYpost, varY.start, vYpost, covit,opost, covuY.start, cuYpost, covuit, cpost, nbetween, varY.prior, covuY.prior, l1cov.prior,l2cov.prior,Y.numcat.tot, ncolYcon, a.start, a.prior, out.iter, PACKAGE = "jomo")
+            .Call("jomo1glmerbinhrC", Ysub, Ysubimp, Ysubcat, submod, order.sub, submod.ran, Y, Yimp, Yimp2, Y.cat.tot, X, Z, clus,betaY.start,bYpost, betait,uit,uY.start,bpost, upost, uYpost, varY.start, vYpost, covit,opost, covuY.start, cuYpost, covuit, cpost, nbetween, varY.prior, covuY.prior, l1cov.prior,l2cov.prior,Y.numcat.tot, ncolYcon, a.start, a.prior, out.iter, 0, PACKAGE = "jomo")
             }
         }
         betapost[,,(i-1)]=bpost

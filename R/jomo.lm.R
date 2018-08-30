@@ -199,7 +199,7 @@ jomo.lm <-
     for (i in 1:nrow(Yi)) for (j in 1:ncol(Yi)) if (is.na(Yimp[i,j])) Yimp2[i,j]=meanobs[j]
     for (i in 1:length(Ysubimp)) if (is.na(Ysubimp[i])) Ysubimp[i]=mean(Ysubimp, na.rm = TRUE)
     
-    .Call("jomolm", Ysub, Ysubimp, submod, order.sub, Y, Yimp, Yimp2, Y.cat.tot, X, betaY.start, bYpost, betait,bpost, varY.start, vYpost, covit,opost, nburn, varY.prior, l1cov.prior,Y.numcat.tot, ncolYcon,out.iter, PACKAGE = "jomo")
+    .Call("jomolmC", Ysub, Ysubimp, submod, order.sub, Y, Yimp, Yimp2, Y.cat.tot, X, betaY.start, bYpost, betait,bpost, varY.start, vYpost, covit,opost, nburn, varY.prior, l1cov.prior,Y.numcat.tot, ncolYcon,out.iter, 0, PACKAGE = "jomo")
     #betapost[,,1]=bpost
     #omegapost[,,(1)]=opost
     bpost<-matrix(0,nrow(beta.start),ncol(beta.start))
@@ -218,7 +218,7 @@ jomo.lm <-
       #Yimp2=matrix(0, nrow(Yimp),ncol(Yimp))
       imp[(i*nrow(X)+1):((i+1)*nrow(X)), (ncol(Y)+2)]=c(1:nrow(Y))
       imp[(i*nrow(X)+1):((i+1)*nrow(X)), (ncol(Y)+3)]=i
-      .Call("jomolm", Ysub, Ysubimp, submod, order.sub, Y, Yimp, Yimp2, Y.cat.tot, X, betaY.start, bYpost, betait,bpost, varY.start, vYpost, covit,opost, nbetween, varY.prior, l1cov.prior,Y.numcat.tot, ncolYcon,out.iter, PACKAGE = "jomo")
+      .Call("jomolmC", Ysub, Ysubimp, submod, order.sub, Y, Yimp, Yimp2, Y.cat.tot, X, betaY.start, bYpost, betait,bpost, varY.start, vYpost, covit,opost, nbetween, varY.prior, l1cov.prior,Y.numcat.tot, ncolYcon,out.iter, 0, PACKAGE = "jomo")
       betapost[,,(i-1)]=bpost
       betaYpost[,,(i-1)]=bYpost
       omegapost[,,(i-1)]=opost

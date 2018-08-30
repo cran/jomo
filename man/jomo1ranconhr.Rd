@@ -69,7 +69,7 @@ This can be set to "Fixed" or "Random". In the first case the function will cons
 When set to any value different from 1 (default), no output is shown on screen at the end of the process.
 }
 \item{out.iter}{
-When set to K, every K iterations a message "Iteration number N*K completed" is printed on screen. Default is 10. 
+When set to K, every K iterations a dot is printed on screen. Default is 10. 
 }
 }
 \details{
