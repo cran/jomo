@@ -95,15 +95,13 @@ Hyperparameter (Degrees of freedom) of the chi square prior distribution for the
 
 \examples{
 
-  attach(cldata)
-  
   # make sure sex is a factor:
   
-  sex<-factor(sex)
+  cldata<-within(cldata, sex<-factor(sex))
   
   # we define the data frame with all the variables 
   
-  data<-data.frame(measure,age, sex, city)
+  data<-cldata[,c("measure","age", "sex", "city")]
   mylevel<-c(1,1,1,1)
   
   # And the formula of the substantive lm model
@@ -112,17 +110,18 @@ Hyperparameter (Degrees of freedom) of the chi square prior distribution for the
   
   #And finally we run the imputation function:
   
-  imp<-jomo.smc(formula,data, level=mylevel, nburn=10, nbetween=10, model="lmer")
+  imp<-jomo.smc(formula,data, level=mylevel, nburn=100, nbetween=100, model="lmer")
   
-  # Note we are using only 10 iterations to avoid time consuming examples, 
+  # Note we are using only 100 iterations to avoid time consuming examples, 
   # which go against CRAN policies. 
   # If we were interested in a model with interactions:
   
   # formula2<-as.formula(measure~sex*age+(1|city))
-  # imp2<-jomo.smc(formula2,data, level=mylevel, nburn=10, nbetween=10, model="lmer")
+  # imp2<-jomo.smc(formula2,data, level=mylevel, nburn=100, nbetween=100, model="lmer")
   
   # The analysis and combination steps are as for all the other functions
-  # (see e.g. help file for jomo1con)
+  # (see e.g. help file for function jomo)
+
   
   
   

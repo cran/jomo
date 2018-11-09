@@ -84,11 +84,16 @@ jomo1rancat.MCMCchain <-
     meanobs<-colMeans(Yi,na.rm=TRUE)
     if (!is.null(start.imp)) {
       start.imp<-as.matrix(start.imp)
-      if ((nrow(start.imp)!=nrow(Yimp2))||(ncol(Yimp2)!=ncol(start.imp))) {
+      if ((nrow(start.imp)!=nrow(Yimp2))||(ncol(Yimp2)>ncol(start.imp))) {
         cat("start.imp dimensions incorrect. Not using start.imp as starting value for the imputed dataset.\n")
         start.imp=NULL
       } else {
-        Yimp2<-start.imp
+        if ((nrow(start.imp)==nrow(Yimp2))&(ncol(Yimp2)<ncol(start.imp))) {
+          Yimp2<-start.imp[,1:ncol(Yimp2)]
+          cat("NOTE: start.imp has more columns than needed. Dropping unnecessary columns.\n")
+        } else {
+          Yimp2<-start.imp
+        }
       }
     }
     if (is.null(start.imp)) {

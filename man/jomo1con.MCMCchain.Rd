@@ -51,12 +51,12 @@ A list with three elements is returned: the final imputed dataset (finimp) and t
 
 \examples{
 
-attach(sldata)
-
 #We define all the inputs:
 
-Y=data.frame(measure,age)
-X=data.frame(rep(1,300),sex)
+Y=sldata[,c("measure", "age")]
+X=data.frame(rep(1,300),sldata[,c("sex")])
+colnames(X)<-c("const", "sex")
+
 beta.start<-matrix(0,2,2)
 l1cov.start<-diag(1,2)
 l1cov.prior=diag(1,2);

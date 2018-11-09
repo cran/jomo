@@ -58,16 +58,15 @@ A list with four elements is returned: the final imputed dataset (finimp) and th
 
 \examples{
 
-attach(sldata)
-
 #Then, we define all the inputs:
-# nimp, nburn and nbetween are smaller than they should. This is
+# nburn is smaller than needed. This is
 #just because of CRAN policies on the examples.
 
-Y.con=data.frame(measure,age)
-Y.cat=data.frame(social)
+Y.con=sldata[,c("measure","age")]
+Y.cat=sldata[,c("social"), drop=FALSE]
 Y.numcat=matrix(4,1,1)
-X=data.frame(rep(1,300),sex)
+X=data.frame(rep(1,300),sldata[,c("sex")])
+colnames(X)<-c("const", "sex")
 beta.start<-matrix(0,2,5)
 l1cov.start<-diag(1,5)
 l1cov.prior=diag(1,5);
@@ -84,7 +83,7 @@ plot(c(1:nburn),imp$collectbeta[1,1,1:nburn],type="l")
 
 #Or similarly we can check the convergence of any element of omega:
 
-plot(c(1:nburn),imp$collectomega[1,2,1:nburn],type="l")
+plot(c(1:nburn),imp$collectomega[1,1,1:nburn],type="l")
 
 
 }

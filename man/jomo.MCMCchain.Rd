@@ -90,12 +90,10 @@ Hyperparameter (Degrees of freedom) of the chi square prior distribution for the
 
 \examples{
 
-  attach(cldata)
-  
   # define all the inputs:
   
-  Y<-data.frame(measure,age)
-  clus<-data.frame(city)
+  Y<-cldata[,c("measure","age")]
+  clus<-cldata[,c("city")]
   nburn=as.integer(200);
   
   #And finally we run the imputation function:
@@ -104,7 +102,7 @@ Hyperparameter (Degrees of freedom) of the chi square prior distribution for the
   
   plot(c(1:nburn),imp$collectbeta[1,1,1:nburn],type="l")
   
-  #Or similarly we can check the convergence of any element of th elevel 2 covariance matrix:
+  #Or similarly we can check the convergence of any element of the level 2 covariance matrix:
   
   plot(c(1:nburn),imp$collectcovu[1,2,1:nburn],type="l")
 }

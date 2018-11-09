@@ -95,12 +95,15 @@ Carpenter J.R., Kenward M.G., (2013), Multiple Imputation and its Application. C
 
 \examples{
 
-attach(tldata)
-
+Y<-tldata[,c("measure.a"), drop=FALSE]
+Y2<-tldata[,c("big.city"), drop=FALSE]
+clus<-tldata[,c("city")]
 
 #now we run the imputation function. Note that we would typically use an higher 
-#number of nburn and nbetween iterations in real applications (at least 100)
+#number of nburn iterations in real applications (at least 1000)
 
-imp<-jomo2com(Y.con=data.frame(measure.a), Y2.cat=data.frame(big.city),
-                  Y2.numcat=c(2), clus=city,nburn=10,nbetween=10,nimp=3)
+imp<-jomo2com(Y.con=Y, Y2.cat=Y2, Y2.numcat=2, clus=clus,nburn=10, nbetween=10, nimp=2)
+  # Check help page for function jomo to see how to fit the model and 
+  # combine estimates with Rubin's rules
+
 }

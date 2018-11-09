@@ -107,17 +107,22 @@ When set to K, every K iterations a dot is printed on screen. Default is 10.
 \examples{
 
 
-attach(tldata)
+Y<-tldata[,c("measure.a"), drop=FALSE]
+Y2<-tldata[,c("big.city"), drop=FALSE]
+clus<-tldata[,c("city")]
 nburn=20
 
 #now we run the imputation function. Note that we would typically use an higher 
 #number of nburn iterations in real applications (at least 100)
 
-imp<-jomo2hr.MCMCchain(Y.con=data.frame(measure.a), 
-         Y2.cat=data.frame(big.city), Y2.numcat=c(2), clus=city,nburn=nburn)
-         
+imp<-jomo2hr.MCMCchain(Y.con=Y, Y2.cat=Y2, Y2.numcat=2, clus=clus,nburn=nburn)
+
 #We can check the convergence of the first element of beta:
 
 plot(c(1:nburn),imp$collectbeta[1,1,1:nburn],type="l")
+
+#Or similarly we can check the convergence of any element of the level 2 covariance matrix:
+
+plot(c(1:nburn),imp$collectcovu[1,2,1:nburn],type="l")
 }
 

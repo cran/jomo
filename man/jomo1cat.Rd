@@ -59,15 +59,19 @@ On screen, the posterior mean of the fixed effects estimates and of the covarian
 Carpenter J.R., Kenward M.G., (2013), Multiple Imputation and its Application. Chapter 5, Wiley, ISBN: 978-0-470-74052-1.
 }
 \examples{
-attach(sldata)
+# make sure sex is a factor:
+
+sldata<-within(sldata, sex<-factor(sex))
+
 
 # we define all the inputs:
 # nimp, nburn and nbetween are smaller than they should. This is
 #just because of CRAN policies on the examples.
 
-Y.cat=data.frame(social)
+Y.cat=sldata[,c("social"), drop=FALSE]
 Y.numcat=matrix(4,1,1)
-X=data.frame(rep(1,300),sex)
+X=data.frame(rep(1,300),sldata[,c("sex")])
+colnames(X)<-c("const", "sex")
 beta.start<-matrix(0,2,3)
 l1cov.start<-diag(1,3)
 l1cov.prior=diag(1,3);
@@ -82,5 +86,9 @@ imp<-jomo1cat(Y.cat,Y.numcat,X,beta.start,l1cov.start,l1cov.prior,nburn,nbetween
 #See one of the imputed values:
 
 cat("Original value was missing (",imp[16,1],"), imputed value:", imp[316,1])
+
+  # Check help page for function jomo to see how to fit the model and 
+  # combine estimates with Rubin's rules
+
 
 }

@@ -93,12 +93,10 @@ Hyperparameter (Degrees of freedom) of the chi square prior distribution for the
 
 \examples{
 
-  attach(cldata)
-  
   # define all the inputs:
   
-  Y<-data.frame(measure,age)
-  clus<-data.frame(city)
+  Y<-cldata[,c("measure","age")]
+  clus<-cldata[,c("city")]
   nburn=as.integer(200);
   nbetween=as.integer(200);
   nimp=as.integer(5);
@@ -107,7 +105,16 @@ Hyperparameter (Degrees of freedom) of the chi square prior distribution for the
   #And finally we run the imputation function:
   imp<-jomo(Y,clus=clus,nburn=nburn,nbetween=nbetween,nimp=nimp)
   
-  #we could even run it with fixed or random cluster-specific covariance matrices:
+  # Finally we show how to fit the model and combine estimate with Rubin's rules
+  # Here we use mitml, other options are available in mice, mitools, etc etc
+
+  #if (requireNamespace("mitml", quietly = TRUE)&requireNamespace("lme4", quietly = TRUE)) {
+    #imp.mitml<-jomo2mitml.list(imp)
+    #fit.i<-with(imp.mitml, lmer(measure~age+(1|clus)))
+    #fit.MI<-testEstimates(fit.i, var.comp=T)
+ # }
+
+  #we could even run imputation with fixed or random cluster-specific covariance matrices:
   
   #imp<-jomo(Y,clus=clus,nburn=nburn,nbetween=nbetween,nimp=nimp, meth="fixed")
   #or:
@@ -116,6 +123,8 @@ Hyperparameter (Degrees of freedom) of the chi square prior distribution for the
   #if we do not add clus as imput, functions for single level imputation are used:
   
   #imp<-jomo(Y)
+  
+  
 
   
   

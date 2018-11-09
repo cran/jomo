@@ -56,11 +56,9 @@ Carpenter J.R., Kenward M.G., (2013), Multiple Imputation and its Application. C
 
 \examples{
 
-attach(sldata)
-
-#We define all the inputs:
-
-Y=data.frame(measure,age)
+# define all the inputs:
+  
+Y<-sldata[,c("measure","age")]
 nburn=as.integer(200);
 nbetween=as.integer(200);
 nimp=as.integer(5);
@@ -68,4 +66,8 @@ nimp=as.integer(5);
 # Then we run the function:
 
 imp<-jomo1(Y,nburn=nburn,nbetween=nbetween,nimp=nimp)
+
+  # Check help page for function jomo to see how to fit the model and 
+  # combine estimates with Rubin's rules
+
 }

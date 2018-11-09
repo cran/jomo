@@ -90,15 +90,13 @@ Hyperparameter (Degrees of freedom) of the chi square prior distribution for the
 
 \examples{
 
-  attach(cldata)
-  
   # make sure sex is a factor:
   
-  sex<-factor(sex)
+  cldata<-within(cldata, sex<-factor(sex))
   
   # we define the data frame with all the variables 
   
-  data<-data.frame(measure,age, sex, city)
+  data<-cldata[,c("measure","age", "sex", "city")]
   mylevel<-c(1,1,1,1)
   
   # And the formula of the substantive lm model
@@ -117,7 +115,7 @@ Hyperparameter (Degrees of freedom) of the chi square prior distribution for the
   # imp2<-jomo.lmer(formula2,data, level=mylevel, nburn=10, nbetween=10)
   
   # The analysis and combination steps are as for all the other functions
-  # (see e.g. help file for jomo1con)
+  # (see e.g. help file for function jomo)
   
   
   

@@ -50,11 +50,9 @@ A list with three elements is returned: the final imputed dataset (finimp) and t
 
 \examples{
 
-attach(sldata)
-
-#We define all the inputs:
-
-Y=data.frame(measure,age)
+# define all the inputs:
+  
+Y<-sldata[,c("measure","age")]
 nburn=as.integer(200);
 
 # Then we run the function:

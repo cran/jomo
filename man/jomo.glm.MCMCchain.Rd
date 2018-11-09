@@ -66,15 +66,13 @@ Starting value for the imputations of the outcome. When using binomial family, t
 
 \examples{
 
-  attach(sldata)
+  # make sure sex is a factor:
   
-  #we make sure sex is a factor:
-  
-  sex<-factor(sex)
+  sldata<-within(sldata, sex<-factor(sex))
   
   # we define the data frame with all the variables 
   
-  data<-data.frame(measure,age, sex)
+  data<-sldata[,c("measure","age", "sex")]
   
   # And the formula of the substantive lm model 
   # sex as an outcome only because it is the only binary variable in the dataset...

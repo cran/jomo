@@ -67,13 +67,13 @@ A list with five elements is returned: the final imputed dataset (finimp) and fo
 }
 
 \examples{
-attach(cldata)
-
-# we define all the inputs:
-Y<-data.frame(measure,age)
-X<-data.frame(rep(1,1000),sex)
+# define all the inputs:
+  
+Y<-cldata[,c("measure","age")]
+clus<-cldata[,c("city")]
+X=data.frame(rep(1,1000),cldata[,c("sex")])
+colnames(X)<-c("const", "sex")
 Z<-data.frame(rep(1,1000))
-clus<-data.frame(city)
 beta.start<-matrix(0,2,2)
 u.start<-matrix(0,10,2)
 l1cov.start<-diag(1,2)
@@ -93,6 +93,6 @@ plot(c(1:nburn),imp$collectbeta[1,1,1:nburn],type="l")
 
 #Or similarly we can check the convergence of any element of the level 2 covariance matrix:
 
-plot(c(1:nburn),imp$collectcovu[1,2,1:nburn],type="l")
+plot(c(1:nburn),imp$collectcovu[1,1,1:nburn],type="l")
 
 }

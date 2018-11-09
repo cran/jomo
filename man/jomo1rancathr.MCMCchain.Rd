@@ -83,17 +83,16 @@ A list with six elements is returned: the final imputed dataset (finimp) and fou
 
 \examples{
 
-attach(cldata)
-
 #we define the inputs
-# nimp, nburn and nbetween are smaller than they should. This is
+#  nburn is smaller than needed. This is
 #just because of CRAN policies on the examples.
 
-Y.cat=data.frame(social)
+Y.cat=cldata[,c("social"), drop=FALSE]
 Y.numcat=matrix(4,1,1)
-X=data.frame(rep(1,1000),sex)
+X=data.frame(rep(1,1000),cldata[,c("sex")])
+colnames(X)<-c("const", "sex")
 Z<-data.frame(rep(1,1000))
-clus<-data.frame(city)
+clus<-cldata[,c("city")]
 beta.start<-matrix(0,2,3)
 u.start<-matrix(0,10,3)
 l1cov.start<-matrix(diag(1,3),30,3,2)

@@ -64,16 +64,15 @@ Carpenter J.R., Kenward M.G., (2013), Multiple Imputation and its Application. C
 
 \examples{
 
-attach(sldata)
-
 #Then, we define all the inputs:
-# nimp, nburn and nbetween are smaller than they should. This is
+# nburn is smaller than needed. This is
 #just because of CRAN policies on the examples.
 
-Y.con=data.frame(measure,age)
-Y.cat=data.frame(social)
+Y.con=sldata[,c("measure","age")]
+Y.cat=sldata[,c("social"), drop=FALSE]
 Y.numcat=matrix(4,1,1)
-X=data.frame(rep(1,300),sex)
+X=data.frame(rep(1,300),sldata[,c("sex")])
+colnames(X)<-c("const", "sex")
 beta.start<-matrix(0,2,5)
 l1cov.start<-diag(1,5)
 l1cov.prior=diag(1,5);
@@ -88,24 +87,8 @@ imp<-jomo1mix(Y.con,Y.cat,Y.numcat,X,beta.start,l1cov.start,
 
 cat("Original value was missing(",imp[1,1],"), imputed value:", imp[301,1])
 
-#Finally we analyze datasets: 
+  # Check help page for function jomo to see how to fit the model and 
+  # combine estimates with Rubin's rules
 
-estimates<-matrix(0,5,5)
-ses<-matrix(0,5,5)
-for (i in 1:5) {
-  dat<-imp[imp$Imputation==i,]
-  fit<-lm(measure~age+sex+factor(social),data=dat)
-  estimates[i,1:5]<-coef(summary(fit))[2:6,1]
-  ses[i,1:5]<-coef(summary(fit))[2:6,2]
-}
-
-# and we aggregate the results with Rubin's rules using the BaBooN package:
-
-#library("BaBooN")
-#MI.inference(estimates[,1], ses[,1]^2)
-#MI.inference(estimates[,2], ses[,2]^2)
-#MI.inference(estimates[,3], ses[,3]^2)
-#MI.inference(estimates[,4], ses[,4]^2)
-#MI.inference(estimates[,5], ses[,5]^2)
 
 }

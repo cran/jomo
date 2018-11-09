@@ -95,15 +95,13 @@ Hyperparameter (Degrees of freedom) of the chi square prior distribution for the
 
 \examples{
 
-  attach(cldata)
+ # make sure sex is a factor:
   
-  # make sure sex is a factor:
-  
-  sex<-factor(sex)
+  cldata<-within(cldata, sex<-factor(sex))
   
   # we define the data frame with all the variables 
   
-  data<-data.frame(measure,age, sex, city)
+  data<-cldata[,c("measure","age", "sex", "city")]
   
   # And the formula of the substantive lm model 
   # sex as an outcome only because it is the only binary variable in the dataset...
@@ -117,7 +115,9 @@ Hyperparameter (Degrees of freedom) of the chi square prior distribution for the
   # Note we are using only 2 iterations to avoid time consuming examples, 
   # which go against CRAN policies. In real applications we would use
   # much larger burn-ins (around 1000) and at least 5 imputations.
-  
+  # Check help page for function jomo to see how to fit the model and 
+  # combine estimates with Rubin's rules
+
   
   
 }

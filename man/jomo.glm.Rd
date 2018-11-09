@@ -65,17 +65,14 @@
 }
 
 \examples{
-   #First of all we attach the data (only for simplicity in these examples):
+
+   # make sure sex is a factor:
   
-  attach(sldata)
-  
-  #Then we make sure sex is a factor:
-  
-  sex<-factor(sex)
+  sldata<-within(sldata, sex<-factor(sex))
   
   # we define the data frame with all the variables 
   
-  data<-data.frame(measure,age, sex)
+  data<-sldata[,c("measure","age", "sex")]
   
   # And the formula of the substantive lm model 
   # sex as an outcome only because it is the only binary variable in the dataset...
@@ -89,6 +86,8 @@
   # Note we are using only 10 iterations to avoid time consuming examples, 
   # which go against CRAN policies. In real applications we would use
   # much larger burn-ins (around 1000) and at least 5 imputations.
-  
+  # Check help page for function jomo to see how to fit the model and 
+  # combine estimates with Rubin's rules
+
   
 }

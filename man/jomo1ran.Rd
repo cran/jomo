@@ -84,12 +84,11 @@ Carpenter J.R., Kenward M.G., (2013), Multiple Imputation and its Application. C
 
 \examples{
 
-attach(cldata)
 
 # define all the inputs:
-
-Y<-data.frame(measure,age)
-clus<-data.frame(city)
+  
+Y<-cldata[,c("measure","age")]
+clus<-cldata[,c("city")]
 nburn=as.integer(200);
 nbetween=as.integer(200);
 nimp=as.integer(5);
@@ -103,5 +102,9 @@ imp<-jomo1ran(Y,clus=clus,nburn=nburn,nbetween=nbetween,nimp=nimp)
 #imp<-jomo1ran(Y,clus=clus,nburn=nburn,nbetween=nbetween,nimp=nimp, meth="fixed")
 #or:
 #imp<-jomo1ran(Y,clus=clus,nburn=nburn,nbetween=nbetween,nimp=nimp, meth="random")
+
+  # Check help page for function jomo to see how to fit the model and 
+  # combine estimates with Rubin's rules
+
 
 }

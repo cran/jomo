@@ -92,17 +92,16 @@ Yucel R.M., (2011), Random-covariances and mixed-effects models for imputing mul
 
 \examples{
 
-attach(cldata)
-
 # we define the inputs
 # nimp, nburn and nbetween are smaller than they should. This is
 #just because of CRAN policies on the examples.
 
-Y.cat=data.frame(social)
+Y.cat=cldata[,c("social"), drop=FALSE]
 Y.numcat=matrix(4,1,1)
-X=data.frame(rep(1,1000),sex)
+X=data.frame(rep(1,1000),cldata[,c("sex")])
+colnames(X)<-c("const", "sex")
 Z<-data.frame(rep(1,1000))
-clus<-data.frame(city)
+clus<-cldata[,c("city")]
 beta.start<-matrix(0,2,3)
 u.start<-matrix(0,10,3)
 l1cov.start<-matrix(diag(1,3),30,3,2)
@@ -120,5 +119,9 @@ imp<-jomo1rancathr(Y.cat, Y.numcat, X,Z,clus,beta.start,u.start,l1cov.start,
       l2cov.start,l1cov.prior,l2cov.prior,nburn,nbetween,nimp, a, meth="fixed")
       
 cat("Original value was missing (",imp[3,1],"), imputed value:", imp[1003,1])
+
+  # Check help page for function jomo to see how to fit the model and 
+  # combine estimates with Rubin's rules
+
 
 }

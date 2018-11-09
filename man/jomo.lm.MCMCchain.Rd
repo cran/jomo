@@ -65,15 +65,14 @@ Starting value for the missing data in the outcome of the substantive model.
 
 \examples{
 
-  attach(sldata)
+
+   # make sure sex is a factor:
   
-  #make sure sex is a factor:
-  
-  sex<-factor(sex)
+  sldata<-within(sldata, sex<-factor(sex))
   
   # we define the data frame with all the variables 
   
-  data<-data.frame(measure,age, sex)
+  data<-sldata[,c("measure","age", "sex")]
   
   # And the formula of the substantive lm model
   

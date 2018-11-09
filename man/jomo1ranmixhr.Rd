@@ -92,25 +92,26 @@ Yucel R.M., (2011), Random-covariances and mixed-effects models for imputing mul
 
 \examples{
 
-attach(cldata)
+
 
 #we define all the inputs:
 # nimp, nburn and nbetween are smaller than they should. This is
 #just because of CRAN policies on the examples.
 
-Y.con=data.frame(measure,age)
-Y.cat=data.frame(social)
+Y.con=cldata[,c("measure","age")]
+Y.cat=cldata[,c("social"), drop=FALSE]
 Y.numcat=matrix(4,1,1)
-X=data.frame(rep(1,1000),sex)
+X=data.frame(rep(1,1000),cldata[,c("sex")])
+colnames(X)<-c("const", "sex")
 Z<-data.frame(rep(1,1000))
-clus<-data.frame(city)
+clus<-cldata[,c("city")]
 beta.start<-matrix(0,2,5)
 u.start<-matrix(0,10,5)
 l1cov.start<-matrix(diag(1,5),50,5,2)
 l2cov.start<-diag(1,5)
 l1cov.prior=diag(1,5);
 l2cov.prior=diag(1,5);
-nburn=as.integer(80);
+nburn=as.integer(50);
 nbetween=as.integer(50);
 nimp=as.integer(5);
 a=6
@@ -122,24 +123,8 @@ imp<-jomo1ranmixhr(Y.con, Y.cat, Y.numcat, X,Z,clus,beta.start,u.start,l1cov.sta
 
 cat("Original value was missing (",imp[4,1],"), imputed value:", imp[1004,1])
 
-#We analyse our imputed datasets with standard techniques:
+  # Check help page for function jomo to see how to fit the model and 
+  # combine estimates with Rubin's rules
 
-estimates<-matrix(0,5,5)
-ses<-matrix(0,5,5)
-for (i in 1:5) {
-  dat<-imp[imp$Imputation==i,]
-  fit<-lm(measure~age+sex+factor(social)+factor(clus),data=dat)
-  estimates[i,1:5]<-coef(summary(fit))[2:6,1]
-  ses[i,1:5]<-coef(summary(fit))[2:6,2]
-}
-
-# And to conclude, we aggregate estimates with Rubin's rules, using BaBooN package:
-
-#library("BaBooN")
-#MI.inference(estimates[,1], ses[,1]^2)
-#MI.inference(estimates[,2], ses[,2]^2)
-#MI.inference(estimates[,3], ses[,3]^2)
-#MI.inference(estimates[,4], ses[,4]^2)
-#MI.inference(estimates[,5], ses[,5]^2)
 
 }

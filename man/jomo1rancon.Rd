@@ -76,13 +76,13 @@ Carpenter J.R., Kenward M.G., (2013), Multiple Imputation and its Application. C
 
 \examples{
 
-attach(cldata)
 
 # we define all the inputs:
-Y<-data.frame(measure,age)
-X<-data.frame(rep(1,1000),sex)
+Y<-cldata[,c("measure","age")]
+clus<-cldata[,c("city")]
+X=data.frame(rep(1,1000),cldata[,c("sex")])
+colnames(X)<-c("const", "sex")
 Z<-data.frame(rep(1,1000))
-clus<-data.frame(city)
 beta.start<-matrix(0,2,2)
 u.start<-matrix(0,10,2)
 l1cov.start<-diag(1,2)
@@ -99,25 +99,7 @@ imp<-jomo1rancon(Y,X,Z,clus,beta.start,u.start,l1cov.start, l2cov.start,l1cov.pr
 
 cat("Original value was missing(",imp[4,1],"), imputed value:", imp[1004,1])
 
-#Then we run the model on the imputed datsets:
-
-estimates<-rep(0,5)
-ses<-rep(0,5)
-estimates2<-rep(0,5)
-ses2<-rep(0,5)
-for (i in 1:5) {
-  dat<-imp[imp$Imputation==i,]
-  fit<-lm(measure~age+sex+factor(clus),data=dat)
-  estimates[i]<-coef(summary(fit))[2,1]
-  ses[i]<-coef(summary(fit))[2,2]
-  estimates2[i]<-coef(summary(fit))[3,1]
-  ses2[i]<-coef(summary(fit))[3,2]
-}
-
-#And finally we aggregate results through RUbin's rules with package BaBooN.
-
-#library("BaBooN")
-#MI.inference(estimates, ses^2)
-#MI.inference(estimates2, ses2^2)
+  # Check help page for function jomo to see how to fit the model and 
+  # combine estimates with Rubin's rules
 
 }

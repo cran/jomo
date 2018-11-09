@@ -77,23 +77,25 @@ A list with five elements is returned: the final imputed dataset (finimp) and fo
 
 \examples{
 
-attach(cldata)
+
 
 # we define the inputs
-# nimp, nburn and nbetween are smaller than they should. This is
+# nburn is smaller than needed. This is
 #just because of CRAN policies on the examples.
 
-Y<-data.frame(measure,age)
-X<-data.frame(rep(1,1000),sex)
+Y<-cldata[,c("measure","age")]
+clus<-cldata[,c("city")]
+X=data.frame(rep(1,1000),cldata[,c("sex")])
+colnames(X)<-c("const", "sex")
 Z<-data.frame(rep(1,1000))
-clus<-data.frame(city)
 beta.start<-matrix(0,2,2)
 u.start<-matrix(0,10,2)
 l1cov.start<-matrix(diag(1,2),20,2,2)
 l2cov.start<-diag(1,2)
 l1cov.prior=diag(1,2);
-nburn=as.integer(50);
-
+nburn=as.integer(200);
+nbetween=as.integer(200);
+nimp=as.integer(5);
 l2cov.prior=diag(1,5);
 a=3
 
@@ -106,7 +108,7 @@ imp<-jomo1ranconhr.MCMCchain(Y,X,Z,clus,beta.start,u.start,l1cov.start, l2cov.st
 
 plot(c(1:nburn),imp$collectbeta[1,1,1:nburn],type="l")
 
-#Or similarly we can check the convergence of any element of th elevel 2 cov. matrix:
+#Or similarly we can check the convergence of any element of the level 2 cov. matrix:
 
 plot(c(1:nburn),imp$collectcovu[1,2,1:nburn],type="l")
 }

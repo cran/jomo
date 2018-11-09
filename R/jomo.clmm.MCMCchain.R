@@ -96,7 +96,7 @@ jomo.clmm.MCMCchain <-
           } else if (length(which(colnames(Y2.cat)==current.term))!=0) {
             submod[1,h]<-which(colnames(Y2.cat)==current.term)
             submod[2,h]<-4
-            submod[4,h]<-Y.numcat[submod[1,h]]-1
+            submod[4,h]<-Y2.numcat[submod[1,h]]-1
           } else if (length(which(colnames(Y2.con)==current.term))!=0) {
             submod[1,h]<-which(colnames(Y2.con)==current.term)
             submod[2,h]<-3
@@ -427,11 +427,16 @@ jomo.clmm.MCMCchain <-
     }
     if (!is.null(start.imp)) {
       start.imp<-as.matrix(start.imp)
-      if ((nrow(start.imp)!=nrow(Yimp2))||(ncol(Yimp2)!=ncol(start.imp))) {
+      if ((nrow(start.imp)!=nrow(Yimp2))||(ncol(Yimp2)>ncol(start.imp))) {
         cat("start.imp dimensions incorrect. Not using start.imp as starting value for the imputed dataset.\n")
         start.imp=NULL
       } else {
-        Yimp2<-start.imp
+        if ((nrow(start.imp)==nrow(Yimp2))&(ncol(Yimp2)<ncol(start.imp))) {
+          Yimp2<-start.imp[,1:ncol(Yimp2)]
+          cat("NOTE: start.imp has more columns than needed. Dropping unnecessary columns.\n")
+        } else {
+          Yimp2<-start.imp
+        }
       }
     }
     if (is.null(start.imp)) {
@@ -439,11 +444,16 @@ jomo.clmm.MCMCchain <-
     }
     if (!is.null(l2.start.imp)) {
       l2.start.imp<-as.matrix(l2.start.imp)
-      if ((nrow(l2.start.imp)!=nrow(Y2imp2))||(ncol(Y2imp2)!=ncol(l2.start.imp))) {
+      if ((nrow(l2.start.imp)!=nrow(Y2imp2))||(ncol(Y2imp2)>ncol(l2.start.imp))) {
         cat("l2.start.imp dimensions incorrect. Not using l2.start.imp as starting value for the level 2 imputed dataset.\n")
         l2.start.imp=NULL
       } else {
-        Y2imp2<-l2.start.imp
+        if ((nrow(l2.start.imp)==nrow(Y2imp2))&(ncol(Y2imp2)<ncol(l2.start.imp))) {
+          Y2imp2<-l2.start.imp[,1:ncol(Y2imp2)]
+          cat("NOTE: l2.start.imp has more columns than needed. Dropping unnecessary columns.\n")
+        } else {
+          Y2imp2<-l2.start.imp
+        }
       }
     }
     if (!is.null(Y2i)&is.null(l2.start.imp)) {

@@ -78,12 +78,10 @@ A list with six elements is returned: the final imputed dataset (finimp) and fou
 
 \examples{
 
-attach(cldata)
-
-#Then we define all the inputs:
-
-Y<-data.frame(measure,age)
-clus<-data.frame(city)
+  # define all the inputs:
+  
+  Y<-cldata[,c("measure","age")]
+  clus<-cldata[,c("city")]
 nburn=as.integer(200);
 
 #And finally we run the imputation function:
@@ -92,7 +90,7 @@ imp<-jomo1ran.MCMCchain(Y,clus=clus,nburn=nburn)
 
 plot(c(1:nburn),imp$collectbeta[1,1,1:nburn],type="l")
 
-#Or similarly we can check the convergence of any element of th elevel 2 covariance matrix:
+#Or similarly we can check the convergence of any element of the level 2 covariance matrix:
 
 plot(c(1:nburn),imp$collectcovu[1,2,1:nburn],type="l")
 }

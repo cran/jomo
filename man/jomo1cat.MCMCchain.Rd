@@ -54,15 +54,18 @@ A list with four elements is returned: the final imputed dataset (finimp) and th
 }
 
 \examples{
-attach(sldata)
+# make sure sex is a factor:
+
+sldata<-within(sldata, sex<-factor(sex))
 
 # we define all the inputs:
-# nimp, nburn and nbetween are smaller than they should. This is
+#  nburn is smaller than necessary. This is
 #just because of CRAN policies on the examples.
 
-Y.cat=data.frame(social)
+Y.cat=sldata[,c("social"), drop=FALSE]
 Y.numcat=matrix(4,1,1)
-X=data.frame(rep(1,300),sex)
+X=data.frame(rep(1,300),sldata[,c("sex")])
+colnames(X)<-c("const", "sex")
 beta.start<-matrix(0,2,3)
 l1cov.start<-diag(1,3)
 l1cov.prior=diag(1,3);

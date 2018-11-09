@@ -99,7 +99,7 @@ jomo.clmm <-
           } else if (length(which(colnames(Y2.cat)==current.term))!=0) {
             submod[1,h]<-which(colnames(Y2.cat)==current.term)
             submod[2,h]<-4
-            submod[4,h]<-Y.numcat[submod[1,h]]-1
+            submod[4,h]<-Y2.numcat[submod[1,h]]-1
           } else if (length(which(colnames(Y2.con)==current.term))!=0) {
             submod[1,h]<-which(colnames(Y2.con)==current.term)
             submod[2,h]<-3
