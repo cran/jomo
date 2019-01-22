@@ -441,7 +441,7 @@ jomo.glmer <-
         meanobs2<-colMeans(Y2i,na.rm=TRUE)
         for (i in 1:nrow(Y2i)) for (j in 1:ncol(Y2i)) if (is.na(Y2imp[i,j])) Y2imp2[i,j]=meanobs2[j]
       }
-      for (i in 1:length(Ysubimp)) if (is.na(Ysubimp[i])) Ysubimp[i]=mean(Ysubimp, na.rm = TRUE)
+      for (i in 1:length(Ysubimp)) if (is.na(Ysubimp[i])) Ysubimp[i]=sample(1:2,1)
       Ysubcat <- c(Ysub)
       
       if (!is.null(Y2)) {

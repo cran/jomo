@@ -219,7 +219,7 @@ jomo.polr.MCMCchain <-
       }
     }
     if (is.null(start.imp.sub)) {
-      for (i in 1:length(Ysubimp)) if (is.na(Ysubimp[i])) Ysubimp[i]=mean(Ysubimp, na.rm = TRUE)
+      for (i in 1:length(Ysubimp)) if (is.na(Ysubimp[i])) Ysubimp[i]=sample(1:Ysub.ncat,1)
     }   
     Ysubcat <- c(Ysub)
     

@@ -208,7 +208,7 @@ jomo.glm <-
       vYpost<-matrix(0,1,1)
       meanobs<-colMeans(Yi,na.rm=TRUE)
       for (i in 1:nrow(Yi)) for (j in 1:ncol(Yi)) if (is.na(Yimp[i,j])) Yimp2[i,j]=meanobs[j]
-      for (i in 1:length(Ysubimp)) if (is.na(Ysubimp[i])) Ysubimp[i]=mean(Ysubimp, na.rm = TRUE)
+      for (i in 1:length(Ysubimp)) if (is.na(Ysubimp[i])) Ysubimp[i]=sample(1:2,1)
       Ysubcat <- c(Ysub)
       
       .Call("jomoglmbinC", Ysub, Ysubimp, Ysubcat, submod, order.sub, Y, Yimp, Yimp2, Y.cat.tot, X, betaY.start, bYpost, betait,bpost, varY.start, vYpost, covit,opost, nburn, varY.prior, l1cov.prior,Y.numcat.tot, ncolYcon,out.iter, 0, PACKAGE = "jomo")
