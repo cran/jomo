@@ -954,8 +954,6 @@ for (i=0;i<ns;i++) {
 			REAL(Ysubcat)[t]=(impsub[t]>0)+1;
 		}
 	}
-		if (i==100) Rprintf("beta=%f betaY=%f\n", REAL(beta)[0], REAL(betaY)[0]);
-
 	if ((i+1)%fl==0) Rprintf(".");
 }
 	if (fl==1) Rprintf("\n");

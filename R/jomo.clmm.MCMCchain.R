@@ -471,7 +471,7 @@ jomo.clmm.MCMCchain <-
     if (is.null(start.imp.sub)) {
       for (i in 1:length(Ysubimp)) if (is.na(Ysubimp[i])) Ysubimp[i]=sample(1:Ysub.ncat,1)
     }
-    Ysubcat <- c(Ysub)
+    Ysubcat <- as.numeric(Ysub)
     
     if (!is.null(Y2)) {
       if (meth=="common") {

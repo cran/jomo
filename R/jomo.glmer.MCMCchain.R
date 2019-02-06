@@ -393,7 +393,7 @@ jomo.glmer.MCMCchain <-
         Y2.numcat.tot=-999
       }
       ncY2<-max(0,ncol(Y2))
-      Ysubimp<-Ysub
+      Ysubimp<-as.numeric(Ysub)
       if (is.null(a.start)) a.start=50+ncol(Y)
       if (is.null(a.prior)) a.prior=a.start
       
@@ -475,7 +475,7 @@ jomo.glmer.MCMCchain <-
       if (is.null(start.imp.sub)) {
         for (i in 1:length(Ysubimp)) if (is.na(Ysubimp[i])) Ysubimp[i]=sample(1:2,1)
       }
-      Ysubcat <- c(Ysub)
+      Ysubcat <- as.numeric(Ysub)
       if (!is.null(Y2)) {
         if (meth=="common") {
           .Call("jomo2glmerbinC", Ysub, Ysubimp, Ysubcat, submod, order.sub, submod.ran, Y, Yimp, Yimp2, Y.cat.tot, Y2, Y2imp, Y2imp2, Y2.cat.tot, X, X2, Z, clus,betaY.start,betaYpost, betait,beta2it,uit,uY.start,betapost, upostall, uYpostall, beta2post, varY.start, varYpost, covit,omegapost, covuY.start, covuYpost, covuit, covupost, nburn, varY.prior, covuY.prior, l1cov.prior,l2cov.prior,Y.numcat.tot, Y2.numcat.tot, ncolYcon,ncolY2con, out.iter, 1, PACKAGE = "jomo")

@@ -395,7 +395,7 @@ jomo.glmer <-
         Y2.numcat.tot=-999
       }
       ncY2<-max(0,ncol(Y2))
-      Ysubimp<-Ysub
+      Ysubimp<-as.numeric(Ysub)
       if (is.null(a.start)) a.start=50+ncol(Y)
       if (is.null(a.prior)) a.prior=a.start
       
@@ -442,7 +442,7 @@ jomo.glmer <-
         for (i in 1:nrow(Y2i)) for (j in 1:ncol(Y2i)) if (is.na(Y2imp[i,j])) Y2imp2[i,j]=meanobs2[j]
       }
       for (i in 1:length(Ysubimp)) if (is.na(Ysubimp[i])) Ysubimp[i]=sample(1:2,1)
-      Ysubcat <- c(Ysub)
+      Ysubcat <- as.numeric(Ysub)
       
       if (!is.null(Y2)) {
         if (meth=="common") {

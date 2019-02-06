@@ -184,7 +184,7 @@ jomo.glm.MCMCchain <-
         Y.cat.tot=-999
         Y.numcat.tot=-999
       }
-      Ysubimp<-Ysub
+      Ysubimp<-as.numeric(Ysub)
       
       if (output!=1) out.iter=nburn+2
       nimp=1
@@ -230,7 +230,7 @@ jomo.glm.MCMCchain <-
       if (is.null(start.imp.sub)) {
         for (i in 1:length(Ysubimp)) if (is.na(Ysubimp[i])) Ysubimp[i]=sample(1:2,1)
       }   
-      Ysubcat <- c(Ysub)
+      Ysubcat <- as.numeric(Ysub)
       
       .Call("jomoglmbinC", Ysub, Ysubimp, Ysubcat, submod, order.sub, Y, Yimp, Yimp2, Y.cat.tot, X,betaY.start,betaYpost, betait,betapost, varY.start, varYpost, covit,omegapost, nburn, varY.prior, l1cov.prior,Y.numcat.tot, ncolYcon,out.iter, 1, PACKAGE = "jomo")
       #betapost[,,1]=bpost

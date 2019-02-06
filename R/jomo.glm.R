@@ -187,7 +187,7 @@ jomo.glm <-
         Y.cat.tot=-999
         Y.numcat.tot=-999
       }
-      Ysubimp<-Ysub
+      Ysubimp<-as.numeric(Ysub)
       
       if (output!=1) out.iter=nburn+nbetween
       imp=matrix(0,nrow(Y)*(nimp+1),ncol(Y)+3)
@@ -209,7 +209,7 @@ jomo.glm <-
       meanobs<-colMeans(Yi,na.rm=TRUE)
       for (i in 1:nrow(Yi)) for (j in 1:ncol(Yi)) if (is.na(Yimp[i,j])) Yimp2[i,j]=meanobs[j]
       for (i in 1:length(Ysubimp)) if (is.na(Ysubimp[i])) Ysubimp[i]=sample(1:2,1)
-      Ysubcat <- c(Ysub)
+      Ysubcat <- as.numeric(Ysub)
       
       .Call("jomoglmbinC", Ysub, Ysubimp, Ysubcat, submod, order.sub, Y, Yimp, Yimp2, Y.cat.tot, X, betaY.start, bYpost, betait,bpost, varY.start, vYpost, covit,opost, nburn, varY.prior, l1cov.prior,Y.numcat.tot, ncolYcon,out.iter, 0, PACKAGE = "jomo")
       #betapost[,,1]=bpost

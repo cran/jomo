@@ -438,7 +438,7 @@ jomo.clmm <-
       for (i in 1:nrow(Y2i)) for (j in 1:ncol(Y2i)) if (is.na(Y2imp[i,j])) Y2imp2[i,j]=meanobs2[j]
     }
     for (i in 1:length(Ysubimp)) if (is.na(Ysubimp[i])) Ysubimp[i]=sample(1:Ysub.ncat,1)
-    Ysubcat <- c(Ysub)
+    Ysubcat <- as.numeric(Ysub)
     
     if (!is.null(Y2)) {
       if (meth=="common") {
