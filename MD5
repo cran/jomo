@@ -1,4 +1,4 @@
-2fd0a880fe20b50c94dff93df4231fab *DESCRIPTION
+34e344b0849a2ed4295be38288dbc356 *DESCRIPTION
 b254ec6508f6d32b81ba40cabe77326d *NAMESPACE
 44c3d1e32c92e16d0767d7e808ffa77f *R/jomo-internal.R
 a2053b97f210d6107ee2cc9d5c773b9a *R/jomo.MCMCchain.R
@@ -13,7 +13,7 @@ c1d7ea15395a9499495d84f0bf62632e *R/jomo.glmer.MCMCchain.R
 f32b9950a61d59aecb41b11aa9092907 *R/jomo.glmer.R
 3f4342738fd0a445ab3b7812610cf6df *R/jomo.lm.MCMCchain.R
 0f4d2b6b5261c7d129123c3eef7e6638 *R/jomo.lm.R
-eaf211931937aa8ef7d8ffdfe4ce2a15 *R/jomo.lmer.MCMCchain.R
+88b5c175cc41630992499085d6dee1a6 *R/jomo.lmer.MCMCchain.R
 6272f84b1780c60bea2cf80b3d8b5f74 *R/jomo.lmer.R
 a84c968a4fab4a7195c72a0f199f1ecf *R/jomo.polr.MCMCchain.R
 ac9058fa9b6d0fafcc029bd8ab3938dc *R/jomo.polr.R

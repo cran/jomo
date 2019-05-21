@@ -492,7 +492,7 @@ jomo.lmer.MCMCchain <-
       imp[(nrow(Y2)+1):(2*nrow(Y2)),(ncol(Y)+2):(1+ncol(Y)+max(0,ncol(Y2.con))+max(0,ncol(Y2.aux.con)))]=Y2imp2[,1:(max(0,ncol(Y2.con))+max(0,ncol(Y2.aux.con)))]
     }
     if (isnullcat2==0|isnullcat2aux==0) {
-      imp[(nrow(Y2)+1):(2*nrow(Y2)),(ncolY2con[1]+ncol(Y)+2):(ncol(Y)+ncY2+1)]=Y2.cat
+      imp[(nrow(Y2)+1):(2*nrow(Y2)),(ncolY2con[1]+ncol(Y)+2):(ncol(Y)+ncY2+1)]=Y2.cat.tot
     }
     if (output==1) cat("First imputation registered.", "\n")
     betaYpostmean<-apply(betaYpost, c(1,2), mean)
