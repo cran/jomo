@@ -206,7 +206,6 @@ jomo.lm.MCMCchain <-
       for (i in 1:nrow(Yi)) for (j in 1:ncol(Yi)) if (is.na(Yimp[i,j])) Yimp2[i,j]=meanobs[j]
     }
     if (!is.null(start.imp.sub)) {
-      start.imp<-as.matrix(start.imp)
       if (!is.vector(start.imp.sub)) {
         cat("start.imp.sub must be a vector. Not using start.imp as starting value for the imputed dataset.\n")
         start.imp.sub=NULL

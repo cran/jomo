@@ -113,7 +113,9 @@ jomo.glmer <-
       }
       order.sub<-order.sub[-j.tbd]
       if (!is.null(Y.con)&sum((colnames(Y.con)==clus.name)==1)) Y.con<-data.frame(Y.con[,-which(colnames(Y.con)==clus.name), drop=FALSE])
+      if (!is.null(Y2.con)&sum((colnames(Y2.con)==clus.name)==1)) Y2.con<-data.frame(Y2.con[,-which(colnames(Y2.con)==clus.name), drop=FALSE])
       if (!is.null(Y.cat)&sum((colnames(Y.cat)==clus.name)==1)) Y.cat<-data.frame(Y.cat[,-which(colnames(Y.cat)==clus.name), drop=FALSE])
+      if (!is.null(Y2.cat)&sum((colnames(Y2.cat)==clus.name)==1)) Y2.cat<-data.frame(Y2.cat[,-which(colnames(Y2.cat)==clus.name), drop=FALSE])
       Y.auxiliary<-data.frame(data[,-c(which(colnames(data)%in%colnames(Y.con)),which(colnames(data)%in%colnames(Y.cat)),which(colnames(data)%in%colnames(Y2.con)),which(colnames(data)%in%colnames(Y2.cat)),which(colnames(data)==clus.name),which(colnames(data)==colnamysub)), drop=FALSE])
       Y.aux.con<-NULL
       Y.aux.cat<-NULL
@@ -152,10 +154,10 @@ jomo.glmer <-
       if (!is.null(Y2.con)|!is.null(Y2.cat)|!is.null(Y2.aux.con)|!is.null(Y2.aux.cat)) {
         #cat("Level 2 variables must be fully observed for valid inference. \n")
         X2=matrix(1,max(nrow(Y2.cat),nrow(Y2.con),nrow(Y2.aux.cat),nrow(Y2.aux.con)),1)
-        if (is.null(l2.beta.start)) l2.beta.start=matrix(0,ncol(X2),(max(as.numeric(!is.null(Y2.con)),ncol(Y2.con))+max(0,(sum(Y2.numcat)-length(Y2.numcat)))+max(as.numeric(!is.null(Y2.aux.con)),ncol(Y2.aux.con))+max(0,(sum(Y2.aux.numcat)-length(Y2.aux.numcat)))))
+        if (is.null(l2.beta.start)) l2.beta.start=matrix(0,ncol(X2),(max(0,ncol(Y2.con))+max(0,(sum(Y2.numcat)-length(Y2.numcat)))+max(as.numeric(!is.null(Y2.aux.con)),ncol(Y2.aux.con))+max(0,(sum(Y2.aux.numcat)-length(Y2.aux.numcat)))))
       }
       Z=matrix(1,nrow(X),1)
-      if (is.null(beta.start)) beta.start=matrix(0,ncol(X),(max(as.numeric(!is.null(Y.con)),ncol(Y.con))+max(0,(sum(Y.numcat)-length(Y.numcat)))+max(as.numeric(!is.null(Y.aux.con)),ncol(Y.aux.con))+max(0,(sum(Y.aux.numcat)-length(Y.aux.numcat)))))
+      if (is.null(beta.start)) beta.start=matrix(0,ncol(X),(max(0,ncol(Y.con))+max(0,(sum(Y.numcat)-length(Y.numcat)))+max(0,ncol(Y.aux.con))+max(0,(sum(Y.aux.numcat)-length(Y.aux.numcat)))))
       
       clus<-factor(data[,clus.name])
       previous_levels_clus<-levels(clus)
@@ -178,10 +180,10 @@ jomo.glmer <-
       }
       ncolYcon<-rep(NA,4)
       ncolY2con<-rep(NA,4)
-      ncolYcon[1]=max(as.numeric(!is.null(Y.con)),ncol(Y.con))+max(as.numeric(!is.null(Y.aux.con)),ncol(Y.aux.con))
-      ncolY2con[1]=max(as.numeric(!is.null(Y2.con)),ncol(Y2.con))+max(as.numeric(!is.null(Y2.aux.con)),ncol(Y2.aux.con))
-      ncolYcon[2]=max(as.numeric(!is.null(Y.con)),ncol(Y.con))
-      ncolY2con[2]=max(as.numeric(!is.null(Y2.con)),ncol(Y2.con))
+      ncolYcon[1]=max(0,ncol(Y.con))+max(0,ncol(Y.aux.con))
+      ncolY2con[1]=max(0,ncol(Y2.con))+max(0,ncol(Y2.aux.con))
+      ncolYcon[2]=max(0,ncol(Y.con))
+      ncolY2con[2]=max(0,ncol(Y2.con))
       ncolYcon[3]=ncolYcon[1]+max(0,(sum(Y.numcat)-length(Y.numcat)))
       ncolY2con[3]=ncolY2con[1]+max(0,(sum(Y2.numcat)-length(Y2.numcat)))
       ncolYcon[4]=max(0,ncol(Y.cat))
@@ -473,13 +475,13 @@ jomo.glmer <-
         b2post<-matrix(0,nrow(l2.beta.start),ncol(l2.beta.start))
       }
       imp[(nrow(Y)+1):(2*nrow(Y)),1]=Ysubcat
-      if (!is.null(Y.con)|!is.null(Y.aux.con)) {
+      if ((!is.null(Y.con)&&ncol(Y.con)!=0)|(!is.null(Y.aux.con)&&ncol(Y.aux.con)!=0))  {
         imp[(nrow(Y)+1):(2*nrow(Y)),2:(1+max(0,ncol(Y.con))+max(0,ncol(Y.aux.con)))]=Yimp2[,1:(max(0,ncol(Y.con))+max(0,ncol(Y.aux.con)))]
       }
       if (isnullcat==0|isnullcataux==0) {
         imp[(nrow(Y)+1):(2*nrow(Y)),(ncolYcon[1]+2):(1+ncol(Y))]=Y.cat.tot
       }
-      if (!is.null(Y2.con)|!is.null(Y2.aux.con)) {
+      if ((!is.null(Y2.con)&&ncol(Y2.con)!=0)|(!is.null(Y2.aux.con)&&ncol(Y2.aux.con)!=0))  {
         imp[(nrow(Y2)+1):(2*nrow(Y2)),(ncol(Y)+2):(1+ncol(Y)+max(0,ncol(Y2.con))+max(0,ncol(Y2.aux.con)))]=Y2imp2[,1:(max(0,ncol(Y2.con))+max(0,ncol(Y2.aux.con)))]
       }
       if (isnullcat2==0|isnullcat2aux==0) {
@@ -525,13 +527,13 @@ jomo.glmer <-
         cpost<-matrix(0,nrow(l2cov.start),ncol(l2cov.start))
         cuYpost<-matrix(0,nrow(as.matrix(covuY.start)),ncol(as.matrix(covuY.start)))
         imp[(i*nrow(X)+1):((i+1)*nrow(X)),1]=Ysubcat
-        if (!is.null(Y.con)|!is.null(Y.aux.con)) {
+        if ((!is.null(Y.con)&&ncol(Y.con)!=0)|(!is.null(Y.aux.con)&&ncol(Y.aux.con)!=0))  {
           imp[(i*nrow(X)+1):((i+1)*nrow(X)),2:(1+max(0,ncol(Y.con))+max(0,ncol(Y.aux.con)))]=Yimp2[,1:(max(0,ncol(Y.con))+max(0,ncol(Y.aux.con)))]
         }
         if (isnullcat==0|isnullcataux==0) {
           imp[(i*nrow(X)+1):((i+1)*nrow(X)),(ncolYcon[1]+2):(1+ncol(Y))]=Y.cat.tot
         }
-        if (!is.null(Y2.con)|!is.null(Y2.aux.con)) {
+        if ((!is.null(Y2.con)&&ncol(Y2.con)!=0)|(!is.null(Y2.aux.con)&&ncol(Y2.aux.con)!=0))  {
           imp[(i*nrow(X)+1):((i+1)*nrow(X)),(ncol(Y)+2):(ncol(Y)+max(0,ncol(Y2.con))+1+max(0,ncol(Y2.aux.con)))]=Y2imp2[,1:(max(0,ncol(Y2.con))+max(0,ncol(Y2.aux.con)))]
         }
         if (isnullcat2==0|isnullcat2aux==0) {
