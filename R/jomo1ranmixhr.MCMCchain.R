@@ -55,8 +55,10 @@ jomo1ranmixhr.MCMCchain <-
     storage.mode(Y.cat) <- "numeric"    
     X<-data.matrix(X)
     storage.mode(X) <- "numeric"    
+    stopifnot(!any(is.na(X)))
     Z<-data.matrix(Z)
-    storage.mode(Z) <- "numeric"    
+    storage.mode(Z) <- "numeric"
+    stopifnot(!any(is.na(Z)))
     clus <- matrix(as.integer(levels(clus))[clus], ncol=1)
     Y=cbind(Y.con,Y.cat)
     Yi=cbind(Y.con, matrix(0,nrow(Y.con),(sum(Y.numcat)-length(Y.numcat))))

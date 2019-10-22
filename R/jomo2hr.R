@@ -123,11 +123,14 @@ jomo2hr <-
     colnamz<-colnames(Z)
     colnamx2<-colnames(X2)
     X<-data.matrix(X)
-    storage.mode(X) <- "numeric"    
+    storage.mode(X) <- "numeric" 
+    stopifnot(!any(is.na(X)))
     Z<-data.matrix(Z)
-    storage.mode(Z) <- "numeric" 
+    storage.mode(Z) <- "numeric"
+    stopifnot(!any(is.na(Z)))
     X2<-data.matrix(X2)
     storage.mode(X2) <- "numeric"  
+    stopifnot(!any(is.na(X2)))
     clus <- matrix(as.integer(levels(clus))[clus], ncol=1)
     if (!is.null(Y.con)&isnullcat==0) {
       Y=cbind(Y.con,Y.cat)

@@ -43,9 +43,11 @@ jomo1ranconhr.MCMCchain <-
     Y<-data.matrix(Y)
     storage.mode(Y) <- "numeric"    
     X<-data.matrix(X)
-    storage.mode(X) <- "numeric"    
+    storage.mode(X) <- "numeric"  
+    stopifnot(!any(is.na(X)))
     Z<-data.matrix(Z)
-    storage.mode(Z) <- "numeric"    
+    storage.mode(Z) <- "numeric"
+    stopifnot(!any(is.na(Z)))
     clus <- matrix(as.integer(levels(clus))[clus], ncol=1)
     if (output!=1) out.iter=nburn+2
     imp=matrix(0,nrow(Y)*(nimp+1),ncol(Y)+ncol(X)+ncol(Z)+3)

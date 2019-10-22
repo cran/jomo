@@ -111,6 +111,11 @@ jomo.lmer <-
     if (!is.null(Y2.con)&sum((colnames(Y2.con)==clus.name)==1)) Y2.con<-data.frame(Y2.con[,-which(colnames(Y2.con)==clus.name), drop=FALSE])
     if (!is.null(Y.cat)&sum((colnames(Y.cat)==clus.name)==1)) Y.cat<-data.frame(Y.cat[,-which(colnames(Y.cat)==clus.name), drop=FALSE])
     if (!is.null(Y2.cat)&sum((colnames(Y2.cat)==clus.name)==1)) Y2.cat<-data.frame(Y2.cat[,-which(colnames(Y2.cat)==clus.name), drop=FALSE])
+    if (!is.null(Y.con)&&ncol(Y.con)==0) Y.con <- NULL
+    if (!is.null(Y.cat)&&ncol(Y.cat)==0) Y.cat <- NULL
+    if (!is.null(Y2.cat)&&ncol(Y2.cat)==0) Y2.cat <- NULL
+    if (!is.null(Y2.con)&&ncol(Y2.con)==0) Y2.con <- NULL
+    
     Y.auxiliary<-data.frame(data[,-c(which(colnames(data)%in%colnames(Y.con)),which(colnames(data)%in%colnames(Y.cat)),which(colnames(data)%in%colnames(Y2.con)),which(colnames(data)%in%colnames(Y2.cat)),which(colnames(data)==clus.name),which(colnames(data)==colnamysub)), drop=FALSE])
     Y.aux.con<-NULL
     Y.aux.cat<-NULL

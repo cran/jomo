@@ -1,8 +1,8 @@
 Package: jomo
 Type: Package
 Title: Multilevel Joint Modelling Multiple Imputation
-Version: 2.6-9
-Date: 2019-07-26
+Version: 2.6-10
+Date: 2019-10-26
 Author: Matteo Quartagno, James Carpenter
 Maintainer: Matteo Quartagno <m.quartagno@ucl.ac.uk>
 Description: Similarly to Schafer's package 'pan', 'jomo' is a package for multilevel joint modelling multiple imputation (Carpenter and Kenward, 2013) <doi: 10.1002/9781119942283>.
@@ -12,6 +12,6 @@ LazyData: yes
 Suggests: mitml
 Imports: stats, lme4, survival, MASS, ordinal
 NeedsCompilation: yes
-Packaged: 2019-07-29 13:05:36 UTC; rmjlmqu
+Packaged: 2019-10-22 09:59:04 UTC; rmjlmqu
 Repository: CRAN
-Date/Publication: 2019-07-29 14:00:04 UTC
+Date/Publication: 2019-10-22 12:40:02 UTC

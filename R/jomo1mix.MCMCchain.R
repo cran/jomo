@@ -32,7 +32,8 @@ jomo1mix.MCMCchain <-
     Y.cat<-data.matrix(Y.cat)
     storage.mode(Y.cat) <- "numeric"    
     X<-data.matrix(X)
-    storage.mode(X) <- "numeric"    
+    storage.mode(X) <- "numeric"  
+    stopifnot(!any(is.na(X)))
     Y=cbind(Y.con,Y.cat)
     Yi=cbind(Y.con, matrix(0,nrow(Y.con),(sum(Y.numcat)-length(Y.numcat))))
     h=1
