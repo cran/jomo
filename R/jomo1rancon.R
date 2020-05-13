@@ -14,6 +14,33 @@ jomo1rancon<- function(Y, X=NULL, Z=NULL, clus, beta.start=NULL, u.start=NULL, l
   if (is.null(u.start)) u.start = matrix(0, nlevels(clus), ncol(Z)*ncol(Y))
   if (is.null(l2cov.start)) l2cov.start = diag(1, ncol(u.start))
   if (is.null(l2cov.prior)) l2cov.prior = diag(1, ncol(l2cov.start))
+  if (any(is.na(Y))) {
+    if (ncol(Y)==1) {
+      miss.pat<-matrix(c(0,1),2,1)
+      n.patterns<-2
+    } else  {
+      miss.pat<-md.pattern.mice(Y, plot=F)
+      miss.pat<-miss.pat[,colnames(Y)]
+      n.patterns<-nrow(miss.pat)-1
+    }
+  } else {
+    miss.pat<-matrix(0,2,ncol(Y)+1)
+    n.patterns<-nrow(miss.pat)-1
+  }
+  
+  miss.pat.id<-rep(0,nrow(Y))
+  for (i in 1:nrow(Y)) {
+    k <- 1
+    flag <- 0
+    while ((k <= n.patterns) & (flag == 0)) {
+      if (all(!is.na(Y[i,])==miss.pat[k,1:(ncol(miss.pat))])) {
+        miss.pat.id[i] <- k
+        flag <- 1
+      } else {
+        k <- k + 1
+      }
+    }
+  }
   for (i in 1:ncol(X)) {
     if (is.factor(X[,i])) X[,i]<-as.numeric(X[,i])
   }
@@ -75,7 +102,7 @@ jomo1rancon<- function(Y, X=NULL, Z=NULL, clus, beta.start=NULL, u.start=NULL, l
   for (i in 1:nrow(Y)) for (j in 1:ncol(Y)) if (is.na(Yimp[i,j])) Yimp2[i,j]=rnorm(1,meanobs[j],1)
   #for (i in 1:nrow(Y)) for (j in 1:ncol(Y)) if (is.na(Yimp[i,j])) Yimp[i,j]=rnorm(1,mean=meanobs[j], sd=0.01)
   Y.cat<-Y.numcat<-(-999)
-  .Call("jomo1ranC", Y, Yimp, Yimp2, Y.cat, X, Z, clus,betait,uit,bpost,upost,covit,opost, covuit, cpost, nburn, l1cov.prior,l2cov.prior,Y.numcat, ncol(Y),out.iter,0, PACKAGE = "jomo")
+  .Call("jomo1ranC", Y, Yimp, Yimp2, Y.cat, X, Z, clus,betait,uit,bpost,upost,covit,opost, covuit, cpost, nburn, l1cov.prior,l2cov.prior,Y.numcat, ncol(Y),out.iter,0, miss.pat.id, n.patterns, PACKAGE = "jomo")
   #betapost[,,1]=bpost
   #upostall[,,1]=upost
   #omegapost[,,1]=opost
@@ -92,7 +119,7 @@ jomo1rancon<- function(Y, X=NULL, Z=NULL, clus, beta.start=NULL, u.start=NULL, l
     imp[(i*nrow(clus)+1):((i+1)*nrow(clus)), (ncol(Y)+ncol(X)+ncol(Z)+1)]=clus
     imp[(i*nrow(Z)+1):((i+1)*nrow(Z)), (ncol(Y)+ncol(X)+ncol(Z)+2)]=c(1:nrow(Y))
     imp[(i*nrow(Z)+1):((i+1)*nrow(Z)), (ncol(Y)+ncol(X)+ncol(Z)+3)]=i
-    .Call("jomo1ranC", Y, Yimp, Yimp2, Y.cat, X, Z, clus,betait,uit,bpost,upost,covit,opost, covuit, cpost, nbetween, l1cov.prior,l2cov.prior,Y.numcat, ncol(Y),out.iter,0, PACKAGE = "jomo")
+    .Call("jomo1ranC", Y, Yimp, Yimp2, Y.cat, X, Z, clus,betait,uit,bpost,upost,covit,opost, covuit, cpost, nbetween, l1cov.prior,l2cov.prior,Y.numcat, ncol(Y),out.iter,0, miss.pat.id, n.patterns, PACKAGE = "jomo")
     betapost[,,(i-1)]=bpost
     upostall[,,(i-1)]=upost
     omegapost[,,(i-1)]=opost

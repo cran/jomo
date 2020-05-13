@@ -82,7 +82,7 @@ Hyperparameter (Degrees of freedom) of the chi square prior distribution for the
     Number of burn in iterations. Default is 1000.
   }
   \item{output}{
-    When set to any value different from 1 (default), no output is shown on screen at the end of the process.
+    When set to 0, no output is shown on screen at the end of the process. When set to 1, only the parameter estimates related to the substantive model are shown (default). When set to 2, all parameter estimates (posterior means) are displayed.
   }
   \item{out.iter}{
     When set to K, every K iterations a dot is printed on screen. Default is 10. 

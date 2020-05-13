@@ -282,41 +282,91 @@ jomo.lmer.MCMCchain <-
       colnamycon<-colnames(Y.con)
       Y.con<-data.matrix(Y.con)
       storage.mode(Y.con) <- "numeric"  
+    } else {
+      colnamycon<-NULL
     }
-    if (isnullcat==0) {
-      colnamycat<-colnames(Y.cat)
-      Y.cat<-data.matrix(Y.cat)
-      storage.mode(Y.cat) <- "numeric"  
+    if (isnullcat == 0) {
+      colnamycat <- colnames(Y.cat)
+      Y.cat <- data.matrix(Y.cat)
+      storage.mode(Y.cat) <- "numeric"
+      cnycatcomp<-rep(NA,(sum(Y.numcat)-length(Y.numcat)))
+      count=0
+      for ( j in 1:ncol(Y.cat)) {
+        for (k in 1:(Y.numcat[j]-1)) {
+          cnycatcomp[count+k]<-paste(colnamycat[j],k,sep=".")
+        }
+        count=count+Y.numcat[j]-1
+      }
+    } else {
+      cnycatcomp<-NULL
     }
     if (!is.null(Y2.con)) {
       colnamy2con<-colnames(Y2.con)
       Y2.con<-data.matrix(Y2.con)
       storage.mode(Y2.con) <- "numeric"  
+    } else {
+      colnamy2con<-NULL
     }
     if (isnullcat2==0) {
       colnamy2cat<-colnames(Y2.cat)
       Y2.cat<-data.matrix(Y2.cat)
-      storage.mode(Y2.cat) <- "numeric"  
+      storage.mode(Y2.cat) <- "numeric" 
+      cny2catcomp<-rep(NA,(sum(Y2.numcat)-length(Y2.numcat)))
+      count=0
+      for ( j in 1:ncol(Y2.cat)) {
+        for (k in 1:(Y2.numcat[j]-1)) {
+          cny2catcomp[count+k]<-paste(colnamy2cat[j],k,sep=".")
+        }
+        count=count+Y2.numcat[j]-1
+      }
+    } else {
+      cny2catcomp<-NULL
     }
     if (!is.null(Y.aux.con)) {
       colnamyauxcon<-colnames(Y.aux.con)
       Y.aux.con<-data.matrix(Y.aux.con)
       storage.mode(Y.aux.con) <- "numeric"  
+    }  else {
+      colnamyauxcon<-NULL
     }
-    if (isnullcataux==0) {
-      colnamyauxcat<-colnames(Y.aux.cat)
-      Y.aux.cat<-data.matrix(Y.aux.cat)
-      storage.mode(Y.aux.cat) <- "numeric"  
+    if (isnullcataux == 0) {
+      colnamyauxcat <- colnames(Y.aux.cat)
+      Y.aux.cat <- data.matrix(Y.aux.cat)
+      storage.mode(Y.aux.cat) <- "numeric"
+      cnyauxcatcomp<-rep(NA,(sum(Y.aux.numcat)-length(Y.aux.numcat)))
+      count=0
+      for ( j in 1:ncol(Y.aux.cat)) {
+        for (k in 1:(Y.aux.numcat[j]-1)) {
+          cnyauxcatcomp[count+k]<-paste(colnamyauxcat[j],k,sep=".")
+        }
+        count=count+Y.aux.numcat[j]-1
+      }
+      
+    } else {
+      cnyauxcatcomp<-NULL
     }
     if (!is.null(Y2.aux.con)) {
       colnamy2auxcon<-colnames(Y2.aux.con)
       Y2.aux.con<-data.matrix(Y2.aux.con)
       storage.mode(Y2.aux.con) <- "numeric"  
+    } else {
+      colnamy2auxcon<-NULL
     }
     if (isnullcat2aux==0) {
       colnamy2auxcat<-colnames(Y2.aux.cat)
       Y2.aux.cat<-data.matrix(Y2.aux.cat)
       storage.mode(Y2.aux.cat) <- "numeric"  
+      cny2auxcatcomp<-rep(NA,(sum(Y2.aux.numcat)-length(Y2.aux.numcat)))
+      count=0
+      for ( j in 1:ncol(Y2.aux.cat)) {
+        for (k in 1:(Y2.aux.numcat[j]-1)) {
+          cny2auxcatcomp[count+k]<-paste(colnamy2auxcat[j],k,sep=".")
+        }
+        count=count+Y2.aux.numcat[j]-1
+      }
+      
+    } else {
+      cny2auxcatcomp<-NULL
     }
     Y.cat.tot<-cbind(Y.cat,Y.aux.cat)
     colnamx<-colnames(X)
@@ -396,7 +446,7 @@ jomo.lmer.MCMCchain <-
     if (is.null(a.start)) a.start=50+ncol(Y)
     if (is.null(a.prior)) a.prior=a.start
     
-    if (output!=1) out.iter=nburn+2
+    if (output==0) out.iter=nburn+2
     nimp=1
     imp=matrix(0,nrow(Y)*(nimp+1),ncol(Y)+ncY2+4)
     imp[1:nrow(Y),1]=Ysub
@@ -477,16 +527,16 @@ jomo.lmer.MCMCchain <-
     }
     if (!is.null(Y2)) {
       if (meth=="common") {
-        .Call("jomo2lmerC", Ysub, Ysubimp, submod, order.sub, submod.ran, Y, Yimp, Yimp2, Y.cat.tot, Y2, Y2imp, Y2imp2, Y2.cat.tot, X, X2, Z, clus,betaY.start,betaYpost, betait,beta2it,uit,uY.start,betapost, upostall, uYpostall, beta2post, varY.start, varYpost, covit,omegapost, covuY.start, covuYpost, covuit, covupost, nburn, varY.prior, covuY.prior, l1cov.prior,l2cov.prior,Y.numcat.tot, Y2.numcat.tot, ncolYcon,ncolY2con, out.iter, 1, PACKAGE = "jomo")
+        .Call("jomo2smcC", Ysub, Ysubimp, 0, submod, order.sub, submod.ran, Y, Yimp, Yimp2, Y.cat.tot, Y2, Y2imp, Y2imp2, Y2.cat.tot, X, X2, Z, clus,betaY.start,betaYpost, betait,beta2it,uit,uY.start,betapost, upostall, uYpostall, beta2post, varY.start, varYpost, covit,omegapost, covuY.start, covuYpost, covuit, covupost, nburn, varY.prior, covuY.prior, l1cov.prior,l2cov.prior,Y.numcat.tot, Y2.numcat.tot, 1, ncolYcon,ncolY2con, out.iter, 1, 0, PACKAGE = "jomo")
         } else {
-        .Call("jomo2lmerhrC", Ysub, Ysubimp, submod, order.sub, submod.ran, Y, Yimp, Yimp2, Y.cat.tot, Y2, Y2imp, Y2imp2, Y2.cat.tot, X, X2, Z, clus,betaY.start,betaYpost, betait,beta2it,uit,uY.start,betapost, upostall, uYpostall, beta2post, varY.start, varYpost, covit,omegapost, covuY.start, covuYpost, covuit, covupost, nburn, varY.prior, covuY.prior, l1cov.prior,l2cov.prior,Y.numcat.tot, Y2.numcat.tot, ncolYcon,ncolY2con,a.start, a.prior, out.iter, 1, PACKAGE = "jomo")
+        .Call("jomo2hrsmcC", Ysub, Ysubimp, 0, submod, order.sub, submod.ran, Y, Yimp, Yimp2, Y.cat.tot, Y2, Y2imp, Y2imp2, Y2.cat.tot, X, X2, Z, clus,betaY.start,betaYpost, betait,beta2it,uit,uY.start,betapost, upostall, uYpostall, beta2post, varY.start, varYpost, covit,omegapost, covuY.start, covuYpost, covuit, covupost, nburn, varY.prior, covuY.prior, l1cov.prior,l2cov.prior,Y.numcat.tot, Y2.numcat.tot, 1, ncolYcon,ncolY2con,a.start, a.prior, out.iter, 1, 0, PACKAGE = "jomo")
       }
     } else {
       if (meth=="common") {
-        .Call("jomo1lmerC", Ysub, Ysubimp, submod, order.sub, submod.ran, Y, Yimp, Yimp2, Y.cat.tot, X, Z, clus,betaY.start,betaYpost, betait,uit,uY.start,betapost, upostall, uYpostall, varY.start, varYpost, covit,omegapost, covuY.start, covuYpost, covuit, covupost, nburn, varY.prior, covuY.prior, l1cov.prior,l2cov.prior,Y.numcat.tot, ncolYcon,out.iter, 1, PACKAGE = "jomo")
+        .Call("jomo1ransmcC", Ysub, Ysubimp, 0, submod, order.sub, submod.ran, Y, Yimp, Yimp2, Y.cat.tot, X, Z, clus,betaY.start,betaYpost, betait,uit,uY.start,betapost, upostall, uYpostall, varY.start, varYpost, covit,omegapost, covuY.start, covuYpost, covuit, covupost, nburn, varY.prior, covuY.prior, l1cov.prior,l2cov.prior,Y.numcat.tot, 1, ncolYcon,out.iter, 1, 0, PACKAGE = "jomo")
 
         } else {
-        .Call("jomo1lmerhrC", Ysub, Ysubimp, submod, order.sub, submod.ran, Y, Yimp, Yimp2, Y.cat.tot, X, Z, clus,betaY.start,betaYpost, betait,uit,uY.start,betapost, upostall, uYpostall, varY.start, varYpost, covit,omegapost, covuY.start, covuYpost, covuit, covupost, nburn, varY.prior, covuY.prior, l1cov.prior,l2cov.prior,Y.numcat.tot, ncolYcon,a.start, a.prior, out.iter, 1, PACKAGE = "jomo")
+        .Call("jomo1ranhrsmcC", Ysub, Ysubimp, 0, submod, order.sub, submod.ran, Y, Yimp, Yimp2, Y.cat.tot, X, Z, clus,betaY.start,betaYpost, betait,uit,uY.start,betapost, upostall, uYpostall, varY.start, varYpost, covit,omegapost, covuY.start, covuYpost, covuit, covupost, nburn, varY.prior, covuY.prior, l1cov.prior,l2cov.prior,Y.numcat.tot, 1, ncolYcon,a.start, a.prior, out.iter, 1, 0, PACKAGE = "jomo")
         }
     }
     imp[(nrow(Y)+1):(2*nrow(Y)),1]=Ysubimp
@@ -502,7 +552,23 @@ jomo.lmer.MCMCchain <-
     if (isnullcat2==0|isnullcat2aux==0) {
       imp[(nrow(Y2)+1):(2*nrow(Y2)),(ncolY2con[1]+ncol(Y)+2):(ncol(Y)+ncY2+1)]=Y2.cat.tot
     }
-    if (output==1) cat("First imputation registered.", "\n")
+    if (output>0) cat("First imputation registered.", "\n")
+    
+    cnamycomp<-c(colnamycon, colnamyauxcon, cnycatcomp, cnyauxcatcomp)
+    cnamy2comp<-c(colnamy2con, colnamy2auxcon, cny2catcomp, cny2auxcatcomp)
+    dimnames(betapost)[1] <- list("(Intercept)")
+    dimnames(betapost)[2] <- list(cnamycomp)
+    if (!is.null(Y2)) {
+      dimnames(beta2post)[1] <- list("(Intercept)")
+      dimnames(beta2post)[2] <- list(cnamy2comp)
+    }
+    dimnames(omegapost)[1] <- list(cnamycomp)
+    dimnames(omegapost)[2] <- list(cnamycomp)
+    colnamcovu<-c(cnamycomp,cnamy2comp)
+    dimnames(covupost)[1] <- list(colnamcovu)
+    dimnames(covupost)[2] <- list(colnamcovu)
+    dimnames(upostall)[1]<-list(levels(factor(clus)))
+    dimnames(upostall)[2]<-list(colnamcovu)
     betaYpostmean<-apply(betaYpost, c(1,2), mean)
     varYpostmean<-mean(varYpost)
     covuYpostmean<-apply(covuYpost, c(1,2), mean)
@@ -512,7 +578,12 @@ jomo.lmer.MCMCchain <-
     upostmean<-apply(upostall, c(1,2), mean)
     omegapostmean<-apply(omegapost, c(1,2), mean)
     covupostmean<-apply(covupost, c(1,2), mean)
-    if (output==1) {
+    colnames(betaYpostmean)<-rownames(summary(fit.cr)$coefficients)
+    rownames(betaYpostmean)<-colnamysub
+    colnames(covuYpostmean)<-rownames(covuYpostmean)<-colnames(uYpostmean)<-dimnames(summary(fit.cr)$varcor[[1]])[[1]]
+    rownames(uYpostmean)<-levels(factor(clus))
+    
+    if (output>0) {
       cat("The posterior mean of the substantive model fixed effects estimates is:\n")
       print(betaYpostmean)
       cat("The posterior mean of the substantive model residual variance is:\n")
@@ -521,18 +592,20 @@ jomo.lmer.MCMCchain <-
       print(covuYpostmean)
       cat("The posterior mean of the substantive model random effects estimates is:\n")
       print(uYpostmean)
-      cat("The posterior mean of the fixed effects estimates is:\n")
-      print(betapostmean)
-      if (!is.null(Y2)) {
-        cat("The posterior mean of the level 2 fixed effects estimates is:\n")
-        print(beta2postmean)
+      if (output==2) {
+        cat("The posterior mean of the fixed effects estimates is:\n")
+        print(betapostmean)
+        if (!is.null(Y2)) {
+          cat("The posterior mean of the level 2 fixed effects estimates is:\n")
+          print(beta2postmean)
+        }
+        cat("The posterior mean of the random effects estimates is:\n")
+        print(upostmean)
+        cat("The posterior mean of the level 1 covariance matrix is:\n")
+        print(omegapostmean)
+        cat("The posterior mean of the level 2 covariance matrix is:\n")
+        print(covupostmean)
       }
-      cat("The posterior mean of the random effects estimates is:\n")
-      print(upostmean)
-      cat("The posterior mean of the level 1 covariance matrix is:\n")
-      print(omegapostmean)
-      cat("The posterior mean of the level 2 covariance matrix is:\n")
-      print(covupostmean)
     }
     imp<-data.frame(imp)
     if (isnullcat==0) {

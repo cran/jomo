@@ -88,21 +88,12 @@ clus<-cldata[,c("city")]
 X=data.frame(rep(1,1000),cldata[,c("sex")])
 colnames(X)<-c("const", "sex")
 Z<-data.frame(rep(1,1000))
-beta.start<-matrix(0,2,2)
-u.start<-matrix(0,10,2)
-l1cov.start<-matrix(diag(1,2),20,2,2)
-l2cov.start<-diag(1,2)
-l1cov.prior=diag(1,2);
 nburn=as.integer(200);
-nbetween=as.integer(200);
-nimp=as.integer(5);
-l2cov.prior=diag(1,5);
 a=3
 
 # Finally we run either the model with fixed or random cluster-specific cov. matrices:
 
-imp<-jomo1ranconhr.MCMCchain(Y,X,Z,clus,beta.start,u.start,l1cov.start, l2cov.start,
-          l1cov.prior,l2cov.prior,nburn=nburn,meth="random")
+imp<-jomo1ranconhr.MCMCchain(Y,X,Z,clus,nburn=nburn,meth="random")
           
 #We can check the convergence of the first element of beta:
 

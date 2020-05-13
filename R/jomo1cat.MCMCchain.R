@@ -11,6 +11,33 @@ jomo1cat.MCMCchain <-
       previous_levels[[i]]<-levels(Y.cat[,i])
       levels(Y.cat[,i])<-1:nlevels(Y.cat[,i])
     }
+    if (any(is.na(Y.cat))) {
+      if (ncol(Y.cat)==1) {
+        miss.pat<-matrix(c(0,1),2,1)
+        n.patterns<-2
+      } else  {
+        miss.pat<-md.pattern.mice(Y.cat, plot=F)
+        miss.pat<-miss.pat[,colnames(Y.cat)]
+        n.patterns<-nrow(miss.pat)-1
+      }
+    } else {
+      miss.pat<-matrix(0,2,ncol(Y.cat)+1)
+      n.patterns<-nrow(miss.pat)-1
+    }
+    
+    miss.pat.id<-rep(0,nrow(Y.cat))
+    for (i in 1:nrow(Y.cat)) {
+      k <- 1
+      flag <- 0
+      while ((k <= n.patterns) & (flag == 0)) {
+        if (all(!is.na(Y.cat[i,])==miss.pat[k,1:(ncol(miss.pat))])) {
+          miss.pat.id[i] <- k
+          flag <- 1
+        } else {
+          k <- k + 1
+        }
+      }
+    }
     for (i in 1:ncol(X)) {
       if (is.factor(X[,i])) X[,i]<-as.numeric(X[,i])
     }
@@ -72,7 +99,7 @@ jomo1cat.MCMCchain <-
     if (is.null(start.imp)) {
       for (i in 1:nrow(Yi)) for (j in 1:ncol(Yi)) if (is.na(Yimp[i,j])) Yimp2[i,j]=meanobs[j]
     } 
-    .Call("jomo1C", Y, Yimp, Yimp2, Y.cat, X,betait,betapost,covit,omegapost, nburn, l1cov.prior,Y.numcat, 0, out.iter, 1, PACKAGE = "jomo")
+    .Call("jomo1C", Y, Yimp, Yimp2, Y.cat, X,betait,betapost,covit,omegapost, nburn, l1cov.prior,Y.numcat, 0, out.iter, 1, miss.pat.id, n.patterns, PACKAGE = "jomo")
     imp[(nrow(Y)+1):(2*nrow(Y)),1:ncol(Y)]=Y.cat
     imp<-data.frame(imp)
     for (i in 1:ncol(Y)) {

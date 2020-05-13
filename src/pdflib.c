@@ -72,6 +72,19 @@ for (gf=1; gf<card; gf++) {
 return maxv;
 }
 
+double minvec (int card, double vec[])
+
+{
+int gf;
+double minv;
+
+minv=vec[0];
+for (gf=1; gf<card; gf++) {
+	if (vec[gf]<minv) minv=vec[gf];
+}
+return minv;
+}
+
 
 
 

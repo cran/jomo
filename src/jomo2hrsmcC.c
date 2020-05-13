@@ -9,9 +9,10 @@
 #include<Rinternals.h>
 #include<Rmath.h>
 
-SEXP jomo2clmmhrC(SEXP Ysub, SEXP Ysubimp, SEXP Ysubcat, SEXP submod, SEXP ordersub, SEXP submodran, SEXP Y, SEXP Yimp, SEXP Yimp2, SEXP Yimpcat, SEXP Y2, SEXP Y2imp, SEXP Y2imp2, SEXP Y2impcat, SEXP X, SEXP X2, SEXP Z, SEXP clus, SEXP betaY, SEXP betaYpost, SEXP beta, SEXP beta2, SEXP u, SEXP uY, SEXP betapost, SEXP upost, SEXP uYpost, SEXP beta2post, SEXP varY, SEXP varYpost, SEXP omega, SEXP omegapost, SEXP covuY, SEXP covuYpost, SEXP covu, SEXP covupost, SEXP nstep, SEXP varYprior, SEXP covuYprior, SEXP Sp, SEXP Sup, SEXP Y_numcat, SEXP Y2_numcat, SEXP Ysub_numcat, SEXP num_con, SEXP num_con2,SEXP a_start, SEXP a_prior, SEXP flagrng, SEXP MCMCchain){
-int indic=0,i,j,k, IY,JY, IX, JX, Io, Jo, Ib, Jb, ns, nmiss=0,t, countm=0, counto=0, countoo=0, jj, tt, kk, ncon,ncat, pos,flag=0,nmaxx,h=0, nconnoaux, nconcat, ncatnoaux, nsubcat, MCMC;
+SEXP jomo2hrsmcC(SEXP Ysub, SEXP Ysubimp, SEXP Ysubcat, SEXP submod, SEXP ordersub, SEXP submodran, SEXP Y, SEXP Yimp, SEXP Yimp2, SEXP Yimpcat, SEXP Y2, SEXP Y2imp, SEXP Y2imp2, SEXP Y2impcat, SEXP X, SEXP X2, SEXP Z, SEXP clus, SEXP betaY, SEXP betaYpost, SEXP beta, SEXP beta2, SEXP u, SEXP uY, SEXP betapost, SEXP upost, SEXP uYpost, SEXP beta2post, SEXP varY, SEXP varYpost, SEXP omega, SEXP omegapost, SEXP covuY, SEXP covuYpost, SEXP covu, SEXP covupost, SEXP nstep, SEXP varYprior, SEXP covuYprior, SEXP Sp, SEXP Sup, SEXP Y_numcat, SEXP Y2_numcat, SEXP Ysub_numcat, SEXP num_con, SEXP num_con2,SEXP a_start, SEXP a_prior, SEXP flagrng, SEXP MCMCchain, SEXP submodtype){
+int indic=0,i,j,k, IY,JY, IX, JX, Io, Jo, Ib, Jb, ns, nmiss=0,t, countm=0, counto=0, countoo=0, jj, tt, kk, ncon,ncat, pos,flag=0,nmaxx,h=0, nconnoaux, nconcat, ncatnoaux, MCMC;
 int Iu, Ju, IZ, JZ, nj,c,fl, currncat, IY2, JY2, IX2,JX2,Ib2, Jb2, ncon2, ncat2, JYm, JXm, Is, Il=0, Ir=0,Jr, JZm, Jum, accratio=0, totprop=0, accratio2=0, totprop2=0, nconnoaux2, nconcat2, ncatnoaux2;
+int nsubcat;
 SEXP RdimY, RdimX, Rdimo, Rdimb, RdimZ, Rdimu, RdimY2, RdimX2, Rdimb2, Rdims, Rdimr;
 double *betaX, *Yobs, *Ymiss, *mumiss, *omegadrawmiss, *betamiss, *betaobs, *omegaoo, *omegamo, *omegamm, *invomega, *invomega2, *help, *help2, *help3, *imp,*imp2, *zi, *yicategorized;
 double *sumzy, *incrzz, *incrzy, *mu, *mu2, *newbeta, *newomega, *sumzi, *yi, *invomega3, *help4, *help5, *help6, *missing, *fixomega,meanom,sdom, *resid, logLH, newlogLH,detom;
@@ -61,12 +62,12 @@ Ysubcat=PROTECT(coerceVector(Ysubcat,INTSXP));
 Y=PROTECT(coerceVector(Y,REALSXP));
 Yimpcat=PROTECT(coerceVector(Yimpcat,REALSXP));
 Y_numcat=PROTECT(coerceVector(Y_numcat,INTSXP));
-Ysub_numcat=PROTECT(coerceVector(Ysub_numcat,INTSXP));
 Yimp=PROTECT(coerceVector(Yimp,REALSXP));
 Yimp2=PROTECT(coerceVector(Yimp2,REALSXP));
 Y2=PROTECT(coerceVector(Y2,REALSXP));
 Y2impcat=PROTECT(coerceVector(Y2impcat,REALSXP));
 Y2_numcat=PROTECT(coerceVector(Y2_numcat,INTSXP));
+Ysub_numcat=PROTECT(coerceVector(Ysub_numcat,INTSXP));
 Y2imp=PROTECT(coerceVector(Y2imp,REALSXP));
 Y2imp2=PROTECT(coerceVector(Y2imp2,REALSXP));
 X=PROTECT(coerceVector(X,REALSXP));
@@ -120,6 +121,7 @@ nj=Iu;
 a_start=PROTECT(coerceVector(a_start,REALSXP));
 a=REAL(a_start)[0];
 a_prior=PROTECT(coerceVector(a_prior,REALSXP));
+submodtype=PROTECT(coerceVector(submodtype,INTSXP));
 
 for (i=0;i<XLENGTH(ordersub);i++) {
 	for (j=0;j<INTEGER(ordersub)[i];j++) {
@@ -129,7 +131,7 @@ for (i=0;i<XLENGTH(ordersub);i++) {
 	Il=Il+maxx;
 	maxx=1;
 }
-Il=Il;
+Il=Il+(INTEGER(submodtype)[0]<2);
 JXm=JY;
 if (Il>JY) JXm=Il;
 if (JX>JXm) JXm=JX;
@@ -314,22 +316,22 @@ for (i=0;i<IY;i++) {
 		for (k=0;k<INTEGER(ordersub)[j];k++) {
 			if (INTEGER(submod)[1+h*4]==1) {
 				for (jj=0;jj<pos;jj++) {
-					Xsub[i+IY*(jj+indic)]=Xsub[i+IY*(jj+indic)]*pow(imp[i+IY*(INTEGER(submod)[h*Is]-1)],INTEGER(submod)[2+h*Is]);
+					Xsub[i+IY*((INTEGER(submodtype)[0]<2)+jj+indic)]=Xsub[i+IY*((INTEGER(submodtype)[0]<2)+jj+indic)]*pow(imp[i+IY*(INTEGER(submod)[h*Is]-1)],INTEGER(submod)[2+h*Is]);
 				}	
 			}
 			else if (INTEGER(submod)[1+h*4]==2) {
 				for (jj=0;jj<pos;jj++) {
 					kk=(jj*currncat)%INTEGER(submod)[3+h*4]+2;
-					Xsub[i+IY*(jj+indic)]=Xsub[i+IY*(jj+indic)]*(REAL(Yimpcat)[i+IY*(INTEGER(submod)[h*Is]-1)]==kk);
+					Xsub[i+IY*((INTEGER(submodtype)[0]<2)+jj+indic)]=Xsub[i+IY*((INTEGER(submodtype)[0]<2)+jj+indic)]*(REAL(Yimpcat)[i+IY*(INTEGER(submod)[h*Is]-1)]==kk);
 				}
 			} else if (INTEGER(submod)[1+h*4]==3) {
 				for (jj=0;jj<pos;jj++) {
-					Xsub[i+IY*(jj+indic)]=Xsub[i+IY*(jj+indic)]*pow(imp2[INTEGER(clus)[i]+Iu*(INTEGER(submod)[h*Is]-1)],INTEGER(submod)[2+h*Is]);
+					Xsub[i+IY*((INTEGER(submodtype)[0]<2)+jj+indic)]=Xsub[i+IY*((INTEGER(submodtype)[0]<2)+jj+indic)]*pow(imp2[INTEGER(clus)[i]+Iu*(INTEGER(submod)[h*Is]-1)],INTEGER(submod)[2+h*Is]);
 				}	
 			} else if (INTEGER(submod)[1+h*4]==4) {
 				for (jj=0;jj<pos;jj++) {
 					kk=(jj*currncat)%INTEGER(submod)[3+h*4]+2;
-					Xsub[i+IY*(jj+indic)]=Xsub[i+IY*(jj+indic)]*(REAL(Y2impcat)[i+IY*(INTEGER(submod)[h*Is]-1)]==kk);
+					Xsub[i+IY*((INTEGER(submodtype)[0]<2)+jj+indic)]=Xsub[i+IY*((INTEGER(submodtype)[0]<2)+jj+indic)]*(REAL(Y2impcat)[i+IY*(INTEGER(submod)[h*Is]-1)]==kk);
 				}
 			} 
 			currncat=currncat*INTEGER(submod)[3+h*4];
@@ -360,7 +362,8 @@ for (i=0;i<IY;i++) {
 	}
 }
 
-for (t=0;t<IY;t++) {
+if (INTEGER(submodtype)[0]==2) {
+	for (t=0;t<IY;t++) {
 		if (ISNAN(REAL(Ysub)[t])) {
 			if (impsub[t]>REAL(betaY)[Il+nsubcat-2]) {
 				INTEGER(Ysubcat)[t]=nsubcat;
@@ -378,7 +381,8 @@ for (t=0;t<IY;t++) {
 			}
 		}
 	}
-	
+}
+
 for (c=0;c<nj;c++) {
 	for (j=0;j<JY;j++) {
 		for (t=0;t<JY;t++) newomega[j+t*JY]=REAL(omega)[(c*JY+j)+t*(JY*nj)];
@@ -414,105 +418,113 @@ for (i=0;i<ns;i++) {
 			pos=ncon;
 			for (j=0;j<ncat;j++) {
 				currncat=INTEGER(Y_numcat)[j]-1;
-				for (t=0;t<IY;t++) {
-					if (!ISNAN(REAL(Y)[t+(ncon+j)*IY])) {
-						for (k=0;k<currncat;k++) betaX[k]=0;
-						for (tt=0;tt<JX;tt++) {
-							for (k=0;k<currncat;k++) {
-								betaX[k]=betaX[k]+REAL(beta)[tt+(k+pos)*Ib]*REAL(X)[t+tt*IX];
+				for (c=0;c<nj;c++) {
+					for (k=0;k<JY;k++) {
+						for (kk=0;kk<JY;kk++) {
+							if (((kk<pos)||(kk>(pos+currncat-1)))&&((k<pos)||(k>(pos+currncat-1)))) {
+								help4[countm]=REAL(omega)[kk+JY*c+JY*nj*k];
+								countm++;
+							}
+							else if (((kk<pos)||(kk>(pos+currncat-1)))&&((k>(pos-1))||(k<(pos+currncat)))) {
+								help5[counto]=REAL(omega)[kk+JY*c+JY*nj*k];
+								counto++;
 							}
 						}
-						for (tt=0;tt<JZ;tt++) {
-							for (k=0;k<currncat;k++) {
-								betaX[k]=betaX[k]+REAL(u)[(INTEGER(clus)[t])+nj*(tt+(k+pos)*JZ)]*REAL(Z)[t+tt*IZ];
-							}
-						}
-
-						for (k=0;k<(JY-currncat);k++) help[k]=0;
-						for (tt=0;tt<JX;tt++) {
-							for (k=0;k<pos;k++) {
-								help[k]=help[k]+REAL(beta)[tt+k*Ib]*REAL(X)[t+tt*IX];
-							}
-							for (k=(pos+currncat);k<JY;k++) {
-								help[k-currncat]=help[k-currncat]+REAL(beta)[tt+k*Ib]*REAL(X)[t+tt*IX];
-							}
-						}
-						for (tt=0;tt<JZ;tt++) {
-							for (k=0;k<pos;k++) {
-								help[k]=help[k]+REAL(u)[(INTEGER(clus)[t])+nj*(tt+k*JZ)]*REAL(Z)[t+tt*IZ];
-							}
-							for (k=(pos+currncat);k<JY;k++) {
-								help[k-currncat]=help[k-currncat]+REAL(u)[(INTEGER(clus)[t])+nj*(tt+k*JZ)]*REAL(Z)[t+tt*IZ];
-							}
-						}
-
-						for (k=0;k<pos;k++) {
-							help[k]=imp[t+k*IY]-help[k];
-						}
+					}
+					countm=0;
+					counto=0;
+					r8mat_pofac((JY-currncat),help4, help6,1);
+					r8mat_poinv((JY-currncat),help6, invomega);
 				
-						for (k=(pos+currncat);k<JY;k++) {
-							help[k-currncat]=imp[t+k*IY]-help[k-currncat];
-						}
-						for (k=0;k<JY;k++) {
-							for (kk=0;kk<JY;kk++) {
-								if (((kk<pos)||(kk>(pos+currncat-1)))&&((k<pos)||(k>(pos+currncat-1)))) {
-									help4[countm]=REAL(omega)[kk+JY*INTEGER(clus)[t]+JY*nj*k];
-									countm++;
+					for (jj=1;jj<(JY-currncat);jj++) for (tt=0;tt<jj;tt++) invomega[jj+(JY-currncat)*tt]=invomega[tt+(JY-currncat)*jj];
+					r8mat_mm_new((JY-currncat),(JY-currncat),currncat,invomega,help5, help2);
+					r8mat_mtm_new(currncat,(JY-currncat),currncat,help2,help5, omegadrawmiss);
+					r8mat_divide(currncat,currncat,-1,omegadrawmiss);
+					for (k=0;k<currncat;k++) {
+						omegadrawmiss[k+k*currncat]=omegadrawmiss[k+k*currncat]+1;
+						for (kk=0;kk<currncat;kk++) if (k!=kk) omegadrawmiss[k+kk*currncat]=omegadrawmiss[k+kk*currncat]+0.5;
+					}
+					r8mat_pofac(currncat,omegadrawmiss, omegamm,2);
+					for (t=0;t<IY;t++) {
+						if (INTEGER(clus)[t]==c) {
+							if (!ISNAN(REAL(Y)[t+(ncon+j)*IY])) {
+								for (k=0;k<currncat;k++) betaX[k]=0;
+								for (tt=0;tt<JX;tt++) {
+									for (k=0;k<currncat;k++) {
+										betaX[k]=betaX[k]+REAL(beta)[tt+(k+pos)*Ib]*REAL(X)[t+tt*IX];
+									}
 								}
-								else if (((kk<pos)||(kk>(pos+currncat-1)))&&((k>(pos-1))||(k<(pos+currncat)))) {
-									help5[counto]=REAL(omega)[kk+JY*INTEGER(clus)[t]+JY*nj*k];
-									counto++;
+								for (tt=0;tt<JZ;tt++) {
+									for (k=0;k<currncat;k++) {
+										betaX[k]=betaX[k]+REAL(u)[c+nj*(tt+(k+pos)*JZ)]*REAL(Z)[t+tt*IZ];
+									}
 								}
-							}
-						}
-						countm=0;
-						counto=0;
-						r8mat_pofac((JY-currncat),help4, help6,1);
-						r8mat_poinv((JY-currncat),help6, invomega);
-			
-						for (jj=1;jj<(JY-currncat);jj++) for (tt=0;tt<jj;tt++) invomega[jj+(JY-currncat)*tt]=invomega[tt+(JY-currncat)*jj];
-						r8mat_mm_new((JY-currncat),(JY-currncat),currncat,invomega,help5, help2);
-						r8mat_mm_new(1,(JY-currncat),currncat,help,help2, mumiss);
-						r8mat_add(currncat,1,betaX,mumiss);
-						r8mat_mtm_new(currncat,(JY-currncat),currncat,help2,help5, omegadrawmiss);
-						r8mat_divide(currncat,currncat,-1,omegadrawmiss);
-						for (k=0;k<currncat;k++) {
-							omegadrawmiss[k+k*currncat]=omegadrawmiss[k+k*currncat]+1;
-							for (kk=0;kk<currncat;kk++) if (k!=kk) omegadrawmiss[k+kk*currncat]=omegadrawmiss[k+kk*currncat]+0.5;
-						}
-						r8mat_pofac(currncat,omegadrawmiss, omegamm,2);
-						flag=0;
-						kk=0;
-						if (REAL(Y)[t+(ncon+j)*IY]==INTEGER(Y_numcat)[j]) {
-							while ((flag==0)&(kk<10000)) {
-								r8vec_multinormal_sample((INTEGER(Y_numcat)[j]-1), mumiss,omegamm, newbeta,mu4,0);
-								maxim=maxvec((INTEGER(Y_numcat)[j]-1),newbeta);
-								if (maxim<0) {
+
+								for (k=0;k<(JY-currncat);k++) help[k]=0;
+								for (tt=0;tt<JX;tt++) {
+									for (k=0;k<pos;k++) {
+										help[k]=help[k]+REAL(beta)[tt+k*Ib]*REAL(X)[t+tt*IX];
+									}
+									for (k=(pos+currncat);k<JY;k++) {
+										help[k-currncat]=help[k-currncat]+REAL(beta)[tt+k*Ib]*REAL(X)[t+tt*IX];
+									}
+								}
+								for (tt=0;tt<JZ;tt++) {
+									for (k=0;k<pos;k++) {
+										help[k]=help[k]+REAL(u)[c+nj*(tt+k*JZ)]*REAL(Z)[t+tt*IZ];
+									}
+									for (k=(pos+currncat);k<JY;k++) {
+										help[k-currncat]=help[k-currncat]+REAL(u)[c+nj*(tt+k*JZ)]*REAL(Z)[t+tt*IZ];
+									}
+								}
+
+								for (k=0;k<pos;k++) {
+									help[k]=imp[t+k*IY]-help[k];
+								}
 						
-									for (k=0;k<(INTEGER(Y_numcat)[j]-1);k++) imp[t+(k+pos)*IY]=newbeta[k];
-									flag=1;
-									indic++;
+								for (k=(pos+currncat);k<JY;k++) {
+									help[k-currncat]=imp[t+k*IY]-help[k-currncat];
 								}
-							kk++;
+
+								r8mat_mm_new(1,(JY-currncat),currncat,help,help2, mumiss);
+								r8mat_add(currncat,1,betaX,mumiss);
+
+								flag=0;
+								kk=0;
+								if (REAL(Y)[t+(ncon+j)*IY]==INTEGER(Y_numcat)[j]) {
+									while ((flag==0)&(kk<10000)) {
+										r8vec_multinormal_sample((INTEGER(Y_numcat)[j]-1), mumiss,omegamm, newbeta,mu4,0);
+										maxim=maxvec((INTEGER(Y_numcat)[j]-1),newbeta);
+										if (maxim<0) {
+								
+											for (k=0;k<(INTEGER(Y_numcat)[j]-1);k++) imp[t+(k+pos)*IY]=newbeta[k];
+											flag=1;
+											indic++;
+										}
+									kk++;
+									}
+								}
+								else {
+									while ((flag==0)&(kk<10000)) {
+										r8vec_multinormal_sample((INTEGER(Y_numcat)[j]-1), mumiss,omegamm, newbeta,mu4,0);
+										maxim=argmaxvec((INTEGER(Y_numcat)[j]-1),newbeta);
+										maxim2=maxvec((INTEGER(Y_numcat)[j]-1),newbeta);
+										if (((maxim+1)==REAL(Y)[t+(ncon+j)*IY])&(maxim2>0)) {
+											for (k=0;k<(INTEGER(Y_numcat)[j]-1);k++) imp[t+(k+pos)*IY]=newbeta[k];
+											flag=1;
+											indic++;
+										}
+										kk++;
+									}
+								}
+								flag=0;
+
 							}
 						}
-						else {
-							while ((flag==0)&(kk<10000)) {
-								r8vec_multinormal_sample((INTEGER(Y_numcat)[j]-1), mumiss,omegamm, newbeta,mu4,0);
-								maxim=argmaxvec((INTEGER(Y_numcat)[j]-1),newbeta);
-								maxim2=maxvec((INTEGER(Y_numcat)[j]-1),newbeta);
-								if (((maxim+1)==REAL(Y)[t+(ncon+j)*IY])&(maxim2>0)) {
-									for (k=0;k<(INTEGER(Y_numcat)[j]-1);k++) imp[t+(k+pos)*IY]=newbeta[k];
-									flag=1;
-									indic++;
-								}
-								kk++;
-							}
-						}
-						flag=0;
 
 					}
 				}
+
 				pos=pos+INTEGER(Y_numcat)[j]-1;
 			}
 
@@ -523,6 +535,32 @@ for (i=0;i<ns;i++) {
 			pos=ncon2;
 			for (j=0;j<ncat2;j++) {
 				currncat=INTEGER(Y2_numcat)[j]-1;
+				for (k=0;k<Ju;k++) {
+					for (kk=0;kk<Ju;kk++) {
+						if (((kk<(pos+JY*JZ))||(kk>(pos+JY*JZ+currncat-1)))&&((k<(pos+JY*JZ))||(k>(pos+JY*JZ+currncat-1)))) {
+							help4[countm]=REAL(covu)[kk+k*Ju];
+								countm++;
+						}
+						else if (((kk<(pos+JY*JZ))||(kk>(pos+JY*JZ+currncat-1)))&&((k>(pos+JY*JZ-1))||(k<(pos+JY*JZ+currncat)))) {
+							help5[counto]=REAL(covu)[kk+k*Ju];
+							counto++;
+						}
+					}
+				}
+				countm=0;
+				counto=0;
+				r8mat_pofac((Ju-currncat),help4, help6,1);
+				r8mat_poinv((Ju-currncat),help6, invomega4);			
+				for (jj=1;jj<(Ju-currncat);jj++) for (tt=0;tt<jj;tt++) invomega4[jj+(Ju-currncat)*tt]=invomega4[tt+(Ju-currncat)*jj];
+				r8mat_mtm_new(currncat,(Ju-currncat),(Ju-currncat),help5,invomega4, help2);
+				r8mat_mm_new(currncat,(Ju-currncat),currncat,help2,help5, omegadrawmiss);
+				r8mat_divide(currncat,currncat,-1,omegadrawmiss);
+				for (k=0;k<currncat;k++) {
+					omegadrawmiss[k+k*currncat]=omegadrawmiss[k+k*currncat]+1;
+					for (kk=0;kk<currncat;kk++) if (k!=kk) omegadrawmiss[k+kk*currncat]=omegadrawmiss[k+kk*currncat]+0.5;
+				}
+				r8mat_pofac(currncat,omegadrawmiss, omegamm,2);
+				
 				for (t=0;t<Iu;t++) {
 					if (!ISNAN(Y2red[t+(ncon2+j)*Iu])) {
 						for (k=0;k<currncat;k++) betaX[k]=0;
@@ -537,33 +575,9 @@ for (i=0;i<ns;i++) {
 						for (k=(pos+JY*JZ+currncat);k<Ju;k++) {
 							help[k-currncat]=REAL(u)[t+k*Iu];
 						}
-						for (k=0;k<Ju;k++) {
-							for (kk=0;kk<Ju;kk++) {
-								if (((kk<(pos+JY*JZ))||(kk>(pos+JY*JZ+currncat-1)))&&((k<(pos+JY*JZ))||(k>(pos+JY*JZ+currncat-1)))) {
-									help4[countm]=REAL(covu)[kk+k*Ju];
-									countm++;
-								}
-								else if (((kk<(pos+JY*JZ))||(kk>(pos+JY*JZ+currncat-1)))&&((k>(pos+JY*JZ-1))||(k<(pos+JY*JZ+currncat)))) {
-									help5[counto]=REAL(covu)[kk+k*Ju];
-									counto++;
-								}
-							}
-						}
-						countm=0;
-						counto=0;
-						r8mat_pofac((Ju-currncat),help4, help6,1);
-						r8mat_poinv((Ju-currncat),help6, invomega4);			
-						for (jj=1;jj<(Ju-currncat);jj++) for (tt=0;tt<jj;tt++) invomega4[jj+(Ju-currncat)*tt]=invomega4[tt+(Ju-currncat)*jj];
-						r8mat_mtm_new(currncat,(Ju-currncat),(Ju-currncat),help5,invomega4, help2);
+
 						r8mat_mm_new(currncat,(Ju-currncat),1,help2,help, mumiss);
 						r8mat_add(currncat,1,betaX,mumiss);
-						r8mat_mm_new(currncat,(Ju-currncat),currncat,help2,help5, omegadrawmiss);
-						r8mat_divide(currncat,currncat,-1,omegadrawmiss);
-						for (k=0;k<currncat;k++) {
-							omegadrawmiss[k+k*currncat]=omegadrawmiss[k+k*currncat]+1;
-							for (kk=0;kk<currncat;kk++) if (k!=kk) omegadrawmiss[k+kk*currncat]=omegadrawmiss[k+kk*currncat]+0.5;
-						}
-						r8mat_pofac(currncat,omegadrawmiss, omegamm,2);
 						flag=0;
 						kk=0;
 						if (Y2red[t+(ncon2+j)*Iu]==INTEGER(Y2_numcat)[j]) {
@@ -650,6 +664,7 @@ for (i=0;i<ns;i++) {
 		}
 
 	}
+	
 	// Partitioning covu
 	
 	for (j=0;j<JY*JZ;j++) {
@@ -802,7 +817,6 @@ for (i=0;i<ns;i++) {
 		r8mat_poinv(Ju, help4,invomega3);
 		for (jj=1;jj<(Ju);jj++) for (tt=0;tt<jj;tt++) invomega3[jj+(Ju)*tt]=invomega3[tt+(Ju)*jj];
 		for(k=0;k<(Ju);k++)  for(j=0;j<(Ju);j++)  REAL(covu)[j+(Ju)*k]=invomega3[j+(Ju)*k];
-	
 	}
 	else {
 			flag=0;
@@ -861,7 +875,7 @@ for (i=0;i<ns;i++) {
 						flag=0;
 					}
 				}
-			}			
+			}				
 	}
 	if (MCMC==0) {
 			r8mat_add(Ju,Ju,REAL(covu),REAL(covupost));
@@ -872,7 +886,6 @@ for (i=0;i<ns;i++) {
 			}
 		}
 	}
-
 	//Updating residuals
 
 	for (t=0;t<IY;t++) {
@@ -1061,148 +1074,171 @@ for (i=0;i<ns;i++) {
 			for (t=0;t<JY;t++) help4[t]=yi[t]-betaX[t];
 			r8mat_mm_new(1,JY,JY,help4,invomega,help5);
 			r8mat_mmt_new(1,JY,1,help5,help4,help6);
-			mu2[0]=0;
-			for (t=0;t<Il;t++) mu2[0]=mu2[0]+REAL(betaY)[t]*Xsub[j+IY*t];
-			for (t=0;t<Ir;t++) mu2[0]=mu2[0]+REAL(uY)[(INTEGER(clus)[j])+nj*t]*Zsub[j+IY*t];
-			if (INTEGER(Ysubcat)[j]==1) {
-				mu2[0]=normal_cdf(REAL(betaY)[Il]-mu2[0]);
-			} else if (INTEGER(Ysubcat)[j]==nsubcat) {
-				mu2[0]=1-normal_cdf(REAL(betaY)[Il+nsubcat-2]-mu2[0]);
+			if (INTEGER(submodtype)[0]==0) {
+				mu2[0]=impsub[j];
+				for (t=0;t<Il;t++) mu2[0]=mu2[0]-REAL(betaY)[t]*Xsub[j+IY*t];
+				for (t=0;t<Ir;t++) mu2[0]=mu2[0]-REAL(uY)[(INTEGER(clus)[j])+nj*t]*Zsub[j+IY*t];
+				logLH=-0.5*mu2[0]*mu2[0]/REAL(varY)[0]-help6[0]/2;
+			} else if (INTEGER(submodtype)[0]==1) {
+				mu2[0]=0;
+				for (t=0;t<Il;t++) mu2[0]=mu2[0]+REAL(betaY)[t]*Xsub[j+IY*t];
+				for (t=0;t<Ir;t++) mu2[0]=mu2[0]+REAL(uY)[(INTEGER(clus)[j])+nj*t]*Zsub[j+IY*t];
+				if (INTEGER(Ysubcat)[j]==1) mu2[0]=-mu2[0];
+				logLH=log(normal_cdf(mu2[0]))-help6[0]/2;
 			} else {
-				mu2[0]=normal_cdf(REAL(betaY)[Il+INTEGER(Ysubcat)[j]-1]-mu2[0])-normal_cdf(REAL(betaY)[Il+INTEGER(Ysubcat)[j]-2]-mu2[0]);
+				mu2[0]=0;
+				for (t=0;t<Il;t++) mu2[0]=mu2[0]+REAL(betaY)[t]*Xsub[j+IY*t];
+				for (t=0;t<Ir;t++) mu2[0]=mu2[0]+REAL(uY)[(INTEGER(clus)[j])+nj*t]*Zsub[j+IY*t];
+				if (INTEGER(Ysubcat)[j]==1) {
+					mu2[0]=normal_cdf(REAL(betaY)[Il]-mu2[0]);
+				} else if (INTEGER(Ysubcat)[j]==nsubcat) {
+					mu2[0]=1-normal_cdf(REAL(betaY)[Il+nsubcat-2]-mu2[0]);
+				} else {
+					mu2[0]=normal_cdf(REAL(betaY)[Il+INTEGER(Ysubcat)[j]-1]-mu2[0])-normal_cdf(REAL(betaY)[Il+INTEGER(Ysubcat)[j]-2]-mu2[0]);
+				}
+				logLH=log(mu2[0])-help6[0]/2;
 			}
-			logLH=log(mu2[0])-help6[0]/2;
-
-			}
-			while (nmiss>0) {
-				if (ISNAN(REAL(Yimp)[j+k*IY])) {
-					betamiss[0]=betaX[k];
-					omegamm[0]=REAL(omega)[INTEGER(clus)[j]*JY+k+k*Io];
+		}
+		while (nmiss>0) {
+			if (ISNAN(REAL(Yimp)[j+k*IY])) {
+				betamiss[0]=betaX[k];
+				omegamm[0]=REAL(omega)[INTEGER(clus)[j]*JY+k+k*Io];
 					for (t=0;t<JY;t++) {
-						if (t!=k) {
-							betaobs[counto]=betaX[t];
-							omegamo[counto]=REAL(omega)[INTEGER(clus)[j]*JY+k+t*Io];
-							Yobs[counto]=imp[j+t*IY];
-							for (tt=0;tt<JY;tt++) {
-								if (tt!=k) {
-									omegaoo[countoo]=REAL(omega)[INTEGER(clus)[j]*JY+tt+t*Io];
-									countoo++;
-								}
+					if (t!=k) {
+						betaobs[counto]=betaX[t];
+						omegamo[counto]=REAL(omega)[INTEGER(clus)[j]*JY+k+t*Io];
+						Yobs[counto]=imp[j+t*IY];
+						for (tt=0;tt<JY;tt++) {
+							if (tt!=k) {
+								omegaoo[countoo]=REAL(omega)[INTEGER(clus)[j]*JY+tt+t*Io];
+								countoo++;
 							}
-							counto++;
 						}
+						counto++;
 					}
+				}
 
-					r8mat_pofac((JY-1),omegaoo,help2,14);
-					r8mat_poinv((JY-1),help2,invomega3);
-					for (jj=1;jj<JY-1;jj++) for (tt=0;tt<jj;tt++) invomega3[jj+(JY-1)*tt]=invomega3[tt+(JY-1)*jj];
-					r8mat_mmt_new((JY-1),(JY-1),1,invomega3,omegamo,help3);
-					r8mat_divide((JY-1),1,-1,betaobs);
-					r8mat_add((JY-1),1,betaobs,Yobs);
-					r8mat_mtm_new(1,(JY-1),1,Yobs,help3,mumiss);
+				r8mat_pofac((JY-1),omegaoo,help2,14);
+				r8mat_poinv((JY-1),help2,invomega3);
+				for (jj=1;jj<JY-1;jj++) for (tt=0;tt<jj;tt++) invomega3[jj+(JY-1)*tt]=invomega3[tt+(JY-1)*jj];
+				r8mat_mmt_new((JY-1),(JY-1),1,invomega3,omegamo,help3);
+				r8mat_divide((JY-1),1,-1,betaobs);
+				r8mat_add((JY-1),1,betaobs,Yobs);
+				r8mat_mtm_new(1,(JY-1),1,Yobs,help3,mumiss);
 
-					mumiss[0]=mumiss[0]+betamiss[0];
-					r8mat_mm_new(1,(JY-1),1,omegamo,help3,omegadrawmiss);
-					omegadrawmiss[0]=omegamm[0]-omegadrawmiss[0];
-				
-					if ((k<nconnoaux)||((k>=ncon)&(k<nconcat))) {
-						Ymiss[0]=r8_normal_sample(yi[k],sqrt(omegamm[0]/10),0);
+				mumiss[0]=mumiss[0]+betamiss[0];
+				r8mat_mm_new(1,(JY-1),1,omegamo,help3,omegadrawmiss);
+				omegadrawmiss[0]=omegamm[0]-omegadrawmiss[0];
+			
+				if ((k<nconnoaux)||((k>=ncon)&(k<nconcat))) {
+					Ymiss[0]=r8_normal_sample(yi[k],sqrt(omegamm[0]/10),0);
+					if (INTEGER(submodtype)[0]==0) {
+						mu2[0]=impsub[j];
+						for (t=0;t<Il;t++) mu2[0]=mu2[0]-REAL(betaY)[t]*Xsub[j+IY*t];
+						for (t=0;t<Ir;t++) mu2[0]=mu2[0]-REAL(uY)[(INTEGER(clus)[j])+nj*t]*Zsub[j+IY*t];
+						logLH=-0.5*mu2[0]*mu2[0]/REAL(varY)[0]-help6[0]/2;
+					} else if (INTEGER(submodtype)[0]==1) {
+						mu2[0]=0;
+						for (t=0;t<Il;t++) mu2[0]=mu2[0]+REAL(betaY)[t]*Xsub[j+IY*t];
+						for (t=0;t<Ir;t++) mu2[0]=mu2[0]+REAL(uY)[(INTEGER(clus)[j])+nj*t]*Zsub[j+IY*t];
+						if (INTEGER(Ysubcat)[j]==1) mu2[0]=-mu2[0];
+						logLH=log(normal_cdf(mu2[0]))-help6[0]/2;
+					} else {
 						mu2[0]=0;
 						for (t=0;t<Il;t++) mu2[0]=mu2[0]+REAL(betaY)[t]*Xsub[j+IY*t];
 						for (t=0;t<Ir;t++) mu2[0]=mu2[0]+REAL(uY)[(INTEGER(clus)[j])+nj*t]*Zsub[j+IY*t];
 						if (INTEGER(Ysubcat)[j]==1) {
-						mu2[0]=normal_cdf(REAL(betaY)[Il]-mu2[0]);
-							} else if (INTEGER(Ysubcat)[j]==nsubcat) {
-								mu2[0]=1-normal_cdf(REAL(betaY)[Il+nsubcat-2]-mu2[0]);
-							} else {
-								mu2[0]=normal_cdf(REAL(betaY)[Il+INTEGER(Ysubcat)[j]-1]-mu2[0])-normal_cdf(REAL(betaY)[Il+INTEGER(Ysubcat)[j]-2]-mu2[0]);
-							}
+							mu2[0]=normal_cdf(REAL(betaY)[Il]-mu2[0]);
+						} else if (INTEGER(Ysubcat)[j]==nsubcat) {
+							mu2[0]=1-normal_cdf(REAL(betaY)[Il+nsubcat-2]-mu2[0]);
+						} else {
+							mu2[0]=normal_cdf(REAL(betaY)[Il+INTEGER(Ysubcat)[j]-1]-mu2[0])-normal_cdf(REAL(betaY)[Il+INTEGER(Ysubcat)[j]-2]-mu2[0]);
+						}
 						logLH=log(mu2[0])-help6[0]/2;
-
+					}
 
 				// Controllare se accettabile
-						help4[k]=help4[k]+Ymiss[0]-yi[k];
-						r8mat_mm_new(1,JY,JY,help4,invomega,help5);
-						r8mat_mmt_new(1,JY,1,help5,help4,help);
-						yi[k]=Ymiss[0];								
-						if (ncatnoaux>0) {
-							h=0;
-							for (jj=0;jj<ncatnoaux;jj++) {
-								maxx=yi[(ncon+h)];
-								nmaxx=0;
-								if (INTEGER(Y_numcat)[jj]>2) {
-									for (kk=1;kk<(INTEGER(Y_numcat)[jj]-1);kk++) {
-										if (yi[(ncon+h+kk)]>maxx) {
-											maxx=yi[(ncon+h+kk)];
-											nmaxx=kk;
-										}
-									}
-								}			
-								if (maxx>0) yicategorized[jj]=nmaxx;
-								else yicategorized[jj]=INTEGER(Y_numcat)[jj]-1;
-								h=h+INTEGER(Y_numcat)[jj]-1;
-							}
-						}
-						if (ncatnoaux2>0) {
-							h=0;
-							for (jj=0;jj<ncatnoaux2;jj++) {
-								maxx=imp2[INTEGER(clus)[j]+Iu*(ncon2+h)];
-								nmaxx=0;
-								if (INTEGER(Y2_numcat)[jj]>2) {
-									for (kk=1;kk<(INTEGER(Y2_numcat)[jj]-1);kk++) {
-										if (imp2[INTEGER(clus)[j]+Iu*(ncon2+h+kk)]>maxx) {
-											maxx=imp2[INTEGER(clus)[j]+Iu*(ncon2+h+kk)];
-											nmaxx=kk;
-										}
-									}
-								}			
-								if (maxx>0) yi2categorized[jj]=nmaxx;
-								else yi2categorized[jj]=INTEGER(Y2_numcat)[jj]-1;
-								h=h+INTEGER(Y2_numcat)[jj]-1;
-							}
-						}
-					
-					//Update Xsubprop
+					help4[k]=help4[k]+Ymiss[0]-yi[k];
+					r8mat_mm_new(1,JY,JY,help4,invomega,help5);
+					r8mat_mmt_new(1,JY,1,help5,help4,help);
+					yi[k]=Ymiss[0];								
+					if (ncatnoaux>0) {
 						h=0;
-						indic=0;
-						for (t=0;t<Il;t++) Xsubprop[t]=1;
-	
-						for (jj=0;jj<XLENGTH(ordersub);jj++) {
-							pos=1;
-							currncat=1;
-							for (t=0;t<INTEGER(ordersub)[jj];t++) {
-								pos=pos*(INTEGER(submod)[3+(h+t)*4]);
-							}
-							for (t=0;t<INTEGER(ordersub)[jj];t++) {
-								if (INTEGER(submod)[1+h*4]==1) {
-									for (tt=0;tt<pos;tt++) {
-										Xsubprop[tt+indic]=Xsubprop[tt+indic]*pow(yi[(INTEGER(submod)[h*Is]-1)],INTEGER(submod)[2+h*Is]);
-
-									}	
-								} else if (INTEGER(submod)[1+h*4]==2) {
-									for (tt=0;tt<pos;tt++) {
-										kk=(tt*currncat)%INTEGER(submod)[3+h*4]+1;
-										Xsubprop[tt+indic]=Xsubprop[tt+indic]*(yicategorized[(INTEGER(submod)[h*Is]-1)]==kk);
-									}
-								} else if (INTEGER(submod)[1+h*4]==3) {
-									for (tt=0;tt<pos;tt++) {
-										Xsubprop[tt+indic]=Xsubprop[tt+indic]*pow(imp2[INTEGER(clus)[j]+Iu*(INTEGER(submod)[h*Is]-1)],INTEGER(submod)[2+h*Is]);
-									}
-								} else if (INTEGER(submod)[1+h*4]==4) {
-									for (tt=0;tt<pos;tt++) {
-										kk=(tt*currncat)%INTEGER(submod)[3+h*4]+1;
-										Xsubprop[tt+indic]=Xsubprop[tt+indic]*(yi2categorized[(INTEGER(submod)[h*Is]-1)]==kk);
+						for (jj=0;jj<ncatnoaux;jj++) {
+							maxx=yi[(ncon+h)];
+							nmaxx=0;
+							if (INTEGER(Y_numcat)[jj]>2) {
+								for (kk=1;kk<(INTEGER(Y_numcat)[jj]-1);kk++) {
+									if (yi[(ncon+h+kk)]>maxx) {
+										maxx=yi[(ncon+h+kk)];
+										nmaxx=kk;
 									}
 								}
-								currncat=currncat*INTEGER(submod)[3+h*4];
-								h=h+1;
-							}
-							currncat=1;
-							indic=indic+pos;
+							}			
+							if (maxx>0) yicategorized[jj]=nmaxx;
+							else yicategorized[jj]=INTEGER(Y_numcat)[jj]-1;
+							h=h+INTEGER(Y_numcat)[jj]-1;
 						}
+					}
+					if (ncatnoaux2>0) {
+						h=0;
+						for (jj=0;jj<ncatnoaux2;jj++) {
+							maxx=imp2[INTEGER(clus)[j]+Iu*(ncon2+h)];
+							nmaxx=0;
+							if (INTEGER(Y2_numcat)[jj]>2) {
+								for (kk=1;kk<(INTEGER(Y2_numcat)[jj]-1);kk++) {
+									if (imp2[INTEGER(clus)[j]+Iu*(ncon2+h+kk)]>maxx) {
+										maxx=imp2[INTEGER(clus)[j]+Iu*(ncon2+h+kk)];
+										nmaxx=kk;
+									}
+								}
+							}			
+							if (maxx>0) yi2categorized[jj]=nmaxx;
+							else yi2categorized[jj]=INTEGER(Y2_numcat)[jj]-1;
+							h=h+INTEGER(Y2_numcat)[jj]-1;
+						}
+					}
 				
-											// Update Zsubprop
-
+				//Update Xsubprop
+					h=0;
+					indic=0;
+					for (t=0;t<Il;t++) Xsubprop[t]=1;
+	
+					for (jj=0;jj<XLENGTH(ordersub);jj++) {
+						pos=1;
+						currncat=1;
+						for (t=0;t<INTEGER(ordersub)[jj];t++) {
+							pos=pos*(INTEGER(submod)[3+(h+t)*4]);
+						}
+						for (t=0;t<INTEGER(ordersub)[jj];t++) {
+							if (INTEGER(submod)[1+h*4]==1) {
+								for (tt=0;tt<pos;tt++) {
+									Xsubprop[(INTEGER(submodtype)[0]<2)+tt+indic]=Xsubprop[(INTEGER(submodtype)[0]<2)+tt+indic]*pow(yi[(INTEGER(submod)[h*Is]-1)],INTEGER(submod)[2+h*Is]);
+								}	
+							} else if (INTEGER(submod)[1+h*4]==2) {
+								for (tt=0;tt<pos;tt++) {
+									kk=(tt*currncat)%INTEGER(submod)[3+h*4]+1;
+									Xsubprop[(INTEGER(submodtype)[0]<2)+tt+indic]=Xsubprop[(INTEGER(submodtype)[0]<2)+tt+indic]*(yicategorized[(INTEGER(submod)[h*Is]-1)]==kk);
+								}
+							} else if (INTEGER(submod)[1+h*4]==3) {
+								for (tt=0;tt<pos;tt++) {
+									Xsubprop[(INTEGER(submodtype)[0]<2)+tt+indic]=Xsubprop[(INTEGER(submodtype)[0]<2)+tt+indic]*pow(imp2[INTEGER(clus)[j]+Iu*(INTEGER(submod)[h*Is]-1)],INTEGER(submod)[2+h*Is]);
+								}
+							} else if (INTEGER(submod)[1+h*4]==4) {
+								for (tt=0;tt<pos;tt++) {
+									kk=(tt*currncat)%INTEGER(submod)[3+h*4]+1;
+									Xsubprop[(INTEGER(submodtype)[0]<2)+tt+indic]=Xsubprop[(INTEGER(submodtype)[0]<2)+tt+indic]*(yi2categorized[(INTEGER(submod)[h*Is]-1)]==kk);
+								}
+							}
+							currncat=currncat*INTEGER(submod)[3+h*4];
+							h=h+1;
+						}
+						currncat=1;
+						indic=indic+pos;
+					}
+			
+										// Update Zsubprop
+										
 					for (t=0;t<Ir;t++) Zsubprop[t]=1;
 					pos=0;
 					for (t=0;t<Jr;t++) {
@@ -1219,18 +1255,30 @@ for (i=0;i<ns;i++) {
 					}					
 			
 				
-					mu2[0]=0;
-					for (t=0;t<Il;t++) mu2[0]=mu2[0]+REAL(betaY)[t]*Xsubprop[t];
-					for (t=0;t<Ir;t++) mu2[0]=mu2[0]+REAL(uY)[(INTEGER(clus)[j])+nj*t]*Zsubprop[t];
-					
-					if (INTEGER(Ysubcat)[j]==1) {
-						mu2[0]=normal_cdf(REAL(betaY)[Il]-mu2[0]);
-					} else if (INTEGER(Ysubcat)[j]==nsubcat) {
-						mu2[0]=1-normal_cdf(REAL(betaY)[Il+nsubcat-2]-mu2[0]);
+					if (INTEGER(submodtype)[0]==0) {
+						mu2[0]=impsub[j];
+						for (t=0;t<Il;t++) mu2[0]=mu2[0]-REAL(betaY)[t]*Xsubprop[t];
+						for (t=0;t<Ir;t++) mu2[0]=mu2[0]-REAL(uY)[(INTEGER(clus)[j])+nj*t]*Zsubprop[t];
+						newlogLH=-0.5*mu2[0]*mu2[0]/REAL(varY)[0]-help[0]/2;
+					} else if (INTEGER(submodtype)[0]==1) {
+						 mu2[0]=0;
+						for (t=0;t<Il;t++) mu2[0]=mu2[0]+REAL(betaY)[t]*Xsubprop[t];
+						for (t=0;t<Ir;t++) mu2[0]=mu2[0]+REAL(uY)[(INTEGER(clus)[j])+nj*t]*Zsubprop[t];						
+						if (INTEGER(Ysubcat)[j]==1) mu2[0]=-mu2[0];	
+						newlogLH=log(normal_cdf(mu2[0]))-help[0]/2;
 					} else {
-						mu2[0]=normal_cdf(REAL(betaY)[Il+INTEGER(Ysubcat)[j]-1]-mu2[0])-normal_cdf(REAL(betaY)[Il+INTEGER(Ysubcat)[j]-2]-mu2[0]);
+						mu2[0]=0;
+						for (t=0;t<Il;t++) mu2[0]=mu2[0]+REAL(betaY)[t]*Xsubprop[t];
+						for (t=0;t<Ir;t++) mu2[0]=mu2[0]+REAL(uY)[(INTEGER(clus)[j])+nj*t]*Zsubprop[t];						
+						if (INTEGER(Ysubcat)[j]==1) {
+							mu2[0]=normal_cdf(REAL(betaY)[Il]-mu2[0]);
+						} else if (INTEGER(Ysubcat)[j]==nsubcat) {
+							mu2[0]=1-normal_cdf(REAL(betaY)[Il+nsubcat-2]-mu2[0]);
+						} else {
+							mu2[0]=normal_cdf(REAL(betaY)[Il+INTEGER(Ysubcat)[j]-1]-mu2[0])-normal_cdf(REAL(betaY)[Il+INTEGER(Ysubcat)[j]-2]-mu2[0]);
+						}
+						newlogLH=log(mu2[0])-help[0]/2;
 					}
-					newlogLH=log(mu2[0])-help[0]/2;
 	
 					if ((( double ) unif_rand ( ) )<exp(newlogLH-logLH)) {	
 
@@ -1290,20 +1338,41 @@ for (i=0;i<ns;i++) {
 			r8mat_mm_new(1,Ju,Ju,help4,invomega2,help5);
 			r8mat_mmt_new(1,Ju,1,help5,help4,help6);
 			logLH=-help6[0]/2;
-			for (tt=0;tt<IY;tt++) {
-				if (INTEGER(clus)[tt]==j) {
-					mu2[0]=0;
-					for (t=0;t<Il;t++) mu2[0]=mu2[0]+REAL(betaY)[t]*Xsub[tt+IY*t];
-					for (t=0;t<Ir;t++) mu2[0]=mu2[0]+REAL(uY)[j+nj*t]*Zsub[tt+IY*t];
-					if (INTEGER(Ysubcat)[tt]==1) {
-						mu2[0]=normal_cdf(REAL(betaY)[Il]-mu2[0]);
-					} else if (INTEGER(Ysubcat)[tt]==nsubcat) {
-						mu2[0]=1-normal_cdf(REAL(betaY)[Il+nsubcat-2]-mu2[0]);
-					} else {
-						mu2[0]=normal_cdf(REAL(betaY)[Il+INTEGER(Ysubcat)[tt]-1]-mu2[0])-normal_cdf(REAL(betaY)[Il+INTEGER(Ysubcat)[tt]-2]-mu2[0]);
-					}
-					logLH=log(mu2[0])+logLH;
-				}				
+			if (INTEGER(submodtype)[0]==0) {
+				for (tt=0;tt<IY;tt++) {
+					if (INTEGER(clus)[tt]==j) {
+						mu2[0]=impsub[tt];
+						for (t=0;t<Il;t++) mu2[0]=mu2[0]-REAL(betaY)[t]*Xsub[tt+IY*t];
+						for (t=0;t<Ir;t++) mu2[0]=mu2[0]-REAL(uY)[j+nj*t]*Zsub[tt+IY*t];
+						logLH=-0.5*mu2[0]*mu2[0]/REAL(varY)[0]+logLH;
+					}				
+				}
+			} else if (INTEGER(submodtype)[0]==1) {
+				for (tt=0;tt<IY;tt++) {
+					if (INTEGER(clus)[tt]==j) {
+						mu2[0]=0;
+						for (t=0;t<Il;t++) mu2[0]=mu2[0]+REAL(betaY)[t]*Xsub[tt+IY*t];
+						for (t=0;t<Ir;t++) mu2[0]=mu2[0]+REAL(uY)[j+nj*t]*Zsub[tt+IY*t];
+						if (INTEGER(Ysubcat)[tt]==1) mu2[0]=-mu2[0];	
+						logLH=log(normal_cdf(mu2[0]))+logLH;
+					}				
+				}
+			} else {
+				for (tt=0;tt<IY;tt++) {
+					if (INTEGER(clus)[tt]==j) {
+						mu2[0]=0;
+						for (t=0;t<Il;t++) mu2[0]=mu2[0]+REAL(betaY)[t]*Xsub[tt+IY*t];
+						for (t=0;t<Ir;t++) mu2[0]=mu2[0]+REAL(uY)[j+nj*t]*Zsub[tt+IY*t];
+						if (INTEGER(Ysubcat)[tt]==1) {
+							mu2[0]=normal_cdf(REAL(betaY)[Il]-mu2[0]);
+						} else if (INTEGER(Ysubcat)[tt]==nsubcat) {
+							mu2[0]=1-normal_cdf(REAL(betaY)[Il+nsubcat-2]-mu2[0]);
+						} else {
+							mu2[0]=normal_cdf(REAL(betaY)[Il+INTEGER(Ysubcat)[tt]-1]-mu2[0])-normal_cdf(REAL(betaY)[Il+INTEGER(Ysubcat)[tt]-2]-mu2[0]);
+						}
+						logLH=log(mu2[0])+logLH;
+					}				
+				}
 			}
 		}
 		while (nmiss>0) {
@@ -1333,31 +1402,52 @@ for (i=0;i<ns;i++) {
 				r8mat_pofac((Ju-1),omegaoo,help,14);
 				r8mat_poinv((Ju-1),help,invomega3);
 				for (jj=1;jj<Ju-1;jj++) for (tt=0;tt<jj;tt++) invomega3[jj+(Ju-1)*tt]=invomega3[tt+(Ju-1)*jj];
-				r8mat_mmt_new((Ju-1),(Ju-1),1,invomega3,omegamo,help4);
+				r8mat_mmt_new((Ju-1),(Ju-1),1,invomega3,omegamo,help5);
 				r8mat_divide((Ju-1),1,-1,betaobs);
 				r8mat_add((Ju-1),1,betaobs,Yobs);
-				r8mat_mtm_new(1,(Ju-1),1,Yobs,help4,mumiss);
+				r8mat_mtm_new(1,(Ju-1),1,Yobs,help5,mumiss);
 				mumiss[0]=mumiss[0]+betamiss[0];
-				r8mat_mm_new(1,(Ju-1),1,omegamo,help4,omegadrawmiss);
+				r8mat_mm_new(1,(Ju-1),1,omegamo,help5,omegadrawmiss);
 				omegadrawmiss[0]=omegamm[0]-omegadrawmiss[0];
 				if (((k-JY*JZ)<nconnoaux2)||(((k-JY*JZ)>=ncon2)&((k-JY*JZ)<nconcat2))) {
 					Ymiss[0]=r8_normal_sample(yi[k-JY*JZ],sqrt(omegamm[0]/10),0);
 					logLH=-help6[0]/2;
-				for (tt=0;tt<IY;tt++) {
-					if (INTEGER(clus)[tt]==j) {
-						mu2[0]=0;
-						for (t=0;t<Il;t++) mu2[0]=mu2[0]+REAL(betaY)[t]*Xsub[tt+IY*t];
-						for (t=0;t<Ir;t++) mu2[0]=mu2[0]+REAL(uY)[j+nj*t]*Zsub[tt+IY*t];
-						if (INTEGER(Ysubcat)[tt]==1) {
-							mu2[0]=normal_cdf(REAL(betaY)[Il]-mu2[0]);
-						} else if (INTEGER(Ysubcat)[tt]==nsubcat) {
-							mu2[0]=1-normal_cdf(REAL(betaY)[Il+nsubcat-2]-mu2[0]);
-						} else {
-							mu2[0]=normal_cdf(REAL(betaY)[Il+INTEGER(Ysubcat)[tt]-1]-mu2[0])-normal_cdf(REAL(betaY)[Il+INTEGER(Ysubcat)[tt]-2]-mu2[0]);
+					if (INTEGER(submodtype)[0]==0) {
+						for (tt=0;tt<IY;tt++) {
+							if (INTEGER(clus)[tt]==j) {
+								mu2[0]=impsub[tt];
+								for (t=0;t<Il;t++) mu2[0]=mu2[0]-REAL(betaY)[t]*Xsub[tt+IY*t];
+								for (t=0;t<Ir;t++) mu2[0]=mu2[0]-REAL(uY)[j+nj*t]*Zsub[tt+IY*t];
+								logLH=-0.5*mu2[0]*mu2[0]/REAL(varY)[0]+logLH;
+							}				
 						}
-						logLH=log(mu2[0])+logLH;
-					}				
-				}
+					} else if (INTEGER(submodtype)[0]==1) {
+						for (tt=0;tt<IY;tt++) {
+							if (INTEGER(clus)[tt]==j) {
+								mu2[0]=0;
+								for (t=0;t<Il;t++) mu2[0]=mu2[0]+REAL(betaY)[t]*Xsub[tt+IY*t];
+								for (t=0;t<Ir;t++) mu2[0]=mu2[0]+REAL(uY)[j+nj*t]*Zsub[tt+IY*t];
+								if (INTEGER(Ysubcat)[tt]==1) mu2[0]=-mu2[0];	
+								logLH=log(normal_cdf(mu2[0]))+logLH;
+							}				
+						}
+					} else {
+						for (tt=0;tt<IY;tt++) {
+							if (INTEGER(clus)[tt]==j) {
+								mu2[0]=0;
+								for (t=0;t<Il;t++) mu2[0]=mu2[0]+REAL(betaY)[t]*Xsub[tt+IY*t];
+								for (t=0;t<Ir;t++) mu2[0]=mu2[0]+REAL(uY)[j+nj*t]*Zsub[tt+IY*t];
+								if (INTEGER(Ysubcat)[tt]==1) {
+									mu2[0]=normal_cdf(REAL(betaY)[Il]-mu2[0]);
+								} else if (INTEGER(Ysubcat)[tt]==nsubcat) {
+									mu2[0]=1-normal_cdf(REAL(betaY)[Il+nsubcat-2]-mu2[0]);
+								} else {
+									mu2[0]=normal_cdf(REAL(betaY)[Il+INTEGER(Ysubcat)[tt]-1]-mu2[0])-normal_cdf(REAL(betaY)[Il+INTEGER(Ysubcat)[tt]-2]-mu2[0]);
+								}
+								logLH=log(mu2[0])+logLH;
+							}				
+						}
+					}
 
 				// Controllare se accettabile
 					help4[k]= help4[k]+Ymiss[0]-yi[k-JY*JZ];
@@ -1420,21 +1510,21 @@ for (i=0;i<ns;i++) {
 							for (t=0;t<INTEGER(ordersub)[jj];t++) {
 								if (INTEGER(submod)[1+h*4]==1) {
 									for (tt=0;tt<pos;tt++) {
-										Xsubprop[c+IY*(tt+indic)]=Xsubprop[c+IY*(tt+indic)]*pow(imp[c+IY*(INTEGER(submod)[h*Is]-1)],INTEGER(submod)[2+h*Is]);
+										Xsubprop[c+IY*((INTEGER(submodtype)[0]<2)+tt+indic)]=Xsubprop[c+IY*((INTEGER(submodtype)[0]<2)+tt+indic)]*pow(imp[c+IY*(INTEGER(submod)[h*Is]-1)],INTEGER(submod)[2+h*Is]);
 									}	
 								} else if (INTEGER(submod)[1+h*4]==2) {
 									for (tt=0;tt<pos;tt++) {
 										kk=(tt*currncat)%INTEGER(submod)[3+h*4]+1;
-										Xsubprop[c+IY*(tt+indic)]=Xsubprop[c+IY*(tt+indic)]*(yicategorized[(INTEGER(submod)[h*Is]-1)]==kk);
+										Xsubprop[c+IY*((INTEGER(submodtype)[0]<2)+tt+indic)]=Xsubprop[c+IY*((INTEGER(submodtype)[0]<2)+tt+indic)]*(yicategorized[(INTEGER(submod)[h*Is]-1)]==kk);
 									}
 								} else if (INTEGER(submod)[1+h*4]==3) {
 									for (tt=0;tt<pos;tt++) {
-										Xsubprop[c+IY*(tt+indic)]=Xsubprop[c+IY*(tt+indic)]*pow(yi[(INTEGER(submod)[h*Is]-1)],INTEGER(submod)[2+h*Is]);
+										Xsubprop[c+IY*((INTEGER(submodtype)[0]<2)+tt+indic)]=Xsubprop[c+IY*((INTEGER(submodtype)[0]<2)+tt+indic)]*pow(yi[(INTEGER(submod)[h*Is]-1)],INTEGER(submod)[2+h*Is]);
 									}	
 								} else if (INTEGER(submod)[1+h*4]==4) {
 									for (tt=0;tt<pos;tt++) {
 										kk=(tt*currncat)%INTEGER(submod)[3+h*4]+1;
-										Xsubprop[c+IY*(tt+indic)]=Xsubprop[c+IY*(tt+indic)]*(yi2categorized[(INTEGER(submod)[h*Is]-1)]==kk);
+										Xsubprop[c+IY*((INTEGER(submodtype)[0]<2)+tt+indic)]=Xsubprop[c+IY*((INTEGER(submodtype)[0]<2)+tt+indic)]*(yi2categorized[(INTEGER(submod)[h*Is]-1)]==kk);
 									}
 								} 
 								currncat=currncat*INTEGER(submod)[3+h*4];
@@ -1448,20 +1538,41 @@ for (i=0;i<ns;i++) {
 					}
 				}
 					newlogLH=-help[0]/2;
-					for (tt=0;tt<IY;tt++) {
-						if (INTEGER(clus)[tt]==j) {
-							mu2[0]=0;
-							for (t=0;t<Il;t++) mu2[0]=mu2[0]+REAL(betaY)[t]*Xsubprop[tt+IY*t];
-							for (t=0;t<Ir;t++) mu2[0]=mu2[0]+REAL(uY)[j+nj*t]*Zsub[tt+IY*t];
-							if (INTEGER(Ysubcat)[tt]==1) {
-								mu2[0]=normal_cdf(REAL(betaY)[Il]-mu2[0]);
-							} else if (INTEGER(Ysubcat)[tt]==nsubcat) {
-								mu2[0]=1-normal_cdf(REAL(betaY)[Il+nsubcat-2]-mu2[0]);
-							} else {
-								mu2[0]=normal_cdf(REAL(betaY)[Il+INTEGER(Ysubcat)[tt]-1]-mu2[0])-normal_cdf(REAL(betaY)[Il+INTEGER(Ysubcat)[tt]-2]-mu2[0]);
-							}
-							newlogLH=log(mu2[0])+newlogLH;
-						}				
+					if (INTEGER(submodtype)[0]==0) {
+						for (tt=0;tt<IY;tt++) {
+							if (INTEGER(clus)[tt]==j) {
+								mu2[0]=impsub[tt];
+								for (t=0;t<Il;t++) mu2[0]=mu2[0]-REAL(betaY)[t]*Xsubprop[tt+IY*t];
+								for (t=0;t<Ir;t++) mu2[0]=mu2[0]-REAL(uY)[j+nj*t]*Zsub[tt+IY*t];
+								newlogLH=-0.5*mu2[0]*mu2[0]/REAL(varY)[0]+newlogLH;
+							}				
+						}
+					} else if (INTEGER(submodtype)[0]==1) {
+						for (tt=0;tt<IY;tt++) {
+							if (INTEGER(clus)[tt]==j) {
+								mu2[0]=0;
+								for (t=0;t<Il;t++) mu2[0]=mu2[0]+REAL(betaY)[t]*Xsubprop[tt+IY*t];
+								for (t=0;t<Ir;t++) mu2[0]=mu2[0]+REAL(uY)[j+nj*t]*Zsub[tt+IY*t];
+								if (INTEGER(Ysubcat)[tt]==1) mu2[0]=-mu2[0];	
+								newlogLH=log(normal_cdf(mu2[0]))+newlogLH;
+							}				
+						}
+					} else {
+						for (tt=0;tt<IY;tt++) {
+							if (INTEGER(clus)[tt]==j) {
+								mu2[0]=0;
+								for (t=0;t<Il;t++) mu2[0]=mu2[0]+REAL(betaY)[t]*Xsubprop[tt+IY*t];
+								for (t=0;t<Ir;t++) mu2[0]=mu2[0]+REAL(uY)[j+nj*t]*Zsub[tt+IY*t];
+								if (INTEGER(Ysubcat)[tt]==1) {
+									mu2[0]=normal_cdf(REAL(betaY)[Il]-mu2[0]);
+								} else if (INTEGER(Ysubcat)[tt]==nsubcat) {
+									mu2[0]=1-normal_cdf(REAL(betaY)[Il+nsubcat-2]-mu2[0]);
+								} else {
+									mu2[0]=normal_cdf(REAL(betaY)[Il+INTEGER(Ysubcat)[tt]-1]-mu2[0])-normal_cdf(REAL(betaY)[Il+INTEGER(Ysubcat)[tt]-2]-mu2[0]);
+								}
+								newlogLH=log(mu2[0])+newlogLH;
+								}				
+						}
 					}
 				if ((( double ) unif_rand ( ) )<exp(newlogLH-logLH)) {	
 					imp2[j+(k-JY*JZ)*Iu]=Ymiss[0];
@@ -1499,41 +1610,65 @@ for (i=0;i<ns;i++) {
 	
 	}
 	
-			// Rejection sampling for latent normal outcome
+	if (INTEGER(submodtype)[0]==1) {
+		
+	// Rejection sampling for latent normal outcome
 	
-	for (t=0;t<IY;t++) {
-		if (!ISNAN(REAL(Ysub)[t])) {
-			kk=0;
-			flag=0;
-			mu2[0]=0;
-			for (k=0;k<Il;k++) mu2[0]=mu2[0]+REAL(betaY)[k]*Xsub[t+k*IX];
-			for (k=0;k<Ir;k++) mu2[0]=mu2[0]+REAL(uY)[(INTEGER(clus)[t])+nj*k]*Zsub[t+IY*k];
-
-			while (flag==0&&kk<10000) {
-				yi[0]=r8_normal_sample(mu2[0],1,0);						
-				if (((INTEGER(Ysubcat)[t]==1)&&(yi[0]<REAL(betaY)[Il]))||((INTEGER(Ysubcat)[t]==nsubcat)&&(yi[0]>REAL(betaY)[Il+nsubcat-2]))||((INTEGER(Ysubcat)[t]>1)&&(INTEGER(Ysubcat)[t]<nsubcat)&&(yi[0]<REAL(betaY)[Il+INTEGER(Ysubcat)[t]-1])&&(yi[0]>REAL(betaY)[Il+INTEGER(Ysubcat)[t]-2]))) {
-					impsub[t]=yi[0];
-					flag=1;
-				} else {
-					kk++;
+		for (t=0;t<IY;t++) {
+			if (!ISNAN(REAL(Ysub)[t])) {
+				kk=0;
+				flag=0;
+				mu2[0]=0;
+				for (k=0;k<Il;k++) mu2[0]=mu2[0]+REAL(betaY)[k]*Xsub[t+k*IX];
+				for (k=0;k<Ir;k++) mu2[0]=mu2[0]+REAL(uY)[(INTEGER(clus)[t])+nj*k]*Zsub[t+k*IX];
+				while (flag==0&&kk<10000) {
+					yi[0]=r8_normal_sample(mu2[0],sqrt(REAL(varY)[0]),0);
+					if ((REAL(Ysub)[t]==2&&yi[0]>0)||(REAL(Ysub)[t]==1&&yi[0]<0)) {
+						impsub[t]=yi[0];
+						flag=1;
+					} else {
+						kk++;
+					}
 				}
 			}
 		}
+	} else if (INTEGER(submodtype)[0]==2) {
+		
+			// Rejection sampling for latent normal outcome
+	
+		for (t=0;t<IY;t++) {
+			if (!ISNAN(REAL(Ysub)[t])) {
+				kk=0;
+				flag=0;
+				mu2[0]=0;
+				for (k=0;k<Il;k++) mu2[0]=mu2[0]+REAL(betaY)[k]*Xsub[t+k*IX];
+				for (k=0;k<Ir;k++) mu2[0]=mu2[0]+REAL(uY)[(INTEGER(clus)[t])+nj*k]*Zsub[t+IY*k];
 
-	}
-	
-		// Update thresholds latent normal
-	
-	for (t=0;t<(nsubcat-1);t++) {
-		mu2[0]=-10;
-		for (j=0;j<IY;j++) {
-			if ((impsub[j]<REAL(betaY)[Il+t])&&(impsub[j]>mu2[0])) mu2[0]=impsub[j];
+				while (flag==0&&kk<10000) {
+					yi[0]=r8_normal_sample(mu2[0],1,0);						
+					if (((INTEGER(Ysubcat)[t]==1)&&(yi[0]<REAL(betaY)[Il]))||((INTEGER(Ysubcat)[t]==nsubcat)&&(yi[0]>REAL(betaY)[Il+nsubcat-2]))||((INTEGER(Ysubcat)[t]>1)&&(INTEGER(Ysubcat)[t]<nsubcat)&&(yi[0]<REAL(betaY)[Il+INTEGER(Ysubcat)[t]-1])&&(yi[0]>REAL(betaY)[Il+INTEGER(Ysubcat)[t]-2]))) {
+						impsub[t]=yi[0];
+						flag=1;
+					} else {
+						kk++;
+					}
+				}
+			}
+
 		}
-		mu2[1]=10;
-		for (j=0;j<IY;j++) {
-			if ((impsub[j]>REAL(betaY)[Il+t])&&(impsub[j]<mu2[1])) mu2[1]=impsub[j];
+			// Update thresholds latent normal
+		
+		for (t=0;t<(nsubcat-1);t++) {
+			mu2[0]=-10;
+			for (j=0;j<IY;j++) {
+				if ((impsub[j]<REAL(betaY)[Il+t])&&(impsub[j]>mu2[0])) mu2[0]=impsub[j];
+			}
+			mu2[1]=10;
+			for (j=0;j<IY;j++) {
+				if ((impsub[j]>REAL(betaY)[Il+t])&&(impsub[j]<mu2[1])) mu2[1]=impsub[j];
+			}
+			REAL(betaY)[Il+t]=r8_uniform_sample(mu2[0],mu2[1],0);
 		}
-		REAL(betaY)[Il+t]=r8_uniform_sample(mu2[0],mu2[1],0);
 	}
 
 		// Update beta of substantive model
@@ -1561,17 +1696,30 @@ for (i=0;i<ns;i++) {
 	for (jj=1;jj<Il;jj++) for (tt=0;tt<jj;tt++) invomega2[jj+Il*tt]=invomega2[tt+Il*jj];
 	r8mat_mm_new(Il,Il,1,invomega2,sumxy,mu);
 	r8mat_pofac(Il,invomega2,help3,5);
-	r8vec_multinormal_sample(Il, mu,help3, newbeta,residsub,0);	
-	for (j=0;j<Il;j++) REAL(betaY)[j]=newbeta[j];
-	if (MCMC==0) {
+	if (INTEGER(submodtype)[0]==2) {
+		r8vec_multinormal_sample(Il, mu,help3, newbeta,residsub,0);	
+		for (j=0;j<Il;j++) REAL(betaY)[j]=newbeta[j];
+		if (MCMC==0) {
 		r8mat_add(1,Il+nsubcat-1,REAL(betaY),REAL(betaYpost));
+		} else {
+			for (j=0;j<1;j++) {
+				for (t=0;t<(Il+nsubcat-1);t++) {
+					REAL(betaYpost)[j+t+i*(Il+nsubcat-1)]=REAL(betaY)[j+t];
+				}
+			}
+
+		}
 	} else {
-		for (j=0;j<1;j++) {
-			for (t=0;t<(Il+nsubcat-1);t++) {
-				REAL(betaYpost)[j+t+i*(Il+nsubcat-1)]=REAL(betaY)[j+t];
+		r8vec_multinormal_sample(Il, mu,help3, REAL(betaY),newbeta,0);	
+		if (MCMC==0) {
+			r8mat_add(1,Il,REAL(betaY),REAL(betaYpost));
+		} else {
+			for (j=0;j<1;j++) {
+				for (t=0;t<(Il);t++) {
+					REAL(betaYpost)[j+t+i*(Il)]=REAL(betaY)[j+t];
+				}
 			}
 		}
-
 	}
 	
 	// Update random effects of substantive model
@@ -1621,6 +1769,7 @@ for (i=0;i<ns;i++) {
 			}
 		}
 	}
+	
 			//Updating level 2 covariance matrix of substantive model 
 	
 	for (j=0;j<Ir*Ir;j++) mu3[j]=0;
@@ -1640,6 +1789,7 @@ for (i=0;i<ns;i++) {
 	r8mat_poinv(Ir, help4,invomega3);
 	for (jj=1;jj<Ir;jj++) for (tt=0;tt<jj;tt++) invomega3[jj+Ir*tt]=invomega3[tt+Ir*jj];
 	for(k=0;k<Ir*Ir;k++) REAL(covuY)[k]=invomega3[k];
+	
 	if (MCMC==0) {
 		r8mat_add(Ir,Ir,REAL(covuY),REAL(covuYpost));
 	} else {
@@ -1662,34 +1812,51 @@ for (i=0;i<ns;i++) {
 			}
 	}
 
-//Not updating omega (fixed to 1)
+	//Updating omega sub model
 
+	if (INTEGER(submodtype)[0]==0) {
+		r8mat_mmt_new(1,IY,1,residsub,residsub,mu2);
+		mu2[0]=mu2[0]+REAL(varYprior)[0];
+		invomega3[0]=1/mu2[0];
+		wishart_sample(1,IY+1,invomega3,omegadrawmiss,help, omegaoo,omegamo,omegamm,0);	
+		REAL(varY)[0]=1/omegadrawmiss[0];
+
+	}
+	
 	if (MCMC==0) {
 		REAL(varYpost)[0]=REAL(varYpost)[0]+REAL(varY)[0];
 	} else {
-	REAL(varYpost)[i]=REAL(varY)[0];
+		REAL(varYpost)[i]=REAL(varY)[0];
 	}
+	
+	// Imputing outcome data
 	
 	for (t=0;t<IY;t++) {
 		if (ISNAN(REAL(Ysub)[t])) {
 			mu2[0]=0;
 			for (k=0;k<Il;k++) mu2[0]=mu2[0]+REAL(betaY)[k]*Xsub[t+k*IX];
 			for (k=0;k<Ir;k++) mu2[0]=mu2[0]+REAL(uY)[(INTEGER(clus)[t])+nj*k]*Zsub[t+k*IX];
-			impsub[t]=r8_normal_sample(mu2[0],1,0);
-			if (impsub[t]>REAL(betaY)[Il+nsubcat-2]) {
-				INTEGER(Ysubcat)[t]=nsubcat;
-			} else {
-				flag=0;
-				k=0;
-				while (flag==0) {
-					if (impsub[t]<=REAL(betaY)[Il+k]) {
-						INTEGER(Ysubcat)[t]=k+1;
-						flag=1;
-					} else {
-						k++;
+
+			impsub[t]=r8_normal_sample(mu2[0],sqrt(REAL(varY)[0]),0);
+			if (INTEGER(submodtype)[0]==1) {
+				INTEGER(Ysubcat)[t]=(impsub[t]>0)+1;
+			} else if (INTEGER(submodtype)[0]==2) {
+				if (impsub[t]>REAL(betaY)[Il+nsubcat-2]) {
+					INTEGER(Ysubcat)[t]=nsubcat;
+				} else {
+					flag=0;
+					k=0;
+					while (flag==0) {
+						if (impsub[t]<=REAL(betaY)[Il+k]) {
+							INTEGER(Ysubcat)[t]=k+1;
+							flag=1;
+						} else {
+							k++;
+						}
 					}
 				}
-			}		
+			}
+			
 		}
 	}
 	
@@ -1749,8 +1916,8 @@ if (ncat2>0) {
 	}
 
 }
-
-if (MCMC==0) {	
+	
+if (MCMC==0) {
 	r8mat_divide(Ib,Jb,ns,REAL(betapost));
 	r8mat_divide(Ib2,Jb2,ns,REAL(beta2post));
 	r8mat_divide(Iu,Ju,ns,REAL(upost));
@@ -1762,6 +1929,6 @@ if (MCMC==0) {
 	r8mat_divide(Ir,Ir,ns,REAL(covuYpost));
 }
 PutRNGstate();
-UNPROTECT(61);
+UNPROTECT(62);
 return R_NilValue;
 }

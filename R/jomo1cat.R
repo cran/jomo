@@ -15,6 +15,34 @@ jomo1cat <-
       previous_levels[[i]]<-levels(Y.cat[,i])
       levels(Y.cat[,i])<-1:nlevels(Y.cat[,i])
     }
+    if (any(is.na(Y.cat))) {
+      if (ncol(Y.cat)==1) {
+        miss.pat<-matrix(c(0,1),2,1)
+        n.patterns<-2
+      } else  {
+        miss.pat<-md.pattern.mice(Y.cat, plot=F)
+        miss.pat<-miss.pat[,colnames(Y.cat)]
+        n.patterns<-nrow(miss.pat)-1
+      }
+    } else {
+      miss.pat<-matrix(0,2,ncol(Y.cat)+1)
+      n.patterns<-nrow(miss.pat)-1
+    }
+    
+    miss.pat.id<-rep(0,nrow(Y.cat))
+    for (i in 1:nrow(Y.cat)) {
+      k <- 1
+      flag <- 0
+      while ((k <= n.patterns) & (flag == 0)) {
+        if (all(!is.na(Y.cat[i,])==miss.pat[k,1:(ncol(miss.pat))])) {
+          miss.pat.id[i] <- k
+          flag <- 1
+        } else {
+          k <- k + 1
+        }
+      }
+    }
+    
     for (i in 1:ncol(X)) {
       if (is.factor(X[,i])) X[,i]<-as.numeric(X[,i])
     }
@@ -61,7 +89,7 @@ jomo1cat <-
     opost<-matrix(0,nrow(l1cov.start),ncol(l1cov.start))
     meanobs<-colMeans(Yi,na.rm=TRUE)
     for (i in 1:nrow(Yi)) for (j in 1:ncol(Yi)) if (is.na(Yimp[i,j])) Yimp2[i,j]=meanobs[j]
-    .Call("jomo1C", Y, Yimp, Yimp2, Y.cat, X,betait,bpost,covit,opost, nburn, l1cov.prior,Y.numcat, 0, out.iter,0, PACKAGE = "jomo")
+    .Call("jomo1C", Y, Yimp, Yimp2, Y.cat, X,betait,bpost,covit,opost, nburn, l1cov.prior,Y.numcat, 0, out.iter,0, miss.pat.id, n.patterns, PACKAGE = "jomo")
     #betapost[,,1]=bpost
     #omegapost[,,1]=opost
     bpost<-matrix(0,nrow(beta.start),ncol(beta.start))
@@ -72,7 +100,7 @@ jomo1cat <-
       imp[(i*nrow(X)+1):((i+1)*nrow(X)),(ncol(Y)+1):(ncol(Y)+ncol(X))]=X
       imp[(i*nrow(X)+1):((i+1)*nrow(X)), (ncol(Y)+ncol(X)+1)]=c(1:nrow(Y))
       imp[(i*nrow(X)+1):((i+1)*nrow(X)), (ncol(Y)+ncol(X)+2)]=i
-      .Call("jomo1C", Y, Yimp, Yimp2, Y.cat, X,betait,bpost,covit, opost, nbetween, l1cov.prior, Y.numcat, 0, out.iter,0, PACKAGE = "jomo") 
+      .Call("jomo1C", Y, Yimp, Yimp2, Y.cat, X,betait,bpost,covit, opost, nbetween, l1cov.prior, Y.numcat, 0, out.iter,0, miss.pat.id, n.patterns, PACKAGE = "jomo") 
       
       betapost[,,(i-1)]=bpost
       omegapost[,,(i-1)]=opost
@@ -81,11 +109,11 @@ jomo1cat <-
       imp[(i*nrow(X)+1):((i+1)*nrow(X)),1:ncol(Y)]=Y.cat
       if (output==1) cat("Imputation number ", i, "registered", "\n")
     }
-
+    
     imp<-data.frame(imp)
     for (i in 1:ncol(Y)) {
-        imp[,i]<-as.factor(imp[,i]) 
-        levels(imp[,i])<-previous_levels[[i]]
+      imp[,i]<-as.factor(imp[,i]) 
+      levels(imp[,i])<-previous_levels[[i]]
     }
     if (is.null(colnamycat)) colnamycat=paste("Y", 1:ncol(Y.cat), sep = "")
     if (is.null(colnamx)) colnamx=paste("X", 1:ncol(X), sep = "")

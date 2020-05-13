@@ -121,21 +121,46 @@ jomo.coxph.MCMCchain <-
       colnamycon<-colnames(Y.con)
       Y.con<-data.matrix(Y.con)
       storage.mode(Y.con) <- "numeric"  
+    } else {
+      colnamycon<-NULL
     }
-    if (isnullcat==0) {
-      colnamycat<-colnames(Y.cat)
-      Y.cat<-data.matrix(Y.cat)
-      storage.mode(Y.cat) <- "numeric"  
+    if (isnullcat == 0) {
+      colnamycat <- colnames(Y.cat)
+      Y.cat <- data.matrix(Y.cat)
+      storage.mode(Y.cat) <- "numeric"
+      cnycatcomp<-rep(NA,(sum(Y.numcat)-length(Y.numcat)))
+      count=0
+      for ( j in 1:ncol(Y.cat)) {
+        for (k in 1:(Y.numcat[j]-1)) {
+          cnycatcomp[count+k]<-paste(colnamycat[j],k,sep=".")
+        }
+        count=count+Y.numcat[j]-1
+      }
+    } else {
+      cnycatcomp<-NULL
     }
     if (!is.null(Y.aux.con)) {
       colnamyauxcon<-colnames(Y.aux.con)
       Y.aux.con<-data.matrix(Y.aux.con)
       storage.mode(Y.aux.con) <- "numeric"  
+    }  else {
+      colnamyauxcon<-NULL
     }
-    if (isnullcataux==0) {
-      colnamyauxcat<-colnames(Y.aux.cat)
-      Y.aux.cat<-data.matrix(Y.aux.cat)
-      storage.mode(Y.aux.cat) <- "numeric"  
+    if (isnullcataux == 0) {
+      colnamyauxcat <- colnames(Y.aux.cat)
+      Y.aux.cat <- data.matrix(Y.aux.cat)
+      storage.mode(Y.aux.cat) <- "numeric"
+      cnyauxcatcomp<-rep(NA,(sum(Y.aux.numcat)-length(Y.aux.numcat)))
+      count=0
+      for ( j in 1:ncol(Y.aux.cat)) {
+        for (k in 1:(Y.aux.numcat[j]-1)) {
+          cnyauxcatcomp[count+k]<-paste(colnamyauxcat[j],k,sep=".")
+        }
+        count=count+Y.aux.numcat[j]-1
+      }
+      
+    } else {
+      cnyauxcatcomp<-NULL
     }
     colnamx<-colnames(X)
     X<-data.matrix(X)
@@ -171,7 +196,7 @@ jomo.coxph.MCMCchain <-
       Y.numcat.tot=-999
     }
     
-    if (output!=1) out.iter=nburn+2
+    if (output == 0) out.iter=nburn+2
     nimp=1
     imp=matrix(0,nrow(Y)*(nimp+1),ncol(Y)+4)
     imp[1:nrow(Y),1:2]=Ysub
@@ -203,7 +228,7 @@ jomo.coxph.MCMCchain <-
       for (i in 1:nrow(Yi)) for (j in 1:ncol(Yi)) if (is.na(Yimp[i,j])) Yimp2[i,j]=meanobs[j]
     }
     
-    .Call("jomocoxC", Ysub, submod, order.sub, Y, Yimp, Yimp2, Y.cat.tot, X, betaY.start, betaYpost, betait, betapost, covit, omegapost, nburn, l1cov.prior,Y.numcat.tot, ncolYcon,out.iter, 1, PACKAGE = "jomo")
+    .Call("jomo1smcC", Ysub, 0, 0, submod, order.sub, Y, Yimp, Yimp2, Y.cat.tot, X, betaY.start, betaYpost, betait, betapost, 0, 0, covit, omegapost, nburn, 0, l1cov.prior,Y.numcat.tot, 1, ncolYcon,out.iter, 1,2, PACKAGE = "jomo")
     #betapost[,,1]=bpost
     #omegapost[,,(1)]=opost
     imp[(nrow(Y)+1):(2*nrow(Y)),1:2]=as.matrix(Ysub)
@@ -213,19 +238,27 @@ jomo.coxph.MCMCchain <-
     if (isnullcat==0|isnullcataux==0) {
       imp[(nrow(Y)+1):(2*nrow(Y)),(ncolYcon[1]+3):(2+ncol(Y))]=Y.cat.tot
     }
-    if (output==1) cat("First imputation registered.", "\n")
+    if (output>0) cat("First imputation registered.", "\n")
 
+    cnamycomp<-c(colnamycon, colnamyauxcon, cnycatcomp, cnyauxcatcomp)
+    dimnames(betapost)[1] <- list("(Intercept)")
+    dimnames(betapost)[2] <- list(cnamycomp)
+    dimnames(omegapost)[1] <- list(cnamycomp)
+    dimnames(omegapost)[2] <- list(cnamycomp)
     betaYpostmean<-apply(betaYpost, c(1,2), mean)
     betapostmean<-apply(betapost, c(1,2), mean)
     omegapostmean<-apply(omegapost, c(1,2), mean)
-    if (output==1) {
+    colnames(betaYpostmean)<-names(fit.cr$coefficients)
+    if (output>0) {
       cat("The posterior mean of the substantive model fixed effects estimates is:\n")
       print(betaYpostmean)
-      cat("The posterior mean of the fixed effects estimates is:\n")
-      print(betapostmean)
-      cat("The posterior mean of the level 1 covariance matrix is:\n")
-      print(omegapostmean)
-    }
+      if (output ==2) {
+        cat("The posterior mean of the fixed effects estimates is:\n")
+        print(betapostmean)
+        cat("The posterior mean of the level 1 covariance matrix is:\n")
+        print(omegapostmean)
+      }
+     }
     imp<-data.frame(imp)
     if (isnullcat==0) {
       for (i in 1:ncol(Y.cat)) {

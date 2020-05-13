@@ -23,15 +23,15 @@ jomo.lm <-
     Y.cat<-NULL
     Y.numcat<-NULL
     for (j in 1:ncol(Ycov)) {
-        if (is.numeric(Ycov[,j])) {
-          if (is.null(Y.con)) Y.con<-data.frame(Ycov[,j,drop=FALSE])
-          else Y.con<-data.frame(Y.con,Ycov[,j,drop=FALSE])
-        }
-        if (is.factor(Ycov[,j])) {
-          if (is.null(Y.cat)) Y.cat<-data.frame(Ycov[,j,drop=FALSE])
-          else Y.cat<-data.frame(Y.cat,Ycov[,j,drop=FALSE])
-          Y.numcat<-cbind(Y.numcat,nlevels(Ycov[,j]))
-        }
+      if (is.numeric(Ycov[,j])) {
+        if (is.null(Y.con)) Y.con<-data.frame(Ycov[,j,drop=FALSE])
+        else Y.con<-data.frame(Y.con,Ycov[,j,drop=FALSE])
+      }
+      if (is.factor(Ycov[,j])) {
+        if (is.null(Y.cat)) Y.cat<-data.frame(Ycov[,j,drop=FALSE])
+        else Y.cat<-data.frame(Y.cat,Ycov[,j,drop=FALSE])
+        Y.numcat<-cbind(Y.numcat,nlevels(Ycov[,j]))
+      }
     }
     h<-1
     for ( j in 1:length.sub) {
@@ -40,22 +40,22 @@ jomo.lm <-
         current.term<-sub(".*I\\(","",current.term)
         current.term<-sub("\\)","",current.term)
         if (grepl("\\^",current.term)) {
-            submod[3,h]<-as.integer(sub(".*\\^","",current.term))
-            current.term<-sub("\\^.*","",current.term)
+          submod[3,h]<-as.integer(sub(".*\\^","",current.term))
+          current.term<-sub("\\^.*","",current.term)
         } else {
-            submod[3,h]<-1
+          submod[3,h]<-1
         }
         if (length(which(colnames(Y.cat)==current.term))!=0) {
-            submod[1,h]<-which(colnames(Y.cat)==current.term)
-            submod[2,h]<-2
-            submod[4,h]<-Y.numcat[submod[1,h]]-1
+          submod[1,h]<-which(colnames(Y.cat)==current.term)
+          submod[2,h]<-2
+          submod[4,h]<-Y.numcat[submod[1,h]]-1
         } else if (length(which(colnames(Y.con)==current.term))!=0) {
-            submod[1,h]<-which(colnames(Y.con)==current.term)
-            submod[2,h]<-1
+          submod[1,h]<-which(colnames(Y.con)==current.term)
+          submod[2,h]<-1
         } 
         h<-h+1  
       }
-        
+      
     }
     Y.auxiliary<-data.frame(data[,-c(which(colnames(data)%in%colnames(Y.con)),which(colnames(data)%in%colnames(Y.cat)),which(colnames(data)==colnamysub)), drop=FALSE])
     Y.aux.con<-NULL
@@ -63,22 +63,22 @@ jomo.lm <-
     Y.aux.numcat<-NULL
     if (ncol(Y.auxiliary)>0) {
       for (j in 1:ncol(Y.auxiliary)) {
-          if (is.numeric(Y.auxiliary[,j])) {
-            if (is.null(Y.aux.con)) Y.aux.con<-data.frame(Y.auxiliary[,j,drop=FALSE])
-            else Y.aux.con<-data.frame(Y.aux.con,Y.auxiliary[,j,drop=FALSE])
-          }
-          if (is.factor(Y.auxiliary[,j])) {
-            if (is.null(Y.aux.cat)) Y.aux.cat<-data.frame(Y.auxiliary[,j,drop=FALSE])
-            else Y.aux.cat<-data.frame(Y.aux.cat,Y.auxiliary[,j,drop=FALSE])
-            Y.aux.numcat<-cbind(Y.aux.numcat,nlevels(Y.auxiliary[,j]))
-          }
+        if (is.numeric(Y.auxiliary[,j])) {
+          if (is.null(Y.aux.con)) Y.aux.con<-data.frame(Y.auxiliary[,j,drop=FALSE])
+          else Y.aux.con<-data.frame(Y.aux.con,Y.auxiliary[,j,drop=FALSE])
+        }
+        if (is.factor(Y.auxiliary[,j])) {
+          if (is.null(Y.aux.cat)) Y.aux.cat<-data.frame(Y.auxiliary[,j,drop=FALSE])
+          else Y.aux.cat<-data.frame(Y.aux.cat,Y.auxiliary[,j,drop=FALSE])
+          Y.aux.numcat<-cbind(Y.aux.numcat,nlevels(Y.auxiliary[,j]))
+        }
       }
     }
     X=matrix(1,max(nrow(Y.cat),nrow(Y.con)),1)
     if (is.null(beta.start)) beta.start=matrix(0,ncol(X),(max(as.numeric(!is.null(Y.con)),ncol(Y.con))+max(0,(sum(Y.numcat)-length(Y.numcat)))+max(as.numeric(!is.null(Y.aux.con)),ncol(Y.aux.con))+max(0,(sum(Y.aux.numcat)-length(Y.aux.numcat)))))
     
     if (is.null(l1cov.start)) {
-        l1cov.start=diag(1,ncol(beta.start))
+      l1cov.start=diag(1,ncol(beta.start))
     }
     if (is.null(l1cov.prior)) l1cov.prior=diag(1,ncol(l1cov.start))
     ncolYcon<-rep(NA,4)
@@ -111,7 +111,7 @@ jomo.lm <-
     } else {
       isnullcataux=1
     } 
-
+    
     stopifnot(nrow(beta.start)==ncol(X), ncol(beta.start)==(ncolYcon[1]+max(0,(sum(Y.numcat)-length(Y.numcat)))+max(0,(sum(Y.aux.numcat)-length(Y.aux.numcat)))))
     stopifnot(nrow(l1cov.start)==ncol(l1cov.start),nrow(l1cov.prior)==nrow(l1cov.start),nrow(l1cov.start)==ncol(beta.start))
     stopifnot(nrow(l1cov.prior)==ncol(l1cov.prior))
@@ -127,22 +127,48 @@ jomo.lm <-
       colnamycon<-colnames(Y.con)
       Y.con<-data.matrix(Y.con)
       storage.mode(Y.con) <- "numeric"  
+    } else {
+      colnamycon<-NULL
     }
-    if (isnullcat==0) {
-      colnamycat<-colnames(Y.cat)
-      Y.cat<-data.matrix(Y.cat)
-      storage.mode(Y.cat) <- "numeric"  
+    if (isnullcat == 0) {
+      colnamycat <- colnames(Y.cat)
+      Y.cat <- data.matrix(Y.cat)
+      storage.mode(Y.cat) <- "numeric"
+      cnycatcomp<-rep(NA,(sum(Y.numcat)-length(Y.numcat)))
+      count=0
+      for ( j in 1:ncol(Y.cat)) {
+        for (k in 1:(Y.numcat[j]-1)) {
+          cnycatcomp[count+k]<-paste(colnamycat[j],k,sep=".")
+        }
+        count=count+Y.numcat[j]-1
+      }
+    } else {
+      cnycatcomp<-NULL
     }
     if (!is.null(Y.aux.con)) {
       colnamyauxcon<-colnames(Y.aux.con)
       Y.aux.con<-data.matrix(Y.aux.con)
       storage.mode(Y.aux.con) <- "numeric"  
+    } else {
+      colnamyauxcon<-NULL
     }
-    if (isnullcataux==0) {
-      colnamyauxcat<-colnames(Y.aux.cat)
-      Y.aux.cat<-data.matrix(Y.aux.cat)
-      storage.mode(Y.aux.cat) <- "numeric"  
+    if (isnullcataux == 0) {
+      colnamyauxcat <- colnames(Y.aux.cat)
+      Y.aux.cat <- data.matrix(Y.aux.cat)
+      storage.mode(Y.aux.cat) <- "numeric"
+      cnyauxcatcomp<-rep(NA,(sum(Y.aux.numcat)-length(Y.aux.numcat)))
+      count=0
+      for ( j in 1:ncol(Y.aux.cat)) {
+        for (k in 1:(Y.aux.numcat[j]-1)) {
+          cnyauxcatcomp[count+k]<-paste(colnamyauxcat[j],k,sep=".")
+        }
+        count=count+Y.aux.numcat[j]-1
+      }
+      
+    } else {
+      cnyauxcatcomp<-NULL
     }
+    
     colnamx<-colnames(X)
     X<-data.matrix(X)
     storage.mode(X) <- "numeric"    
@@ -176,9 +202,9 @@ jomo.lm <-
       Y.cat.tot=-999
       Y.numcat.tot=-999
     }
-     Ysubimp<-Ysub
-
-    if (output!=1) out.iter=nburn+nbetween
+    Ysubimp<-Ysub
+    
+    if (output == 0) out.iter=nburn+nbetween
     imp=matrix(0,nrow(Y)*(nimp+1),ncol(Y)+3)
     imp[1:nrow(Y),1]=Ysub
     imp[1:nrow(Y),2:(1+ncol(Y))]=Y
@@ -199,7 +225,7 @@ jomo.lm <-
     for (i in 1:nrow(Yi)) for (j in 1:ncol(Yi)) if (is.na(Yimp[i,j])) Yimp2[i,j]=meanobs[j]
     for (i in 1:length(Ysubimp)) if (is.na(Ysubimp[i])) Ysubimp[i]=mean(Ysubimp, na.rm = TRUE)
     
-    .Call("jomolmC", Ysub, Ysubimp, submod, order.sub, Y, Yimp, Yimp2, Y.cat.tot, X, betaY.start, bYpost, betait,bpost, varY.start, vYpost, covit,opost, nburn, varY.prior, l1cov.prior,Y.numcat.tot, ncolYcon,out.iter, 0, PACKAGE = "jomo")
+    .Call("jomo1smcC", Ysub, Ysubimp, 0, submod, order.sub, Y, Yimp, Yimp2, Y.cat.tot, X, betaY.start, bYpost, betait,bpost, varY.start, vYpost, covit,opost, nburn, varY.prior, l1cov.prior,Y.numcat.tot,1, ncolYcon,out.iter, 0, 0, PACKAGE = "jomo")
     #betapost[,,1]=bpost
     #omegapost[,,(1)]=opost
     bpost<-matrix(0,nrow(beta.start),ncol(beta.start))
@@ -213,12 +239,12 @@ jomo.lm <-
     if (isnullcat==0|isnullcataux==0) {
       imp[(nrow(Y)+1):(2*nrow(Y)),(ncolYcon[1]+2):(1+ncol(Y))]=Y.cat.tot
     }
-    if (output==1) cat("First imputation registered.", "\n")
+    if (output > 0) cat("First imputation registered.", "\n")
     for (i in 2:nimp) {
       #Yimp2=matrix(0, nrow(Yimp),ncol(Yimp))
       imp[(i*nrow(X)+1):((i+1)*nrow(X)), (ncol(Y)+2)]=c(1:nrow(Y))
       imp[(i*nrow(X)+1):((i+1)*nrow(X)), (ncol(Y)+3)]=i
-      .Call("jomolmC", Ysub, Ysubimp, submod, order.sub, Y, Yimp, Yimp2, Y.cat.tot, X, betaY.start, bYpost, betait,bpost, varY.start, vYpost, covit,opost, nbetween, varY.prior, l1cov.prior,Y.numcat.tot, ncolYcon,out.iter, 0, PACKAGE = "jomo")
+      .Call("jomo1smcC", Ysub, Ysubimp, 0, submod, order.sub, Y, Yimp, Yimp2, Y.cat.tot, X, betaY.start, bYpost, betait,bpost, varY.start, vYpost, covit,opost, nbetween, varY.prior, l1cov.prior,Y.numcat.tot,1, ncolYcon,out.iter, 0, 0, PACKAGE = "jomo")
       betapost[,,(i-1)]=bpost
       betaYpost[,,(i-1)]=bYpost
       omegapost[,,(i-1)]=opost
@@ -234,22 +260,31 @@ jomo.lm <-
       if (isnullcat==0||isnullcataux==0) {
         imp[(i*nrow(X)+1):((i+1)*nrow(X)),(ncolYcon[1]+2):(1+ncol(Y))]=Y.cat.tot
       }
-      if (output==1) cat("Imputation number ", i, "registered", "\n")
+      if (output > 0) cat("Imputation number ", i, "registered", "\n")
     }
     
-    betaYpostmean<-apply(betaYpost, c(1,2), mean)
-    varYpostmean<-mean(varYpost)
-    betapostmean<-apply(betapost, c(1,2), mean)
-    omegapostmean<-apply(omegapost, c(1,2), mean)
-    if (output==1) {
+    cnamycomp<-c(colnamycon, colnamyauxcon, cnycatcomp, cnyauxcatcomp)
+    dimnames(betapost)[1] <- list("(Intercept)")
+    dimnames(betapost)[2] <- list(cnamycomp)
+    dimnames(omegapost)[1] <- list(cnamycomp)
+    dimnames(omegapost)[2] <- list(cnamycomp)
+    betaYpostmean <- apply(betaYpost, c(1, 2), mean)
+    varYpostmean <- mean(varYpost)
+    betapostmean <- apply(betapost, c(1, 2), mean)
+    omegapostmean <- apply(omegapost, c(1, 2), mean)
+    colnames(betaYpostmean)<-names(fit.cr$coefficients)
+    rownames(betaYpostmean)<-colnamysub
+    if (output > 0) {
       cat("The posterior mean of the substantive model fixed effects estimates is:\n")
       print(betaYpostmean)
       cat("The posterior mean of the substantive model residual variance is:\n")
       print(varYpostmean)
-      cat("The posterior mean of the fixed effects estimates is:\n")
-      print(betapostmean)
-      cat("The posterior mean of the level 1 covariance matrix is:\n")
-      print(omegapostmean)
+      if ( output == 2 ) {
+        cat("The posterior mean of the fixed effects estimates is:\n")
+        print(betapostmean)
+        cat("The posterior mean of the level 1 covariance matrix is:\n")
+        print(omegapostmean)
+      }
     }
     imp<-data.frame(imp)
     if (isnullcat==0) {

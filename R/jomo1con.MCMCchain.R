@@ -3,6 +3,34 @@ jomo1con.MCMCchain<- function(Y, X=NULL, beta.start=NULL, l1cov.start=NULL, l1co
   if (is.null(beta.start)) beta.start=matrix(0,ncol(X),ncol(Y))
   if (is.null(l1cov.start)) l1cov.start=diag(1,ncol(beta.start))
   if (is.null(l1cov.prior)) l1cov.prior=diag(1,ncol(beta.start))
+  if (any(is.na(Y))) {
+    if (ncol(Y)==1) {
+      miss.pat<-matrix(c(0,1),2,1)
+      n.patterns<-2
+    } else  {
+      miss.pat<-md.pattern.mice(Y, plot=F)
+      miss.pat<-miss.pat[,colnames(Y)]
+      n.patterns<-nrow(miss.pat)-1
+    }
+  } else {
+    miss.pat<-matrix(0,2,ncol(Y)+1)
+    n.patterns<-nrow(miss.pat)-1
+  }
+  
+  miss.pat.id<-rep(0,nrow(Y))
+  for (i in 1:nrow(Y)) {
+    k <- 1
+    flag <- 0
+    while ((k <= n.patterns) & (flag == 0)) {
+      if (all(!is.na(Y[i,])==miss.pat[k,1:(ncol(miss.pat))])) {
+        miss.pat.id[i] <- k
+        flag <- 1
+      } else {
+        k <- k + 1
+      }
+    }
+  }
+  
   for (i in 1:ncol(X)) {
     if (is.factor(X[,i])) X[,i]<-as.numeric(X[,i])
   }
@@ -54,7 +82,7 @@ jomo1con.MCMCchain<- function(Y, X=NULL, beta.start=NULL, l1cov.start=NULL, l1co
     for (i in 1:nrow(Y)) for (j in 1:ncol(Y)) if (is.na(Yimp[i,j])) Yimp2[i,j]=meanobs[j]
   } 
   Y.cat<-Y.numcat<-(-999)
-  .Call("jomo1C", Y, Yimp, Yimp2, Y.cat, X,betait,betapost,covit,omegapost, nburn, l1cov.prior,Y.numcat, ncol(Y),out.iter, 1, PACKAGE = "jomo")
+  .Call("jomo1C", Y, Yimp, Yimp2, Y.cat, X,betait,betapost,covit,omegapost, nburn, l1cov.prior,Y.numcat, ncol(Y),out.iter, 1, miss.pat.id, n.patterns, PACKAGE = "jomo")
   imp[(nrow(Y)+1):(2*nrow(Y)),1:ncol(Y)]=Yimp2
   imp<-data.frame(imp)
   if (is.null(colnamy)) colnamy=paste("Y", 1:ncol(Y), sep = "")

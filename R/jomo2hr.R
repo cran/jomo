@@ -142,6 +142,34 @@ jomo2hr <-
       Y=Y.cat
       Yi=matrix(0,nrow(Y.cat),(sum(Y.numcat)-length(Y.numcat)))
     }
+    n.patterns<-c(0,0)
+    if (any(is.na(Y))) {
+      if (ncol(Y)==1) {
+        miss.pat<-matrix(c(0,1),2,1)
+        n.patterns[1]<-2
+      } else  {
+        miss.pat<-md.pattern.mice(Y, plot=F)
+        miss.pat<-miss.pat[,colnames(Y)]
+        n.patterns[1]<-nrow(miss.pat)-1
+      }
+    } else {
+      miss.pat<-matrix(0,2,ncol(Y)+1)
+      n.patterns[1]<-nrow(miss.pat)-1
+    }
+    
+    miss.pat.id<-rep(0,nrow(Y))
+    for (i in 1:nrow(Y)) {
+      k <- 1
+      flag <- 0
+      while ((k <= n.patterns[1]) & (flag == 0)) {
+        if (all(!is.na(Y[i,])==miss.pat[k,1:(ncol(miss.pat))])) {
+          miss.pat.id[i] <- k
+          flag <- 1
+        } else {
+          k <- k + 1
+        }
+      }
+    }
     if (!is.null(Y2.con)&isnullcat2==0) {
       Y2=cbind(Y2.con,Y2.cat)
       Y2i=cbind(Y2.con, matrix(0,nrow(Y2.con),(sum(Y2.numcat)-length(Y2.numcat))))
@@ -151,6 +179,33 @@ jomo2hr <-
     } else {
       Y2=Y2.cat
       Y2i=matrix(0,nrow(Y2.cat),(sum(Y2.numcat)-length(Y2.numcat)))
+    }
+    if (any(is.na(Y2))) {
+      if (ncol(Y2)==1) {
+        miss.pat2<-matrix(c(0,1),2,1)
+        n.patterns[2]<-2
+      } else  {
+        miss.pat2<-md.pattern.mice(Y2, plot=F)
+        miss.pat2<-miss.pat2[,colnames(Y2)]
+        n.patterns[2]<-nrow(miss.pat2)-1
+      }
+    } else {
+      miss.pat2<-matrix(0,2,ncol(Y2)+1)
+      n.patterns[2]<-nrow(miss.pat2)-1
+    }
+    
+    miss.pat.id2<-rep(0,nrow(Y2))
+    for (i in 1:nrow(Y2)) {
+      k <- 1
+      flag <- 0
+      while ((k <= n.patterns[2]) & (flag == 0)) {
+        if (all(!is.na(Y2[i,])==miss.pat2[k,1:(ncol(miss.pat2))])) {
+          miss.pat.id2[i] <- k
+          flag <- 1
+        } else {
+          k <- k + 1
+        }
+      }
     }
     h=1
     if (isnullcat==0) {
@@ -213,7 +268,7 @@ jomo2hr <-
     } else {
       fixed=0
     }
-    .Call("jomo2hrC", Y, Yimp, Yimp2, Y.cat,  Y2, Y2imp,Y2imp2, Y2.cat, X, X2, Z, clus,betait,beta2it,uit,bpost,b2post,upost,covit,opost, covuit,cpost,nburn, l1cov.prior,l2cov.prior,Y.numcat, Y2.numcat, ncolYcon,ncolY2con,ait,a.prior,out.iter, fixed, 0, PACKAGE = "jomo")
+    .Call("jomo2hrC", Y, Yimp, Yimp2, Y.cat,  Y2, Y2imp,Y2imp2, Y2.cat, X, X2, Z, clus,betait,beta2it,uit,bpost,b2post,upost,covit,opost, covuit,cpost,nburn, l1cov.prior,l2cov.prior,Y.numcat, Y2.numcat, ncolYcon,ncolY2con,ait,a.prior,out.iter, fixed, 0, miss.pat.id, n.patterns, miss.pat.id2, PACKAGE = "jomo")
     #betapost[,,1]=bpost
     #upostall[,,1]=upost
     #omegapost[,,(1)]=opost
@@ -244,7 +299,7 @@ jomo2hr <-
       imp[(i*nrow(clus)+1):((i+1)*nrow(clus)), (ncol(Y)+ncol(Y2)+ncol(X)+ncol(X2)+ncol(Z)+1)]=clus
       imp[(i*nrow(X)+1):((i+1)*nrow(X)), (ncol(Y)+ncol(Y2)+ncol(X)+ncol(X2)+ncol(Z)+2)]=c(1:nrow(Y))
       imp[(i*nrow(X)+1):((i+1)*nrow(X)), (ncol(Y)+ncol(Y2)+ncol(X)+ncol(X2)+ncol(Z)+3)]=i
-      .Call("jomo2hrC", Y, Yimp, Yimp2, Y.cat,  Y2, Y2imp,Y2imp2, Y2.cat, X, X2, Z, clus,betait,beta2it,uit,bpost,b2post,upost,covit,opost, covuit,cpost,nbetween, l1cov.prior,l2cov.prior,Y.numcat, Y2.numcat, ncolYcon,ncolY2con,ait,a.prior,out.iter, fixed, 0, PACKAGE = "jomo")
+      .Call("jomo2hrC", Y, Yimp, Yimp2, Y.cat,  Y2, Y2imp,Y2imp2, Y2.cat, X, X2, Z, clus,betait,beta2it,uit,bpost,b2post,upost,covit,opost, covuit,cpost,nbetween, l1cov.prior,l2cov.prior,Y.numcat, Y2.numcat, ncolYcon,ncolY2con,ait,a.prior,out.iter, fixed, 0, miss.pat.id, n.patterns, miss.pat.id2, PACKAGE = "jomo")
       betapost[,,(i-1)]=bpost
       beta2post[,,(i-1)]=b2post
       upostall[,,(i-1)]=upost
