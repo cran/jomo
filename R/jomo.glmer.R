@@ -605,7 +605,11 @@ jomo.glmer <-
         dimnames(beta2post)[1] <- list("(Intercept)")
         dimnames(beta2post)[2] <- list(cnamy2comp)
       }
-      dimnames(omegapost)[1] <- list(cnamycomp)
+      if (meth=="common") {
+        dimnames(omegapost)[1] <- list(cnamycomp)
+      } else {
+        dimnames(omegapost)[1] <- list(paste(cnamycomp,rep(levels(factor(clus)),each=length(cnamycomp)), sep="."))
+      }
       dimnames(omegapost)[2] <- list(cnamycomp)
       colnamcovu<-c(cnamycomp,cnamy2comp)
       dimnames(covupost)[1] <- list(colnamcovu)

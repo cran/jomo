@@ -601,12 +601,16 @@ jomo.clmm <-
       dimnames(beta2post)[1] <- list("(Intercept)")
       dimnames(beta2post)[2] <- list(cnamy2comp)
     }
-    dimnames(omegapost)[1] <- list(cnamycomp)
+    if (meth=="common") {
+      dimnames(omegapost)[1] <- list(cnamycomp)
+    } else {
+      dimnames(omegapost)[1] <- list(paste(cnamycomp,rep(levels(factor(clus)),each=length(cnamycomp)), sep="."))
+    }
     dimnames(omegapost)[2] <- list(cnamycomp)
     colnamcovu<-c(cnamycomp,cnamy2comp)
     dimnames(covupost)[1] <- list(colnamcovu)
     dimnames(covupost)[2] <- list(colnamcovu)
-    dimnames(upostall)[1]<-list(levels(clus))
+    dimnames(upostall)[1]<-list(levels(factor(clus)))
     dimnames(upostall)[2]<-list(colnamcovu)
     betaYpostmean<-apply(betaYpost, c(1,2), mean)
     varYpostmean<-mean(varYpost)

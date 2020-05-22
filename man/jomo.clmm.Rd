@@ -107,11 +107,10 @@ Hyperparameter (Degrees of freedom) of the chi square prior distribution for the
   
   #And finally we run the imputation function:
   
-  imp<-jomo.clmm(formula,data, nburn=2, nbetween=2, nimp=2)
+  # imp<-jomo.clmm(formula,data, nburn=1000, nbetween=1000, nimp=2)
   
-  # Note we are using only 2 iterations to avoid time consuming examples, 
-  # which go against CRAN policies. In real applications we would use
-  # much larger burn-ins (around 1000) and at least 5 imputations.
+  # Note the function is commented out to avoid time consuming examples, 
+  # which go against CRAN policies. 
   # Check help page for function jomo to see how to fit the model and 
   # combine estimates with Rubin's rules
   

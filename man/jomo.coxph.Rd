@@ -63,7 +63,7 @@ formula<-as.formula(Surv(time, status) ~ measure + sex + I(measure^2))
 #Run imputation
 if (requireNamespace("survival", quietly = TRUE)) {
   library(survival)
-  imp<-jomo.coxph(formula,surdata, nburn = 100, nbetween = 100, nimp=5)
+  #imp<-jomo.coxph(formula,surdata, nburn = 100, nbetween = 100, nimp=5)
 }
   # Check help page for function jomo to see how to fit the model and 
   # combine estimates with Rubin's rules

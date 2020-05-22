@@ -63,7 +63,7 @@ Starting value for the missing data in the covariates of the substantive model. 
     
 if (requireNamespace("survival", quietly = TRUE)) {
   library(survival)
-  imp<-jomo.coxph.MCMCchain(formula,surdata, nburn = 100)
+  #imp<-jomo.coxph.MCMCchain(formula,surdata, nburn = 100)
   }
     
 }
