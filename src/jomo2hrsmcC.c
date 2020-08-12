@@ -1861,6 +1861,8 @@ for (i=0;i<ns;i++) {
 	}
 	
 	if ((i+1)%fl==0) Rprintf(".");
+	if ((i+1)%(fl*50)==0) Rprintf("\n");
+
 }
 if (fl==1) Rprintf("\n");
 

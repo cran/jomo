@@ -395,7 +395,6 @@ for (i=0;i<ns;i++) {
 					r8mat_poinv((JY-nmiss),help4,invomega3);
 					for (jj=1;jj<JY-nmiss;jj++) for (tt=0;tt<jj;tt++) invomega3[jj+(JY-nmiss)*tt]=invomega3[tt+(JY-nmiss)*jj];
 					r8mat_mmt_new((JY-nmiss),(JY-nmiss),nmiss,invomega3,omegamo,help5);
-					r8mat_add(1,nmiss,betamiss,mumiss);
 					r8mat_mm_new(nmiss,(JY-nmiss),nmiss,omegamo,help5,omegadrawmiss);
 					r8mat_divide(nmiss,nmiss,-1,omegadrawmiss);
 					r8mat_add(nmiss,nmiss,omegamm,omegadrawmiss);
@@ -456,6 +455,7 @@ for (i=0;i<ns;i++) {
 		}
 	}
 	if ((i+1)%fl==0) Rprintf(".");
+	if ((i+1)%(fl*50)==0) Rprintf("\n");
 }
 if (fl==1) Rprintf("\n");
 for(i=0;i<IY;i++)  {

@@ -98,6 +98,7 @@ JXm=JX;
 if (JX2>JX) JXm=JX2;
 JYm=JY;
 if (JY2>JY) JYm=JY2;
+if (Ju>JYm) JYm=Ju;
 mpid=PROTECT(coerceVector(mpid,INTSXP));
 npatterns=PROTECT(coerceVector(npatterns,INTSXP));
 np=INTEGER(npatterns)[0];
@@ -999,7 +1000,6 @@ for (i=0;i<ns;i++) {
 							r8mat_poinv((JY-nmiss),help7,invomega4);
 							for (jj=1;jj<JY-nmiss;jj++) for (tt=0;tt<jj;tt++) invomega4[jj+(JY-nmiss)*tt]=invomega4[tt+(JY-nmiss)*jj];
 							r8mat_mmt_new((JY-nmiss),(JY-nmiss),nmiss,invomega4,omegamo,help8);
-							r8mat_add(1,nmiss,betamiss,mumiss);
 							r8mat_mm_new(nmiss,(JY-nmiss),nmiss,omegamo,help8,omegadrawmiss);
 							r8mat_divide(nmiss,nmiss,-1,omegadrawmiss);
 							r8mat_add(nmiss,nmiss,omegamm,omegadrawmiss);
@@ -1131,13 +1131,11 @@ for (i=0;i<ns;i++) {
 					r8mat_poinv((Ju-nmiss),help7,invomega4);
 					for (jj=1;jj<Ju-nmiss;jj++) for (tt=0;tt<jj;tt++) invomega4[jj+(Ju-nmiss)*tt]=invomega4[tt+(Ju-nmiss)*jj];
 					r8mat_mm_new(nmiss,(Ju-nmiss),(Ju-nmiss),omegamo,invomega4,help8);
-					r8mat_mm_new(nmiss,(Ju-nmiss),1,help8,Yobs,mumiss);
-					r8mat_add(1,nmiss,betamiss,mumiss);
 					r8mat_mmt_new(nmiss,(Ju-nmiss),nmiss,help8,omegamo,omegadrawmiss);
 					r8mat_divide(nmiss,nmiss,-1,omegadrawmiss);
 					r8mat_add(nmiss,nmiss,omegamm,omegadrawmiss);
 					r8mat_pofac(nmiss,omegadrawmiss,help9,15);
-					for (jj=0;jj<nmiss*nmiss;jj++) listomega[jj+(kk-1)*JY*JY]=help9[jj];
+					for (jj=0;jj<nmiss*nmiss;jj++) listomega[jj+(kk-1)*Ju*Ju]=help9[jj];
 					for (jj=0;jj<(Ju-nmiss)*nmiss;jj++) listh8[jj+(kk-1)*Ju*Ju]=help8[jj];
 				}
 				
@@ -1176,11 +1174,7 @@ for (i=0;i<ns;i++) {
 			for (jj=0;jj<(Ju-nmiss)*nmiss;jj++) help8[jj]=listh8[jj+(mpid2red[j]-1)*Ju*Ju];
 			r8mat_mm_new(nmiss,(Ju-nmiss),1,help8,Yobs,mumiss);
 			r8mat_add(1,nmiss,betamiss,mumiss);
-			r8mat_mmt_new(nmiss,(Ju-nmiss),nmiss,help8,omegamo,omegadrawmiss);
-			r8mat_divide(nmiss,nmiss,-1,omegadrawmiss);
-			r8mat_add(nmiss,nmiss,omegamm,omegadrawmiss);
 			for (jj=0;jj<nmiss*nmiss;jj++) help9[jj]=listomega[jj+(mpid2red[j]-1)*Ju*Ju];
-			r8mat_pofac(nmiss,omegadrawmiss,help9,15);
 			r8vec_multinormal_sample(nmiss,mumiss,help9,Ymiss,help6,0);
 			countm=0;
 			for (k=0;k<JY2;k++) {
@@ -1203,6 +1197,7 @@ for (i=0;i<ns;i++) {
 	}
 	
 	if ((i+1)%fl==0) Rprintf(".");
+	if ((i+1)%(fl*50)==0) Rprintf("\n");
 }
 if (fl==1) Rprintf("\n");
 

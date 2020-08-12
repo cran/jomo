@@ -1117,6 +1117,7 @@ for (i=0;i<ns;i++) {
 		}
 	}
 	if ((i+1)%fl==0) Rprintf(".");
+	if ((i+1)%(fl*50)==0) Rprintf("\n");
 }
 	if (fl==1) Rprintf("\n");
 if (((double)accratio/((double)totprop))<0.15) Rprintf("Warning: acceptance ratio = %f. This might be a sign that the chain did not mix well. \n" , ((double)accratio/((double)totprop)));

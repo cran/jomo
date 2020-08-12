@@ -97,10 +97,10 @@ When set to K, every K iterations a dot is printed on screen. Default is 10.
 Y<-tldata[,c("measure.a"), drop=FALSE]
 Y2<-tldata[,c("big.city"), drop=FALSE]
 clus<-tldata[,c("city")]
-nburn=20
+nburn=6
 
 #now we run the imputation function. Note that we would typically use an higher 
-#number of nburn iterations in real applications (at least 100)
+#number of nburn iterations in real applications (at least 1000)
 
 imp<-jomo2com.MCMCchain(Y.con=Y, Y2.cat=Y2, Y2.numcat=2, clus=clus,nburn=nburn)
 
