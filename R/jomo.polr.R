@@ -6,6 +6,12 @@ jomo.polr <-
       cat("Minimum number of imputations:2. For single imputation using function jomo.mlogit.MCMCchain\n")
     }
     stopifnot(is.data.frame(data))
+    if (is_tibble(data)) {
+      data<-data.frame(data)
+      warning("tibbles not supported. data converted to standard data.frame. ")
+    }
+    
+    if (isTRUE(any(sapply(df, is.character)))) stop("Character variables not allowed in data\n")
     stopifnot(any(grepl("~",deparse(formula))))
     fit.cr<-polr(formula,data=data, na.action = na.omit, Hess=T, method = "probit")
     colnamysub<-all.vars(formula[[2]])
@@ -25,12 +31,18 @@ jomo.polr <-
     Y.numcat<-NULL
     for (j in 1:ncol(Ycov)) {
       if (is.numeric(Ycov[,j])) {
-        if (is.null(Y.con)) Y.con<-data.frame(Ycov[,j,drop=FALSE])
-        else Y.con<-data.frame(Y.con,Ycov[,j,drop=FALSE])
+        if (is.null(Y.con)) {
+          Y.con<-data.frame(Ycov[,j,drop=FALSE])
+        } else {
+          Y.con<-data.frame(Y.con,Ycov[,j,drop=FALSE])
+        }
       }
       if (is.factor(Ycov[,j])) {
-        if (is.null(Y.cat)) Y.cat<-data.frame(Ycov[,j,drop=FALSE])
-        else Y.cat<-data.frame(Y.cat,Ycov[,j,drop=FALSE])
+        if (is.null(Y.cat)) {
+          Y.cat<-data.frame(Ycov[,j,drop=FALSE])
+        } else {
+          Y.cat<-data.frame(Y.cat,Ycov[,j,drop=FALSE])
+        }
         Y.numcat<-cbind(Y.numcat,nlevels(Ycov[,j]))
       }
     }

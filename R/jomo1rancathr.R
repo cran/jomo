@@ -10,6 +10,19 @@ jomo1rancathr <-
     if (is.null(l1cov.prior)) l1cov.prior=diag(1,ncol(beta.start))
     if (is.null(a)) a=ncol(beta.start)+50
     if (is.null(a.prior)) a.prior=ncol(beta.start)
+    if (is_tibble(Y.cat)) {
+      Y.cat<-data.frame(Y.cat)
+      warning("tibbles not supported. Y.cat converted to standard data.frame. ")
+    }
+    if (is_tibble(X)) {
+      X<-data.frame(X)
+      warning("tibbles not supported. X converted to standard data.frame. ")
+    }
+    if (is_tibble(Z)) {
+      Z<-data.frame(Z)
+      warning("tibbles not supported. Z converted to standard data.frame. ")
+    }
+    
     clus<-factor(unlist(clus))
     previous_levels_clus<-levels(clus)
     levels(clus)<-0:(nlevels(clus)-1)

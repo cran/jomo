@@ -8,6 +8,34 @@ jomo2hr.MCMCchain <-
     if (is.null(l1cov.prior)) l1cov.prior=diag(1,ncol(beta.start))
     if (is.null(a)) a=ncol(beta.start)+50
     if (is.null(a.prior)) a.prior=ncol(beta.start)
+    if (is_tibble(Y.con)) {
+      Y.con<-data.frame(Y.con)
+      warning("tibbles not supported. Y.con converted to standard data.frame. ")
+    }
+    if (is_tibble(Y.cat)) {
+      Y.cat<-data.frame(Y.cat)
+      warning("tibbles not supported. Y.cat converted to standard data.frame. ")
+    }
+    if (is_tibble(Y2.con)) {
+      Y2.con<-data.frame(Y2.con)
+      warning("tibbles not supported. Y2.con converted to standard data.frame. ")
+    }
+    if (is_tibble(Y2.cat)) {
+      Y2.cat<-data.frame(Y2.cat)
+      warning("tibbles not supported. Y2.cat converted to standard data.frame. ")
+    }
+    if (is_tibble(X)) {
+      X<-data.frame(X)
+      warning("tibbles not supported. X converted to standard data.frame. ")
+    }
+    if (is_tibble(Z)) {
+      Z<-data.frame(Z)
+      warning("tibbles not supported. Z converted to standard data.frame. ")
+    }
+    if (is_tibble(X2)) {
+      X2<-data.frame(X2)
+      warning("tibbles not supported. X2 converted to standard data.frame. ")
+    }
     clus<-factor(unlist(clus))
     previous_levels_clus<-levels(clus)
     levels(clus)<-0:(nlevels(clus)-1)

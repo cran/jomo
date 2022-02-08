@@ -96,8 +96,8 @@ Carpenter J.R., Kenward M.G., (2013), Multiple Imputation and its Application. C
 Y<-tldata[,c("measure.a"), drop=FALSE]
 Y2<-tldata[,c("big.city"), drop=FALSE]
 clus<-tldata[,c("city")]
-nburn=3
-nbetween=3
+nburn=10
+nbetween=10
 nimp=2
 
 #now we run the imputation function. Note that we would typically use an higher 

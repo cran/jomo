@@ -11,6 +11,35 @@ jomo2com <-
     if (is.null(l2.beta.start)) l2.beta.start=matrix(0,ncol(X2),(max(0,ncol(Y2.con))+max(0,(sum(Y2.numcat)-length(Y2.numcat)))))
     if (is.null(l1cov.start)) l1cov.start=diag(1,ncol(beta.start))
     if (is.null(l1cov.prior)) l1cov.prior=diag(1,ncol(l1cov.start))
+    if (is_tibble(Y.con)) {
+      Y.con<-data.frame(Y.con)
+      warning("tibbles not supported. Y.con converted to standard data.frame. ")
+    }
+    if (is_tibble(Y.cat)) {
+      Y.cat<-data.frame(Y.cat)
+      warning("tibbles not supported. Y.cat converted to standard data.frame. ")
+    }
+    if (is_tibble(Y2.con)) {
+      Y2.con<-data.frame(Y2.con)
+      warning("tibbles not supported. Y2.con converted to standard data.frame. ")
+    }
+    if (is_tibble(Y2.cat)) {
+      Y2.cat<-data.frame(Y2.cat)
+      warning("tibbles not supported. Y2.cat converted to standard data.frame. ")
+    }
+    if (is_tibble(X)) {
+      X<-data.frame(X)
+      warning("tibbles not supported. X converted to standard data.frame. ")
+    }
+    if (is_tibble(Z)) {
+      Z<-data.frame(Z)
+      warning("tibbles not supported. Z converted to standard data.frame. ")
+    }
+    if (is_tibble(X2)) {
+      X2<-data.frame(X2)
+      warning("tibbles not supported. X2 converted to standard data.frame. ")
+    }
+    
     clus<-factor(unlist(clus))
     previous_levels_clus<-levels(clus)
     levels(clus)<-0:(nlevels(clus)-1)

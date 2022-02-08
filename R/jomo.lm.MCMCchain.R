@@ -2,6 +2,12 @@ jomo.lm.MCMCchain <-
   function(formula, data, beta.start=NULL, l1cov.start=NULL, l1cov.prior=NULL, betaY.start=NULL, varY.start=NULL, nburn=1000, start.imp=NULL, start.imp.sub=NULL, output=1, out.iter=10) {
     cat("This function is beta software. Use carefully and please report any bug to the package mantainer\n")
     stopifnot(is.data.frame(data))
+    if (is_tibble(data)) {
+      data<-data.frame(data)
+      warning("tibbles not supported. data converted to standard data.frame. ")
+    }
+    
+    if (isTRUE(any(sapply(df, is.character)))) stop("Character variables not allowed in data\n")
     stopifnot(any(grepl("~",deparse(formula))))
     fit.cr<-lm(formula,data=data, na.action = na.omit)
     if (is.null(betaY.start)) betaY.start<-coef(fit.cr)
@@ -20,12 +26,18 @@ jomo.lm.MCMCchain <-
     Y.numcat<-NULL
     for (j in 1:ncol(Ycov)) {
       if (is.numeric(Ycov[,j])) {
-        if (is.null(Y.con)) Y.con<-data.frame(Ycov[,j,drop=FALSE])
-        else Y.con<-data.frame(Y.con,Ycov[,j,drop=FALSE])
+        if (is.null(Y.con)) {
+          Y.con<-data.frame(Ycov[,j,drop=FALSE])
+        } else {
+          Y.con<-data.frame(Y.con,Ycov[,j,drop=FALSE])
+        }
       }
       if (is.factor(Ycov[,j])) {
-        if (is.null(Y.cat)) Y.cat<-data.frame(Ycov[,j,drop=FALSE])
-        else Y.cat<-data.frame(Y.cat,Ycov[,j,drop=FALSE])
+        if (is.null(Y.cat)) {
+          Y.cat<-data.frame(Ycov[,j,drop=FALSE])
+        } else {
+          Y.cat<-data.frame(Y.cat,Ycov[,j,drop=FALSE])
+        }
         Y.numcat<-cbind(Y.numcat,nlevels(Ycov[,j]))
       }
     }

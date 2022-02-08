@@ -8,6 +8,19 @@ jomo1rancon<- function(Y, X=NULL, Z=NULL, clus, beta.start=NULL, u.start=NULL, l
   if (is.null(beta.start)) beta.start=matrix(0,ncol(X),ncol(Y))
   if (is.null(l1cov.start)) l1cov.start=diag(1,ncol(beta.start))
   if (is.null(l1cov.prior)) l1cov.prior=diag(1,ncol(beta.start))
+  if (is_tibble(Y)) {
+    Y<-data.frame(Y)
+    warning("tibbles not supported. Y converted to standard data.frame. ")
+  }
+  if (is_tibble(X)) {
+    X<-data.frame(X)
+    warning("tibbles not supported. X converted to standard data.frame. ")
+  }
+  if (is_tibble(Z)) {
+    Z<-data.frame(Z)
+    warning("tibbles not supported. Z converted to standard data.frame. ")
+  }
+  
   clus<-factor(unlist(clus))
   previous_levels_clus<-levels(clus)
   levels(clus)<-0:(nlevels(clus)-1)

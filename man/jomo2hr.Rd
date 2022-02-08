@@ -116,7 +116,7 @@ clus<-tldata[,c("city")]
 #now we run the imputation function. Note that we would typically use an higher 
 #number of nburn iterations in real applications (at least 1000)
 
-imp<-jomo2hr(Y.con=Y, Y2.cat=Y2, Y2.numcat=2, clus=clus,nburn=3, nbetween=3, nimp=2)
+imp<-jomo2hr(Y.con=Y, Y2.cat=Y2, Y2.numcat=2, clus=clus,nburn=10, nbetween=10, nimp=2)
 
   # Check help page for function jomo to see how to fit the model and 
   # combine estimates with Rubin's rules

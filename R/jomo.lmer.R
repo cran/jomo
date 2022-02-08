@@ -6,6 +6,11 @@ jomo.lmer <-
       cat("Minimum number of imputations:2. For single imputation using function jomo.lmer.MCMCchain\n")
     }
     stopifnot(is.data.frame(data))
+    if (is_tibble(data)) {
+      data<-data.frame(data)
+      warning("tibbles not supported. data converted to standard data.frame. ")
+    }
+    if (isTRUE(any(sapply(df, is.character)))) stop("Character variables not allowed in data\n")
     stopifnot(any(grepl("~",deparse(formula))))
     fit.cr<-lmer(formula,data=data, na.action = na.omit)
     betaY.start<-fixef(fit.cr)
@@ -30,22 +35,34 @@ jomo.lmer <-
     for (j in 1:ncol(Ycov)) {
       if (level[1, which(colnames(level)==colnames(Ycov)[j])]==1) {
         if (is.numeric(Ycov[,j])) {
-          if (is.null(Y.con)) Y.con<-data.frame(Ycov[,j,drop=FALSE])
-          else Y.con<-data.frame(Y.con,Ycov[,j,drop=FALSE])
+          if (is.null(Y.con)) {
+            Y.con<-data.frame(Ycov[,j,drop=FALSE])
+          } else {
+            Y.con<-data.frame(Y.con,Ycov[,j,drop=FALSE])
+          }
         }
         if (is.factor(Ycov[,j])) {
-          if (is.null(Y.cat)) Y.cat<-data.frame(Ycov[,j,drop=FALSE])
-          else Y.cat<-data.frame(Y.cat,Ycov[,j,drop=FALSE])
+          if (is.null(Y.cat)) {
+            Y.cat<-data.frame(Ycov[,j,drop=FALSE])
+          } else {
+            Y.cat<-data.frame(Y.cat,Ycov[,j,drop=FALSE])
+          }
           Y.numcat<-cbind(Y.numcat,nlevels(Ycov[,j]))
         }
       } else {
         if (is.numeric(Ycov[,j])) {
-          if (is.null(Y2.con)) Y2.con<-data.frame(Ycov[,j,drop=FALSE])
-          else Y2.con<-data.frame(Y2.con,Ycov[,j,drop=FALSE])
+          if (is.null(Y2.con)) {
+            Y2.con<-data.frame(Ycov[,j,drop=FALSE])
+          } else {
+            Y2.con<-data.frame(Y2.con,Ycov[,j,drop=FALSE])
+          }
         }
         if (is.factor(Ycov[,j])) {
-          if (is.null(Y2.cat)) Y2.cat<-data.frame(Ycov[,j,drop=FALSE])
-          else Y2.cat<-data.frame(Y2.cat,Ycov[,j,drop=FALSE])
+          if (is.null(Y2.cat)) {
+            Y2.cat<-data.frame(Ycov[,j,drop=FALSE])
+          } else {
+            Y2.cat<-data.frame(Y2.cat,Ycov[,j,drop=FALSE])
+          }
           Y2.numcat<-cbind(Y2.numcat,nlevels(Ycov[,j]))
         }
       }
@@ -109,8 +126,14 @@ jomo.lmer <-
     order.sub<-order.sub[-j.tbd]
     if (!is.null(Y.con)&sum((colnames(Y.con)==clus.name)==1)) Y.con<-data.frame(Y.con[,-which(colnames(Y.con)==clus.name), drop=FALSE])
     if (!is.null(Y2.con)&sum((colnames(Y2.con)==clus.name)==1)) Y2.con<-data.frame(Y2.con[,-which(colnames(Y2.con)==clus.name), drop=FALSE])
-    if (!is.null(Y.cat)&sum((colnames(Y.cat)==clus.name)==1)) Y.cat<-data.frame(Y.cat[,-which(colnames(Y.cat)==clus.name), drop=FALSE])
-    if (!is.null(Y2.cat)&sum((colnames(Y2.cat)==clus.name)==1)) Y2.cat<-data.frame(Y2.cat[,-which(colnames(Y2.cat)==clus.name), drop=FALSE])
+    if (!is.null(Y.cat)&sum((colnames(Y.cat)==clus.name)==1)) {
+      Y.cat<-data.frame(Y.cat[,-which(colnames(Y.cat)==clus.name), drop=FALSE])
+      Y.numcat<-Y.numcat[-which(colnames(Y.cat)==clus.name)]
+    }
+    if (!is.null(Y2.cat)&sum((colnames(Y2.cat)==clus.name)==1)) {
+      Y2.numcat<-Y2.numcat[-which(colnames(Y2.cat)==clus.name)]
+      Y2.cat<-data.frame(Y2.cat[,-which(colnames(Y2.cat)==clus.name), drop=FALSE])
+    }
     if (!is.null(Y.con)&&ncol(Y.con)==0) Y.con <- NULL
     if (!is.null(Y.cat)&&ncol(Y.cat)==0) Y.cat <- NULL
     if (!is.null(Y2.cat)&&ncol(Y2.cat)==0) Y2.cat <- NULL
@@ -150,6 +173,7 @@ jomo.lmer <-
         
       }
     }
+    if (((is.null(Y.con))&&(is.null(Y.cat)&is.null(Y.numcat)))) stop("No level 1 covariates in substantive model. jomo currently supports only models with at least one level 1 variable besides the outcome.\n")
     X=matrix(1,max(nrow(Y.cat),nrow(Y.con)),1)
     if (!is.null(Y2.con)|!is.null(Y2.cat)|!is.null(Y2.aux.con)|!is.null(Y2.aux.cat)) {
       #cat("Level 2 variables must be fully observed for valid inference. \n")
@@ -188,7 +212,8 @@ jomo.lmer <-
     ncolY2con[3]=ncolY2con[1]+max(0,(sum(Y2.numcat)-length(Y2.numcat)))
     ncolYcon[4]=max(0,ncol(Y.cat))
     ncolY2con[4]=max(0,ncol(Y2.cat))
-    stopifnot(((!is.null(Y.con))||(!is.null(Y.cat)&!is.null(Y.numcat)))||((!is.null(Y2.con))||(!is.null(Y2.cat)&!is.null(Y2.numcat))))
+    
+    stopifnot(((!is.null(Y.con))||(!is.null(Y.cat)&!is.null(Y.numcat))))
     if (is.null(u.start)) u.start = matrix(0, nlevels(clus), ncol(Z)*(ncolYcon[1]+max(0,(sum(Y.numcat)-length(Y.numcat)))+max(0,(sum(Y.aux.numcat)-length(Y.aux.numcat))))+(ncolY2con[1]+max(0,(sum(Y2.numcat)-length(Y2.numcat)))+max(0,(sum(Y2.aux.numcat)-length(Y2.aux.numcat)))))
     if (is.null(l2cov.start)) l2cov.start = diag(1, ncol(u.start))
     if (is.null(l2cov.prior)) l2cov.prior = diag(1, ncol(l2cov.start))
@@ -412,6 +437,7 @@ jomo.lmer <-
     if (isnullcat2==0) {
       for (i in 1:length(Y2.numcat)) {
         for (j in 1:nrow(Y2)) {
+          cat(j," ", i, "\n")
           if (is.na(Y2.cat[j,i])) {
             Y2i[j,(ncolY2con[1]+h):(ncolY2con[1]+h+Y2.numcat[i]-2)]=NA
           }

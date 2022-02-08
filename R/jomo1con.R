@@ -7,6 +7,15 @@ jomo1con<- function(Y, X=NULL, beta.start=NULL, l1cov.start=NULL, l1cov.prior=NU
   if (is.null(beta.start)) beta.start=matrix(0,ncol(X),ncol(Y))
   if (is.null(l1cov.start)) l1cov.start=diag(1,ncol(beta.start))
   if (is.null(l1cov.prior)) l1cov.prior=diag(1,ncol(beta.start))
+  if (is_tibble(Y)) {
+    Y<-data.frame(Y)
+    warning("tibbles not supported. Y converted to standard data.frame. ")
+  }
+  if (is_tibble(X)) {
+    X<-data.frame(X)
+    warning("tibbles not supported. X converted to standard data.frame. ")
+  }
+  
   if (any(is.na(Y))) {
     if (ncol(Y)==1) {
       miss.pat<-matrix(c(0,1),2,1)

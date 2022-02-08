@@ -7,6 +7,12 @@ jomo.clmm <-
     }
 
     stopifnot(is.data.frame(data))
+    if (is_tibble(data)) {
+      data<-data.frame(data)
+      warning("tibbles not supported. data converted to standard data.frame. ")
+    }
+    
+    if (isTRUE(any(sapply(df, is.character)))) stop("Character variables not allowed in data\n")
     stopifnot(any(grepl("~",deparse(formula))))
     fit.cr<-ordinal::clmm(formula,data=data, na.action = na.omit, Hess=T, link = "probit")
     colnamysub<-all.vars(formula[[2]])
@@ -33,22 +39,34 @@ jomo.clmm <-
     for (j in 1:ncol(Ycov)) {
       if (level[1, which(colnames(level)==colnames(Ycov)[j])]==1) {
         if (is.numeric(Ycov[,j])) {
-          if (is.null(Y.con)) Y.con<-data.frame(Ycov[,j,drop=FALSE])
-          else Y.con<-data.frame(Y.con,Ycov[,j,drop=FALSE])
+          if (is.null(Y.con)) {
+            Y.con<-data.frame(Ycov[,j,drop=FALSE])
+          } else {
+            Y.con<-data.frame(Y.con,Ycov[,j,drop=FALSE])
+          }
         }
         if (is.factor(Ycov[,j])) {
-          if (is.null(Y.cat)) Y.cat<-data.frame(Ycov[,j,drop=FALSE])
-          else Y.cat<-data.frame(Y.cat,Ycov[,j,drop=FALSE])
+          if (is.null(Y.cat)) {
+            Y.cat<-data.frame(Ycov[,j,drop=FALSE])
+          } else {
+            Y.cat<-data.frame(Y.cat,Ycov[,j,drop=FALSE])
+          }
           Y.numcat<-cbind(Y.numcat,nlevels(Ycov[,j]))
         }
       } else {
         if (is.numeric(Ycov[,j])) {
-          if (is.null(Y2.con)) Y2.con<-data.frame(Ycov[,j,drop=FALSE])
-          else Y2.con<-data.frame(Y2.con,Ycov[,j,drop=FALSE])
+          if (is.null(Y2.con)) {
+            Y2.con<-data.frame(Ycov[,j,drop=FALSE])
+          } else {
+            Y2.con<-data.frame(Y2.con,Ycov[,j,drop=FALSE])
+          }
         }
         if (is.factor(Ycov[,j])) {
-          if (is.null(Y2.cat)) Y2.cat<-data.frame(Ycov[,j,drop=FALSE])
-          else Y2.cat<-data.frame(Y2.cat,Ycov[,j,drop=FALSE])
+          if (is.null(Y2.cat)) {
+            Y2.cat<-data.frame(Ycov[,j,drop=FALSE])
+          } else {
+            Y2.cat<-data.frame(Y2.cat,Ycov[,j,drop=FALSE])
+          }
           Y2.numcat<-cbind(Y2.numcat,nlevels(Ycov[,j]))
         }
       }
@@ -112,8 +130,14 @@ jomo.clmm <-
     order.sub<-order.sub[-j.tbd]
     if (!is.null(Y.con)&sum((colnames(Y.con)==clus.name)==1)) Y.con<-data.frame(Y.con[,-which(colnames(Y.con)==clus.name), drop=FALSE])
     if (!is.null(Y2.con)&sum((colnames(Y2.con)==clus.name)==1)) Y2.con<-data.frame(Y2.con[,-which(colnames(Y2.con)==clus.name), drop=FALSE])
-    if (!is.null(Y.cat)&sum((colnames(Y.cat)==clus.name)==1)) Y.cat<-data.frame(Y.cat[,-which(colnames(Y.cat)==clus.name), drop=FALSE])
-    if (!is.null(Y2.cat)&sum((colnames(Y2.cat)==clus.name)==1)) Y2.cat<-data.frame(Y2.cat[,-which(colnames(Y2.cat)==clus.name), drop=FALSE])
+    if (!is.null(Y.cat)&sum((colnames(Y.cat)==clus.name)==1)) {
+      Y.cat<-data.frame(Y.cat[,-which(colnames(Y.cat)==clus.name), drop=FALSE])
+      Y.numcat<-Y.numcat[-which(colnames(Y.cat)==clus.name)]
+    }
+    if (!is.null(Y2.cat)&sum((colnames(Y2.cat)==clus.name)==1)) {
+      Y2.numcat<-Y2.numcat[-which(colnames(Y2.cat)==clus.name)]
+      Y2.cat<-data.frame(Y2.cat[,-which(colnames(Y2.cat)==clus.name), drop=FALSE])
+    }
     if (!is.null(Y.con)&&ncol(Y.con)==0) Y.con <- NULL
     if (!is.null(Y.cat)&&ncol(Y.cat)==0) Y.cat <- NULL
     if (!is.null(Y2.cat)&&ncol(Y2.cat)==0) Y2.cat <- NULL
@@ -153,6 +177,7 @@ jomo.clmm <-
         
       }
     }
+    if (((is.null(Y.con))&&(is.null(Y.cat)&is.null(Y.numcat)))) stop("No level 1 covariates in substantive model. jomo currently supports only models with at least one level 1 variable besides the outcome.\n")
     X=matrix(1,max(nrow(Y.cat),nrow(Y.con)),1)
     if (!is.null(Y2.con)|!is.null(Y2.cat)|!is.null(Y2.aux.con)|!is.null(Y2.aux.cat)) {
       X2=matrix(1,max(nrow(Y2.cat),nrow(Y2.con),nrow(Y2.aux.cat),nrow(Y2.aux.con)),1)

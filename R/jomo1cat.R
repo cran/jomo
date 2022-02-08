@@ -8,6 +8,15 @@ jomo1cat <-
     if (is.null(beta.start)) beta.start=matrix(0,ncol(X),((sum(Y.numcat)-length(Y.numcat))))
     if (is.null(l1cov.start)) l1cov.start=diag(1,ncol(beta.start))
     if (is.null(l1cov.prior)) l1cov.prior=diag(1,ncol(beta.start))
+    if (is_tibble(Y.cat)) {
+      Y.cat<-data.frame(Y.cat)
+      warning("tibbles not supported. Y.cat converted to standard data.frame. ")
+    }
+    if (is_tibble(X)) {
+      X<-data.frame(X)
+      warning("tibbles not supported. X converted to standard data.frame. ")
+    }
+    
     previous_levels<-list()
     Y.cat<-data.frame(Y.cat)
     for (i in 1:ncol(Y.cat)) {
