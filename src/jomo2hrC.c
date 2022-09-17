@@ -979,7 +979,7 @@ for (i=0;i<ns;i++) {
 						if (nmiss>0) {
 							for (k=0;k<JY;k++) {
 								for (t=0;t<JY;t++) {
-									if (ISNAN(REAL(Yimp)[j+k*IY])&ISNAN(REAL(Yimp)[j+t*IY])) {
+									if (ISNAN(REAL(Yimp)[j+k*IY])&&ISNAN(REAL(Yimp)[j+t*IY])) {
 										omegamm[countmm]=REAL(omega)[(INTEGER(clus)[j]*JY+t)+k*(JY*nj)];
 										countmm++;
 									}
@@ -987,7 +987,7 @@ for (i=0;i<ns;i++) {
 										omegamo[countmo]=REAL(omega)[(INTEGER(clus)[j]*JY+k)+t*(JY*nj)];	
 										countmo++;	
 									}
-									else if (!ISNAN(REAL(Yimp)[j+k*IY])&!ISNAN(REAL(Yimp)[j+t*IY])){
+									else if (!ISNAN(REAL(Yimp)[j+k*IY])&&!ISNAN(REAL(Yimp)[j+t*IY])){
 										omegaoo[countoo]=REAL(omega)[(INTEGER(clus)[j]*JY+t)+k*(JY*nj)];
 										countoo++;	
 									}
@@ -1051,14 +1051,14 @@ for (i=0;i<ns;i++) {
 								counto++;
 							}
 							for (t=0;t<JY;t++) {
-								if (ISNAN(REAL(Yimp)[j+k*IY])&ISNAN(REAL(Yimp)[j+t*IY])) {
+								if (ISNAN(REAL(Yimp)[j+k*IY])&&ISNAN(REAL(Yimp)[j+t*IY])) {
 									omegamm[countmm]=REAL(omega)[(INTEGER(clus)[j]*JY+t)+k*(JY*nj)];
 									countmm++;
 								}
 								else if (ISNAN(REAL(Yimp)[j+t*IY])) {
 									countmo++;	
 								}
-								else if (!ISNAN(REAL(Yimp)[j+k*IY])&!ISNAN(REAL(Yimp)[j+t*IY])){
+								else if (!ISNAN(REAL(Yimp)[j+k*IY])&&!ISNAN(REAL(Yimp)[j+t*IY])){
 									omegaoo[countoo]=REAL(omega)[(INTEGER(clus)[j]*JY+t)+k*(JY*nj)];
 									countoo++;	
 								}

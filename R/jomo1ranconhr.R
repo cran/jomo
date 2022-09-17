@@ -39,7 +39,7 @@ jomo1ranconhr <-
         n.patterns<-nrow(miss.pat)-1
       }
     } else {
-      miss.pat<-matrix(0,2,ncol(Y)+1)
+      miss.pat<-matrix(0,2,ncol(Y))
       n.patterns<-nrow(miss.pat)-1
     }
     

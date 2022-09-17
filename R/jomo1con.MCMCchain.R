@@ -22,7 +22,7 @@ jomo1con.MCMCchain<- function(Y, X=NULL, beta.start=NULL, l1cov.start=NULL, l1co
       n.patterns<-nrow(miss.pat)-1
     }
   } else {
-    miss.pat<-matrix(0,2,ncol(Y)+1)
+    miss.pat<-matrix(0,2,ncol(Y))
     n.patterns<-nrow(miss.pat)-1
   }
   

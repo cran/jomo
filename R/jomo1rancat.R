@@ -45,7 +45,7 @@ jomo1rancat <-
         n.patterns<-nrow(miss.pat)-1
       }
     } else {
-      miss.pat<-matrix(0,2,ncol(Y.cat)+1)
+      miss.pat<-matrix(0,2,ncol(Y.cat))
       n.patterns<-nrow(miss.pat)-1
     }
     

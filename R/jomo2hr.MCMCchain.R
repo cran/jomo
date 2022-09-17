@@ -179,7 +179,7 @@ jomo2hr.MCMCchain <-
         n.patterns[1]<-nrow(miss.pat)-1
       }
     } else {
-      miss.pat<-matrix(0,2,ncol(Y)+1)
+      miss.pat<-matrix(0,2,ncol(Y))
       n.patterns[1]<-nrow(miss.pat)-1
     }
     
@@ -217,7 +217,7 @@ jomo2hr.MCMCchain <-
         n.patterns[2]<-nrow(miss.pat2)-1
       }
     } else {
-      miss.pat2<-matrix(0,2,ncol(Y2)+1)
+      miss.pat2<-matrix(0,2,ncol(Y2))
       n.patterns[2]<-nrow(miss.pat2)-1
     }
     

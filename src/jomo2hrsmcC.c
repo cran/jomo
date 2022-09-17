@@ -1826,7 +1826,9 @@ for (i=0;i<ns;i++) {
 	if (MCMC==0) {
 		REAL(varYpost)[0]=REAL(varYpost)[0]+REAL(varY)[0];
 	} else {
-		REAL(varYpost)[i]=REAL(varY)[0];
+		if (INTEGER(submodtype)[0]!=2) {
+			REAL(varYpost)[i]=REAL(varY)[0];
+		}
 	}
 	
 	// Imputing outcome data
