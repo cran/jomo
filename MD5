@@ -1,5 +1,5 @@
-3b49226036292d5b6977471982b4a1e4 *DESCRIPTION
-5dfe343010552e01ec06b13c3c977923 *NAMESPACE
+efe13994226c7ee78f9063817bee3834 *DESCRIPTION
+bf46c503559ba3dc51a009773957a379 *NAMESPACE
 a2053b97f210d6107ee2cc9d5c773b9a *R/jomo.MCMCchain.R
 c2f46e88a1dc069511d3c5fe8bdc5f36 *R/jomo.R
 72dc963f3082d4dd5b6960df01c1c794 *R/jomo.clmm.MCMCchain.R
@@ -53,7 +53,7 @@ d841f005383a91f0dd079d0003b3de82 *data/JSPmiss.RData
 64cac254f049269b874232cb713d6e66 *data/sldata.RData
 a8171366d0e793e5e6cbebd8464fd368 *data/surdata.RData
 d3f029cdcfdb29608f041f6c6b012fb2 *data/tldata.RData
-221db698cb0c6e919211ac1939543427 *inst/CITATION
+5b74a5536bc5a8c699ea40fc85dfa0c4 *inst/CITATION
 94dc76e426f6b464c25b71200afb4aea *man/ExamScores.Rd
 9b8065213719d6e57bd4f5c09af42145 *man/JSPmiss.Rd
 0a0152d8a38447bbe2a608edc2876e34 *man/cldata.Rd
@@ -110,13 +110,13 @@ cb185f4404a1a6448f4817bb663d2c2c *man/surdata.Rd
 7cb3588588ab5cf95c307f446784418a *src/jomo1C.c
 d6ad45710303294a0b6f0e2aa1245207 *src/jomo1ranC.c
 dc6447335674d2ed35ae6372e449b8bc *src/jomo1ranhrC.c
-d238038a2d9a50d4a1640b12d4cb9fe8 *src/jomo1ranhrsmcC.c
-f05e9555d3e476dc0ba90355e56adf64 *src/jomo1ransmcC.c
-1088fa760978747cd94a179f2787568b *src/jomo1smcC.c
+ce7d45e64b99d1335ff4c12e1ab88c73 *src/jomo1ranhrsmcC.c
+194d1873791e2202f3755f2079dc1533 *src/jomo1ransmcC.c
+36fb5d29496430493c0b8c2cdd778078 *src/jomo1smcC.c
 40ba79f00f7e07c81a68cbeeeca5ef63 *src/jomo2comC.c
 96f53a3867aa4ebf2401c2f825e04e4c *src/jomo2hrC.c
-deb4f1b7b8ff33a0c12477379b21b854 *src/jomo2hrsmcC.c
-68f09fc502e4c1efd2475f1338b91a48 *src/jomo2smcC.c
+7b214511fa167ba9af3b5a14aa531fda *src/jomo2hrsmcC.c
+b0546c4f5c84f5ded584417007142560 *src/jomo2smcC.c
 bd4215e97d9a0b54134dd5902076d278 *src/jomo_init.c
 52cc2287f553f2c67b842a6f4f4b9a0e *src/pdflib.c
 cddf9cdc24681ecca94825e07a6795c7 *src/pdflib.h

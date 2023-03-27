@@ -10,7 +10,7 @@
 #include<Rmath.h>
 
 SEXP jomo1ranhrsmcC(SEXP Ysub, SEXP Ysubimp, SEXP Ysubcat, SEXP submod, SEXP ordersub, SEXP submodran, SEXP Y, SEXP Yimp, SEXP Yimp2, SEXP Yimpcat, SEXP X, SEXP Z, SEXP clus, SEXP betaY, SEXP betaYpost, SEXP beta, SEXP u, SEXP uY, SEXP betapost, SEXP upost, SEXP uYpost, SEXP varY, SEXP varYpost, SEXP omega, SEXP omegapost, SEXP covuY, SEXP covuYpost, SEXP covu, SEXP covupost, SEXP nstep, SEXP varYprior, SEXP covuYprior, SEXP Sp, SEXP Sup, SEXP Y_numcat, SEXP Ysub_numcat, SEXP num_con, SEXP a_start, SEXP a_prior, SEXP flagrng, SEXP MCMCchain, SEXP submodtype){
-int indic=0,i,j,k, IY,JY, IX, JX, Io, Jo, Ib, Jb, ns, nmiss=0,t, countm=0, counto=0, countoo=0, jj, tt, kk, ncon,ncat, pos,flag=0,nmaxx,h=0;
+int indic=0,i,j,k, IY,JY, IX, JX, Io, Jo, Ib, Jb, ns, nmiss=0,t, countm=0, counto=0, countoo=0, jj, tt, kk, ncon,ncat, pos,flag=0,nmaxx,h=0, *Ysubcatint;
 int Iu, Ju, IZ, JZ, nj,c,fl, currncat, Is, Il=0, JXm, Ir=0,Jr, JZm, Jum, accratio=0, totprop=0, nconnoaux, nconcat, ncatnoaux, MCMC, nsubcat;
 SEXP RdimY, RdimX, Rdimo, Rdimb, RdimZ, Rdimu, Rdims, Rdimr;
 double *betaX, *Yobs, *Ymiss, *mumiss, *omegadrawmiss, *betamiss, *betaobs, *omegaoo, *omegamo, *omegamm, *invomega, *invomega2, *help, *help2, *help3, *imp, *zi, *yicategorized, *impsub;
@@ -47,7 +47,7 @@ submod=PROTECT(coerceVector(submod,INTSXP));
 ordersub=PROTECT(coerceVector(ordersub,INTSXP));
 submodran=PROTECT(coerceVector(submodran,INTSXP));
 Ysubimp=PROTECT(coerceVector(Ysubimp,REALSXP));
-Ysubcat=PROTECT(coerceVector(Ysubcat,INTSXP));
+Ysubcat=PROTECT(coerceVector(Ysubcat,REALSXP));
 Y=PROTECT(coerceVector(Y,REALSXP));
 Yimpcat=PROTECT(coerceVector(Yimpcat,REALSXP));
 Y_numcat=PROTECT(coerceVector(Y_numcat,INTSXP));
@@ -180,11 +180,13 @@ invA= (double * )  R_alloc ( JY * JY , sizeof(double) );
 Gammastar= (double * )  R_alloc ( JY * JY , sizeof(double) );
 clusnum = ( double * )  R_alloc ( nj , sizeof(double));
 cumclus = ( double * )  R_alloc ( nj+1 , sizeof(double));
+Ysubcatint = ( int * ) R_alloc ( IY , sizeof ( int ) );
 
 /* Some initializations */
 
 for (j=0; j<IY; j++) {
 	missing[j]=0;
+	if (INTEGER(submodtype)[0]>0) Ysubcatint[j]=REAL(Ysubcat)[j];
 	for (k=0;k<JY;k++) {
 		if (ISNAN(REAL(Yimp)[j+k*IY])) {
 			missing[j]++;
@@ -279,13 +281,13 @@ if (INTEGER(submodtype)[0]==2) {
 	for (t=0;t<IY;t++) {
 		if (ISNAN(REAL(Ysub)[t])) {
 			if (impsub[t]>REAL(betaY)[Il+nsubcat-2]) {
-				INTEGER(Ysubcat)[t]=nsubcat;
+				Ysubcatint[t]=nsubcat;
 			} else {
 				flag=0;
 				k=0;
 				while (flag==0) {
 					if (impsub[t]<=REAL(betaY)[Il+k]) {
-						INTEGER(Ysubcat)[t]=k+1;
+						Ysubcatint[t]=k+1;
 						flag=1;
 					} else {
 						k++;
@@ -770,18 +772,18 @@ for (i=0;i<ns;i++) {
 				mu2[0]=0;
 				for (t=0;t<Il;t++) mu2[0]=mu2[0]+REAL(betaY)[t]*Xsub[j+IY*t];
 				for (t=0;t<Ir;t++) mu2[0]=mu2[0]+REAL(uY)[(INTEGER(clus)[j])+nj*t]*Zsub[j+IY*t];
-				if (INTEGER(Ysubcat)[j]==1) mu2[0]=-mu2[0];
+				if (Ysubcatint[j]==1) mu2[0]=-mu2[0];
 				logLH=log(normal_cdf(mu2[0]))-help6[0]/2;
 			} else {
 				mu2[0]=0;
 				for (t=0;t<Il;t++) mu2[0]=mu2[0]+REAL(betaY)[t]*Xsub[j+IY*t];
 				for (t=0;t<Ir;t++) mu2[0]=mu2[0]+REAL(uY)[(INTEGER(clus)[j])+nj*t]*Zsub[j+IY*t];
-				if (INTEGER(Ysubcat)[j]==1) {
+				if (Ysubcatint[j]==1) {
 					mu2[0]=normal_cdf(REAL(betaY)[Il]-mu2[0]);
-				} else if (INTEGER(Ysubcat)[j]==nsubcat) {
+				} else if (Ysubcatint[j]==nsubcat) {
 					mu2[0]=1-normal_cdf(REAL(betaY)[Il+nsubcat-2]-mu2[0]);
 				} else {
-					mu2[0]=normal_cdf(REAL(betaY)[Il+INTEGER(Ysubcat)[j]-1]-mu2[0])-normal_cdf(REAL(betaY)[Il+INTEGER(Ysubcat)[j]-2]-mu2[0]);
+					mu2[0]=normal_cdf(REAL(betaY)[Il+Ysubcatint[j]-1]-mu2[0])-normal_cdf(REAL(betaY)[Il+Ysubcatint[j]-2]-mu2[0]);
 				}
 				logLH=log(mu2[0])-help6[0]/2;
 			}
@@ -828,18 +830,18 @@ for (i=0;i<ns;i++) {
 						mu2[0]=0;
 						for (t=0;t<Il;t++) mu2[0]=mu2[0]+REAL(betaY)[t]*Xsub[j+IY*t];
 						for (t=0;t<Ir;t++) mu2[0]=mu2[0]+REAL(uY)[(INTEGER(clus)[j])+nj*t]*Zsub[j+IY*t];
-						if (INTEGER(Ysubcat)[j]==1) mu2[0]=-mu2[0];
+						if (Ysubcatint[j]==1) mu2[0]=-mu2[0];
 						logLH=log(normal_cdf(mu2[0]))-help6[0]/2;
 					} else {
 						mu2[0]=0;
 						for (t=0;t<Il;t++) mu2[0]=mu2[0]+REAL(betaY)[t]*Xsub[j+IY*t];
 						for (t=0;t<Ir;t++) mu2[0]=mu2[0]+REAL(uY)[(INTEGER(clus)[j])+nj*t]*Zsub[j+IY*t];
-						if (INTEGER(Ysubcat)[j]==1) {
+						if (Ysubcatint[j]==1) {
 							mu2[0]=normal_cdf(REAL(betaY)[Il]-mu2[0]);
-						} else if (INTEGER(Ysubcat)[j]==nsubcat) {
+						} else if (Ysubcatint[j]==nsubcat) {
 							mu2[0]=1-normal_cdf(REAL(betaY)[Il+nsubcat-2]-mu2[0]);
 						} else {
-							mu2[0]=normal_cdf(REAL(betaY)[Il+INTEGER(Ysubcat)[j]-1]-mu2[0])-normal_cdf(REAL(betaY)[Il+INTEGER(Ysubcat)[j]-2]-mu2[0]);
+							mu2[0]=normal_cdf(REAL(betaY)[Il+Ysubcatint[j]-1]-mu2[0])-normal_cdf(REAL(betaY)[Il+Ysubcatint[j]-2]-mu2[0]);
 						}
 						logLH=log(mu2[0])-help6[0]/2;
 					}
@@ -925,19 +927,19 @@ for (i=0;i<ns;i++) {
 						for (t=0;t<Il;t++) mu2[0]=mu2[0]+REAL(betaY)[t]*Xsubprop[t];
 						for (t=0;t<Ir;t++) mu2[0]=mu2[0]+REAL(uY)[(INTEGER(clus)[j])+nj*t]*Zsubprop[t];
 					
-						if (INTEGER(Ysubcat)[j]==1) mu2[0]=-mu2[0];	
+						if (Ysubcatint[j]==1) mu2[0]=-mu2[0];	
 						newlogLH=log(normal_cdf(mu2[0]))-help[0]/2;
 					} else {
 						mu2[0]=0;
 						for (t=0;t<Il;t++) mu2[0]=mu2[0]+REAL(betaY)[t]*Xsubprop[t];
 						for (t=0;t<Ir;t++) mu2[0]=mu2[0]+REAL(uY)[(INTEGER(clus)[j])+nj*t]*Zsubprop[t];
 						
-						if (INTEGER(Ysubcat)[j]==1) {
+						if (Ysubcatint[j]==1) {
 							mu2[0]=normal_cdf(REAL(betaY)[Il]-mu2[0]);
-						} else if (INTEGER(Ysubcat)[j]==nsubcat) {
+						} else if (Ysubcatint[j]==nsubcat) {
 							mu2[0]=1-normal_cdf(REAL(betaY)[Il+nsubcat-2]-mu2[0]);
 						} else {
-							mu2[0]=normal_cdf(REAL(betaY)[Il+INTEGER(Ysubcat)[j]-1]-mu2[0])-normal_cdf(REAL(betaY)[Il+INTEGER(Ysubcat)[j]-2]-mu2[0]);
+							mu2[0]=normal_cdf(REAL(betaY)[Il+Ysubcatint[j]-1]-mu2[0])-normal_cdf(REAL(betaY)[Il+Ysubcatint[j]-2]-mu2[0]);
 						}
 						newlogLH=log(mu2[0])-help[0]/2;
 					}
@@ -1008,7 +1010,7 @@ for (i=0;i<ns;i++) {
 
 				while (flag==0&&kk<10000) {
 					yi[0]=r8_normal_sample(mu2[0],1,0);						
-					if (((INTEGER(Ysubcat)[t]==1)&&(yi[0]<REAL(betaY)[Il]))||((INTEGER(Ysubcat)[t]==nsubcat)&&(yi[0]>REAL(betaY)[Il+nsubcat-2]))||((INTEGER(Ysubcat)[t]>1)&&(INTEGER(Ysubcat)[t]<nsubcat)&&(yi[0]<REAL(betaY)[Il+INTEGER(Ysubcat)[t]-1])&&(yi[0]>REAL(betaY)[Il+INTEGER(Ysubcat)[t]-2]))) {
+					if (((Ysubcatint[t]==1)&&(yi[0]<REAL(betaY)[Il]))||((Ysubcatint[t]==nsubcat)&&(yi[0]>REAL(betaY)[Il+nsubcat-2]))||((Ysubcatint[t]>1)&&(Ysubcatint[t]<nsubcat)&&(yi[0]<REAL(betaY)[Il+Ysubcatint[t]-1])&&(yi[0]>REAL(betaY)[Il+Ysubcatint[t]-2]))) {
 						impsub[t]=yi[0];
 						flag=1;
 					} else {
@@ -1202,16 +1204,16 @@ for (i=0;i<ns;i++) {
 
 			impsub[t]=r8_normal_sample(mu2[0],sqrt(REAL(varY)[0]),0);
 			if (INTEGER(submodtype)[0]==1) {
-				INTEGER(Ysubcat)[t]=(impsub[t]>0)+1;
+				Ysubcatint[t]=(impsub[t]>0)+1;
 			} else if (INTEGER(submodtype)[0]==2) {
 				if (impsub[t]>REAL(betaY)[Il+nsubcat-2]) {
-					INTEGER(Ysubcat)[t]=nsubcat;
+					Ysubcatint[t]=nsubcat;
 				} else {
 					flag=0;
 					k=0;
 					while (flag==0) {
 						if (impsub[t]<=REAL(betaY)[Il+k]) {
-							INTEGER(Ysubcat)[t]=k+1;
+							Ysubcatint[t]=k+1;
 							flag=1;
 						} else {
 							k++;
@@ -1253,7 +1255,11 @@ for(i=0;i<IY;i++)  {
 		}
 	}	
 }
-
+if (INTEGER(submodtype)[0]>0) {
+	for (j=0;j<IY;j++) {
+		REAL(Ysubcat)[j]=(double)Ysubcatint[j];
+	}
+}
 if (MCMC==0) {	
 	r8mat_divide(Ib,Jb,ns,REAL(betapost));
 	r8mat_divide(Iu,Ju,ns,REAL(upost));

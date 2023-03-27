@@ -11,7 +11,7 @@
 
 SEXP jomo1smcC(SEXP Ysub, SEXP Ysubimp, SEXP Ysubcat, SEXP submod, SEXP ordersub, SEXP Y, SEXP Yimp, SEXP Yimp2, SEXP Yimpcat, SEXP X,SEXP betaY, SEXP betaYpost, SEXP beta, SEXP betapost, SEXP varY, SEXP varYpost, SEXP omega, SEXP omegapost, SEXP nstep, SEXP varYprior, SEXP Sp, SEXP Y_numcat, SEXP Ysub_numcat, SEXP num_con, SEXP flagrng, SEXP MCMCchain, SEXP submodtype){
 int indic=0,i,j,k, IY,JY, IX, JX, Io, Jo, Ib, Jb, ns, nmiss=0,t, countm=0, counto=0,countoo=0, jj, tt, kk, ncon,ncat, pos,flag=0,nmaxx,h=0;
-int fl, currncat, Is,  Il=0, JXm, accratio=0, totprop=0, nconnoaux, nconcat, ncatnoaux, MCMC, nsubcat;
+int fl, currncat, Is,  Il=0, JXm, accratio=0, totprop=0, nconnoaux, nconcat, ncatnoaux, MCMC, nsubcat, *Ysubcatint;
 SEXP RdimY, RdimX, Rdimo, Rdimb, Rdims;
 double *betaX, *Yobs, *Ymiss, *mumiss, *omegadrawmiss, *betamiss, *betaobs, *omegaoo, *omegamo, *omegamm, *invomega, *invomega2;
 double *mu, *mu2, *newbeta, *newomega,  *yi, *invomega3, *help4, *help5, *help6, *missing, *fixomega,meanom,sdom, *resid, detom, *residsub;
@@ -38,7 +38,7 @@ Ysub=PROTECT(coerceVector(Ysub,REALSXP));
 submod=PROTECT(coerceVector(submod,INTSXP));
 ordersub=PROTECT(coerceVector(ordersub,INTSXP));
 Ysubimp=PROTECT(coerceVector(Ysubimp,REALSXP));
-Ysubcat=PROTECT(coerceVector(Ysubcat,INTSXP));
+Ysubcat=PROTECT(coerceVector(Ysubcat,REALSXP));
 Y=PROTECT(coerceVector(Y,REALSXP));
 Yimpcat=PROTECT(coerceVector(Yimpcat,REALSXP));
 Y_numcat=PROTECT(coerceVector(Y_numcat,INTSXP));
@@ -127,6 +127,7 @@ missing = ( double * ) R_alloc ( IY , sizeof ( double ) );
 Xsub = ( double * ) R_alloc ( IY* Il , sizeof ( double ) );
 Xsubprop = ( double * ) R_alloc ( Il , sizeof ( double ) );
 yicategorized=( double * ) R_alloc (  JY,sizeof ( double ) );
+Ysubcatint = ( int * ) R_alloc ( IY , sizeof ( int ) );
 sumbeta = ( double * ) R_alloc ( IY+1 , sizeof ( double ) );
 sumexpbetanew = ( double * ) R_alloc ( IY+1 , sizeof ( double ) );
 sumexpbeta=( double * ) R_alloc (  IY+1,sizeof ( double ) );
@@ -138,6 +139,7 @@ helpLH=( double * ) R_alloc (  4,sizeof ( double ) );
 
 for (j=0; j<IY; j++) {
 	missing[j]=0;
+	if (INTEGER(submodtype)[0]>0) Ysubcatint[j]=REAL(Ysubcat)[j];
 	for (k=0;k<JY;k++) {
 		if (ISNAN(REAL(Yimp)[j+k*IY])) {
 			missing[j]++;
@@ -200,13 +202,13 @@ if (INTEGER(submodtype)[0]==3) {
 	for (t=0;t<IY;t++) {
 		if (ISNAN(REAL(Ysub)[t])) {
 			if (impsub[t]>REAL(betaY)[Il+nsubcat-2]) {
-				INTEGER(Ysubcat)[t]=nsubcat;
+				Ysubcatint[t]=nsubcat;
 			} else {
 				flag=0;
 				k=0;
 				while (flag==0) {
 					if (impsub[t]<=REAL(betaY)[Il+k]) {
-						INTEGER(Ysubcat)[t]=k+1;
+						Ysubcatint[t]=k+1;
 						flag=1;
 					} else {
 						k++;
@@ -509,19 +511,19 @@ for (i=0;i<ns;i++) {
 			} else if (INTEGER(submodtype)[0]==1) {
 				mu2[0]=0;
 				for (t=0;t<Il;t++) mu2[0]=mu2[0]+REAL(betaY)[t]*Xsub[j+IY*t];
-				if (INTEGER(Ysubcat)[j]==1) mu2[0]=-mu2[0];
+				if (Ysubcatint[j]==1) mu2[0]=-mu2[0];
 				logLH=log(normal_cdf(mu2[0]))-help6[0]/2;
 			} else if (INTEGER(submodtype)[0]==2) {
 				logLH=helpLH[0]-help6[0]/2;
 			} else {
 				mu2[0]=0;
 				for (t=0;t<Il;t++) mu2[0]=mu2[0]+REAL(betaY)[t]*Xsub[j+IY*t];
-				if (INTEGER(Ysubcat)[j]==1) {
+				if (Ysubcatint[j]==1) {
 					mu2[0]=normal_cdf(REAL(betaY)[Il]-mu2[0]);
-				} else if (INTEGER(Ysubcat)[j]==nsubcat) {
+				} else if (Ysubcatint[j]==nsubcat) {
 					mu2[0]=1-normal_cdf(REAL(betaY)[Il+nsubcat-2]-mu2[0]);
 				} else {
-					mu2[0]=normal_cdf(REAL(betaY)[Il+INTEGER(Ysubcat)[j]-1]-mu2[0])-normal_cdf(REAL(betaY)[Il+INTEGER(Ysubcat)[j]-2]-mu2[0]);
+					mu2[0]=normal_cdf(REAL(betaY)[Il+Ysubcatint[j]-1]-mu2[0])-normal_cdf(REAL(betaY)[Il+Ysubcatint[j]-2]-mu2[0]);
 				}
 				logLH=log(mu2[0])-help6[0]/2;
 			}			
@@ -567,19 +569,19 @@ for (i=0;i<ns;i++) {
 					} else if (INTEGER(submodtype)[0]==1) {
 						mu2[0]=0;
 						for (t=0;t<Il;t++) mu2[0]=mu2[0]+REAL(betaY)[t]*Xsub[j+IY*t];
-						if (INTEGER(Ysubcat)[j]==1) mu2[0]=-mu2[0];
+						if (Ysubcatint[j]==1) mu2[0]=-mu2[0];
 						logLH=log(normal_cdf(mu2[0]))-help6[0]/2;
 					} else if (INTEGER(submodtype)[0]==2) {
 						logLH=helpLH[0]-help6[0]/2;
 					} else {
 						mu2[0]=0;
 						for (t=0;t<Il;t++) mu2[0]=mu2[0]+REAL(betaY)[t]*Xsub[j+IY*t];
-						if (INTEGER(Ysubcat)[j]==1) {
+						if (Ysubcatint[j]==1) {
 							mu2[0]=normal_cdf(REAL(betaY)[Il]-mu2[0]);
-						} else if (INTEGER(Ysubcat)[j]==nsubcat) {
+						} else if (Ysubcatint[j]==nsubcat) {
 							mu2[0]=1-normal_cdf(REAL(betaY)[Il+nsubcat-2]-mu2[0]);
 						} else {
-							mu2[0]=normal_cdf(REAL(betaY)[Il+INTEGER(Ysubcat)[j]-1]-mu2[0])-normal_cdf(REAL(betaY)[Il+INTEGER(Ysubcat)[j]-2]-mu2[0]);
+							mu2[0]=normal_cdf(REAL(betaY)[Il+Ysubcatint[j]-1]-mu2[0])-normal_cdf(REAL(betaY)[Il+Ysubcatint[j]-2]-mu2[0]);
 						}
 						logLH=log(mu2[0])-help6[0]/2;
 					}	
@@ -644,7 +646,7 @@ for (i=0;i<ns;i++) {
 					} else if (INTEGER(submodtype)[0]==1) {
 						mu2[0]=0;
 						for (t=0;t<Il;t++) mu2[0]=mu2[0]+REAL(betaY)[t]*Xsubprop[t];
-						if (INTEGER(Ysubcat)[j]==1) mu2[0]=-mu2[0];	
+						if (Ysubcatint[j]==1) mu2[0]=-mu2[0];	
 						newlogLH=log(normal_cdf(mu2[0]))-help[0]/2;
 					} else if (INTEGER(submodtype)[0]==2) {
 						helpLH[1]=helpLH[0];
@@ -670,12 +672,12 @@ for (i=0;i<ns;i++) {
 					} else {
 						mu2[0]=0;
 						for (t=0;t<Il;t++) mu2[0]=mu2[0]+REAL(betaY)[t]*Xsubprop[t];
-						if (INTEGER(Ysubcat)[j]==1) {
+						if (Ysubcatint[j]==1) {
 							mu2[0]=normal_cdf(REAL(betaY)[Il]-mu2[0]);
-						} else if (INTEGER(Ysubcat)[j]==nsubcat) {
+						} else if (Ysubcatint[j]==nsubcat) {
 							mu2[0]=1-normal_cdf(REAL(betaY)[Il+nsubcat-2]-mu2[0]);
 						} else {
-							mu2[0]=normal_cdf(REAL(betaY)[Il+INTEGER(Ysubcat)[j]-1]-mu2[0])-normal_cdf(REAL(betaY)[Il+INTEGER(Ysubcat)[j]-2]-mu2[0]);
+							mu2[0]=normal_cdf(REAL(betaY)[Il+Ysubcatint[j]-1]-mu2[0])-normal_cdf(REAL(betaY)[Il+Ysubcatint[j]-2]-mu2[0]);
 						}
 						newlogLH=log(mu2[0])-help[0]/2;					
 					}	
@@ -747,7 +749,7 @@ for (i=0;i<ns;i++) {
 				for (k=0;k<Il;k++) mu2[0]=mu2[0]+REAL(betaY)[k]*Xsub[t+k*IX];
 				while (flag==0&&kk<10000) {
 					yi[0]=r8_normal_sample(mu2[0],1,0);						
-					if (((INTEGER(Ysubcat)[t]==1)&&(yi[0]<REAL(betaY)[Il]))||((INTEGER(Ysubcat)[t]==nsubcat)&&(yi[0]>REAL(betaY)[Il+nsubcat-2]))||((INTEGER(Ysubcat)[t]>1)&&(INTEGER(Ysubcat)[t]<nsubcat)&&(yi[0]<REAL(betaY)[Il+INTEGER(Ysubcat)[t]-1])&&(yi[0]>REAL(betaY)[Il+INTEGER(Ysubcat)[t]-2]))) {
+					if (((Ysubcatint[t]==1)&&(yi[0]<REAL(betaY)[Il]))||((Ysubcatint[t]==nsubcat)&&(yi[0]>REAL(betaY)[Il+nsubcat-2]))||((Ysubcatint[t]>1)&&(Ysubcatint[t]<nsubcat)&&(yi[0]<REAL(betaY)[Il+Ysubcatint[t]-1])&&(yi[0]>REAL(betaY)[Il+Ysubcatint[t]-2]))) {
 						impsub[t]=yi[0];
 						flag=1;
 					} else {
@@ -911,16 +913,16 @@ for (i=0;i<ns;i++) {
 				for (k=0;k<Il;k++) mu2[0]=mu2[0]+REAL(betaY)[k]*Xsub[t+k*IX];
 				impsub[t]=r8_normal_sample(mu2[0],sqrt(REAL(varY)[0]),0);
 				if (INTEGER(submodtype)[0]==1) {
-					INTEGER(Ysubcat)[t]=(impsub[t]>0)+1;
+					Ysubcatint[t]=(impsub[t]>0)+1;
 				} else if (INTEGER(submodtype)[0]==3) {
 					if (impsub[t]>REAL(betaY)[Il+nsubcat-2]) {
-						INTEGER(Ysubcat)[t]=nsubcat;
+						Ysubcatint[t]=nsubcat;
 					} else {
 						flag=0;
 						k=0;
 						while (flag==0) {
 							if (impsub[t]<=REAL(betaY)[Il+k]) {
-								INTEGER(Ysubcat)[t]=k+1;
+								Ysubcatint[t]=k+1;
 								flag=1;
 							} else {
 								k++;
@@ -961,7 +963,11 @@ for(i=0;i<IY;i++)  {
 		}
 	}	
 }
-
+if (INTEGER(submodtype)[0]>0) {
+	for (j=0;j<IY;j++) {
+		REAL(Ysubcat)[j]=(double)Ysubcatint[j];
+	}
+}
 if (MCMC==0) {	
 	r8mat_divide(Ib,Jb,ns,REAL(betapost));
 	r8mat_divide(JY,JY,ns,REAL(omegapost));
