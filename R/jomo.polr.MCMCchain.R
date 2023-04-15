@@ -258,6 +258,7 @@ jomo.polr.MCMCchain <-
       for (i in 1:length(Ysubimp)) if (is.na(Ysubimp[i])) Ysubimp[i]=sample(1:Ysub.ncat,1)
     }   
     Ysubcat <- as.numeric(Ysub)
+    Ysubcat[is.na(Ysubcat)]<-1
     
     .Call("jomo1smcC", Ysub, Ysubimp, Ysubcat, submod, order.sub, Y, Yimp, Yimp2, Y.cat.tot, X, betaY.start, betaYpost, betait,betapost, varY.start, varYpost, covit,omegapost, nburn, varY.prior, l1cov.prior,Y.numcat.tot, Ysub.ncat, ncolYcon,out.iter, 1, 3, PACKAGE = "jomo")
     imp[(nrow(Y)+1):(2*nrow(Y)),1]=Ysubcat

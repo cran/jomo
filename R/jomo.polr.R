@@ -239,7 +239,8 @@ jomo.polr <-
     for (i in 1:nrow(Yi)) for (j in 1:ncol(Yi)) if (is.na(Yimp[i,j])) Yimp2[i,j]=meanobs[j]
     for (i in 1:length(Ysubimp)) if (is.na(Ysubimp[i])) Ysubimp[i]=sample(1:Ysub.ncat,1)
     Ysubcat <- as.numeric(Ysub)
-
+    Ysubcat[is.na(Ysubcat)]<-1
+    
     .Call("jomo1smcC", Ysub, Ysubimp, Ysubcat, submod, order.sub, Y, Yimp, Yimp2, Y.cat.tot, X, betaY.start, bYpost, betait,bpost, varY.start, vYpost, covit,opost, nburn, varY.prior, l1cov.prior,Y.numcat.tot, Ysub.ncat, ncolYcon, out.iter, 0, 3, PACKAGE = "jomo")
     #betapost[,,1]=bpost
     #omegapost[,,(1)]=opost

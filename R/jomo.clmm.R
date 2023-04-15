@@ -521,6 +521,7 @@ jomo.clmm <-
     }
     for (i in 1:length(Ysubimp)) if (is.na(Ysubimp[i])) Ysubimp[i]=sample(1:Ysub.ncat,1)
     Ysubcat <- as.numeric(Ysub)
+    Ysubcat[is.na(Ysubcat)]<-1
     
     if (!is.null(Y2)) {
       if (meth=="common") {
